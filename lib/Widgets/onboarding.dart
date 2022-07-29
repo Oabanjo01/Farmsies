@@ -93,8 +93,8 @@ class onboardingScreen extends StatelessWidget {
       ),
       done: const Text('Done'),
       skip: const Text('Skip'),
-      onDone: () => Navigator.pushNamed(context, '/loginScreen'),
-      onSkip: () => Navigator.pushNamed(context, '/loginScreen'),
+      onDone: () => Navigator.popAndPushNamed(context, '/loginScreen'),
+      onSkip: () => Navigator.popAndPushNamed(context, '/loginScreen'),
     );
   }
 }

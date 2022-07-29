@@ -1,9 +1,9 @@
-import 'package:farmsies/Screens/home.dart';
-
-import 'package:farmsies/Screens/login.dart';
-import 'package:farmsies/Screens/signupscreen.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:flutter/material.dart';
+
+import '../Screens/auth-page/login.dart';
+import '../Screens/auth-page/signupscreen.dart';
+import '../Widgets/homepage.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -11,12 +11,14 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/home':
-        return MaterialPageRoute(builder: (_) => onboardingScreen(
+        return MaterialPageRoute(builder: (_) => const onboardingScreen(
         ));
       case '/loginScreen':
           return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/signupScreen':
           return MaterialPageRoute(builder: (_) => SignupScreen());
+      case '/homepage':
+          return MaterialPageRoute(builder: (_) => HomePage());
       default: 
         return _errorRoute();
     }

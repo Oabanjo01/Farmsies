@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1059316457587",
+    "project_id": "farmsies-330cc",
+    "storage_bucket": "farmsies-330cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059316457587:android:11dc6f1edd71370cc68a06",
+        "android_client_info": {
+          "package_name": "com.example.farmsies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059316457587-nasj504cunl51s9bhpq04ev4iniiia9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-aK-eO3S9UgOSLoPkODoatJHfFCKnI3c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059316457587-nasj504cunl51s9bhpq04ev4iniiia9r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,17 @@
-import 'package:farmsies/Constants/colors.dart';
-import 'package:farmsies/Widgets/textfields.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:farmsies/Constants/colors.dart';
+import 'package:farmsies/Widgets/textfields.dart';
+
+class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController userController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
@@ -44,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                   child: textField(
-                    icon: Icon(Icons.password_rounded),
+                    icon: const Icon(Icons.password_rounded),
                     hideText: true,
                     controller: passwordController,
                     helperText: 'Password',
@@ -59,11 +67,20 @@ class LoginScreen extends StatelessWidget {
           ElevatedButton(
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
-            onPressed: () {
+            onPressed: () async {
               print(userController.text);
               print(passwordController.text);
+              try {
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: userController.text,
+                  password: passwordController.text,
+                );
+                Navigator.of(context).popAndPushNamed('/homepage');
+              } catch (e) {
+                print(e.toString());
+              }
             },
-            child: Text('Login'),
+            child: const Text('Login'),
           ),
           SizedBox(
             height: size.height * 0.005,
