@@ -14,52 +14,47 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  // bool screenLoaded = false;
+  var newLaunch;
   String developername = 'Xerxes';
 
   String versionNumber = 'V 1.0.0';
 
-  final Future<SharedPreferences> _preferences =
-      SharedPreferences.getInstance();
-
   @override
   void initState() {
     super.initState();
-    _loadanotherScreen();
-    // final _initialiseScreen = _preferences.then((SharedPreferences prefs) {
-    //   return (prefs.getBool('onboarding') ?? false);
-    // });
-    // print(_initialiseScreen);
+    _loadLoginScreen().then((value) {
+      if (value == true) {
+        Timer(const Duration(seconds: 3), (() => Navigator.of(context).popAndPushNamed('/onboarding')));
+      } else {
+        Timer(const Duration(seconds: 3), (() => Navigator.of(context).popAndPushNamed('/loginScreen')));
+      }
+    });
   }
 
-  _loadanotherScreen () {
-    Timer(const Duration(seconds: 3), checkFirstSeen);
+  Future <bool> _loadLoginScreen() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    setState(() {
+      bool _newLaunch = _preferences.getBool('newScreen1') ?? true;
+      newLaunch = _newLaunch;
+    });
+    return newLaunch;
   }
 
-  Future checkFirstSeen() async {
+  checkSplashScreenran() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _introSeen = (prefs.getBool('showonOnboarding') ?? false);
+      if (prefs.containsKey('newScreen1')) {
+        prefs.setBool('newScreen1', false);
+      } else {
+        prefs.setBool('newScreen1', false);
+      } 
+  }
 
-    if (_introSeen) {
-      Navigator.popAndPushNamed(context, '/home');
-    } else {
-      await prefs.setBool('showonOnboarding', true);
-      Navigator.popAndPushNamed(context, '/loginScreen');
-    }}
-
-  // Future initScreen() async {
-  //   SharedPreferences prefs = await _preferences;
-  //   bool _initialiseScreen = prefs.getBool('onboarding') ?? false;
-
-  // //     if (_initialiseScreen) {
-  // //       Navigator.popAndPushNamed(context, '/home');
-  // //   } else {
-  // //     await prefs.setBool('onboarding', true);
-  // //     Navigator.popAndPushNamed(context, '/loginScreen');
-  // // }
-
-  //   // final int _initialiseScreen = prefs.getInt('onboarding') ?? 0;
-  // }
- 
+  @override
+  void dispose() {
+    super.dispose();
+    checkSplashScreenran();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +88,5 @@ class _SplashScreenState extends State<SplashScreen> {
                 ))
           ],
         ));
-  }}
-
-
+  }
+}

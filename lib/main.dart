@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'Screens/auth-page/splash_screen.dart';
 
-Future <SharedPreferences> preferences = SharedPreferences.getInstance();
+// Future <SharedPreferences> preferences = SharedPreferences.getInstance();
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
