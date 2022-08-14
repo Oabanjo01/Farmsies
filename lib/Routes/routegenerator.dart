@@ -1,3 +1,4 @@
+import 'package:farmsies/Screens/settings.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,8 @@ class RouteGenerator {
           return MaterialPageRoute(builder: (_) => SignupScreen());
       case '/homepage':
           return MaterialPageRoute(builder: (_) => HomePage());
+      case '/settings':
+          return MaterialPageRoute(builder: (_) => SettingsPage());
       default: 
         return _errorRoute();
     }

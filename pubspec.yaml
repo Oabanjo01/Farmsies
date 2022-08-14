@@ -40,6 +40,7 @@ dependencies:
   introduction_screen: ^3.0.2
   firebase_auth: ^3.3.8
   firebase_core: ^1.12.0
+  google_sign_in: ^5.4.0
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,18 @@ flutter:
     - assets/undraw_delivery_truck_vt6p.svg
     - assets/farmer (1).png
     - assets/undraw_mobile_interface_re_1vv9.svg
+    - assets/Food-deck/photo-1585540083814-ea6ee8af9e4f.jpeg
+    - assets/Onboarding/Deliveryman.svg
+    - assets/Onboarding/Father-Son-Time.svg
+    - assets/Onboarding/Online-Grocery-Shopping.svg
+    - assets/Onboarding/online-mart.svg
+    - assets/Onboarding/Online-Shopping.svg
+    - assets/Onboarding/Woman-Buying-Online-Meat.svg
+    - assets/Onboarding/Chef-Kneading-Dough.svg
+    - assets/Onboarding/Face-Mask.svg
+    - assets/Onboarding/Working-from-Home.svg
+    - assets/Onboarding/Productive-and-Cozy.svg
+    - assets/Onboarding/Staying-at-Home-Concept.svg
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

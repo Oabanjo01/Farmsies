@@ -1,4 +1,5 @@
 import 'package:farmsies/Constants/colors.dart';
+import 'package:farmsies/Constants/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -26,9 +27,9 @@ class onboardingScreen extends StatelessWidget {
       pages: [
         PageViewModel(
             title: 'Welcome to farmsies',
-            body: '',
+            body: 'Shop for fresh farm produce directly from your house',
             image:
-                SvgPicture.asset('assets/undraw_mobile_interface_re_1vv9.svg'),
+                SvgPicture.asset(onboarding1, height: size.height * 0.5,),
             decoration: PageDecoration(
               titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
               bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
@@ -38,7 +39,7 @@ class onboardingScreen extends StatelessWidget {
             title: 'Easy to use',
             body: 'Browse through and place an order',
             image:
-                SvgPicture.asset('assets/undraw_order_confirmed_re_g0if.svg'),
+                SvgPicture.asset(onboarding2, height: size.height * 0.5),
             decoration: PageDecoration(
               titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
               bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
@@ -47,7 +48,7 @@ class onboardingScreen extends StatelessWidget {
         PageViewModel(
             title: 'Speedy delivery',
             body: 'Get your items at your door step in no time!',
-            image: SvgPicture.asset('assets/undraw_delivery_truck_vt6p.svg'),
+            image: SvgPicture.asset(onboarding3, height: size.height * 0.5,),
             decoration: PageDecoration(
               titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
               bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
@@ -55,8 +56,8 @@ class onboardingScreen extends StatelessWidget {
                 imagePadding: EdgeInsets.all(size.height * 0.05),)),
         PageViewModel(
           image: Padding(
-            padding: EdgeInsets.only(top: size.height * 0.1),
-            child: Image.asset('assets/harvest.png'),
+            padding: EdgeInsets.only(left: size.width * 0.1, right: size.width * 0.1,),
+            child: SvgPicture.asset(drawer, height: size.height * 0.5,),
           ),
           title: 'Get Started',
           body: 'Sign up if you don\'t have an account',

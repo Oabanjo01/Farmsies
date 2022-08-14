@@ -16,10 +16,10 @@ class _HomePageState extends State<HomePage> {
   int initialBar = 0;
 
   final List<Map> _tabs = [
-    {'label': 'Home', 'icon': Icons.home_filled,},
-    {'label': 'Cart', 'icon': Icons.shopping_bag_rounded,},
-    {'label': 'Orders', 'icon': Icons.directions_bike_rounded,},
-    {'label': 'Profile', 'icon': Icons.person,},
+    {'label': 'Home', 'icon': Icons.home_outlined,},
+    {'label': 'Cart', 'icon': Icons.shopping_cart_outlined,},
+    {'label': 'Orders', 'icon': Icons.motorcycle_outlined,},
+    {'label': 'Profile', 'icon': Icons.person_outline_rounded,},
   ];
 
   List _screens = [
@@ -51,10 +51,10 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: primaryColor.withOpacity(0.7),
         selectedItemColor: primaryColor,
         items: [
-          BottomNavigationBarItem(icon: Icon(_tabs[0]['icon']), label: _tabs[0]['label']),
-          BottomNavigationBarItem(icon: Icon(_tabs[1]['icon']), label: _tabs[1]['label']),
-          BottomNavigationBarItem(icon: Icon(_tabs[2]['icon']), label: _tabs[2]['label']),
-          BottomNavigationBarItem(icon: Icon(_tabs[3]['icon']), label: _tabs[3]['label']),
+          BottomNavigationBarItem(icon: Icon(_tabs[0]['icon']), label: _tabs[0]['label'], tooltip: _tabs[0]['label'], activeIcon: const Icon(Icons.home)),
+          BottomNavigationBarItem(icon: Icon(_tabs[1]['icon']), label: _tabs[1]['label'], tooltip: _tabs[1]['label'], activeIcon: const Icon(Icons.shopping_cart_rounded)),
+          BottomNavigationBarItem(icon: Icon(_tabs[2]['icon']), label: _tabs[2]['label'], tooltip: _tabs[2]['label'], activeIcon: const Icon(Icons.motorcycle_rounded)),
+          BottomNavigationBarItem(icon: Icon(_tabs[3]['icon']), label: _tabs[3]['label'], tooltip: _tabs[3]['label'], activeIcon: const Icon(Icons.person)),
         ],
       ),
     );

@@ -35,7 +35,8 @@ class _FarmsiesState extends State<Farmsies> {
         colorScheme: ThemeData().colorScheme.copyWith(
           primary: primaryColor,
           secondary: secondaryColor.withOpacity(0.5),
-          brightness: Brightness.light
+          brightness: Brightness.light,
+          
         )
       ),
       darkTheme: ThemeData(
