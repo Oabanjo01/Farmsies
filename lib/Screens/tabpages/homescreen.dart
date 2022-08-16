@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../Constants/colors.dart';
+import '../../Constants/othermethods.dart';
 import '../../Widgets/headboard.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -98,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: secondaryColor,
       body: ListView(children: [
         Headboard(size: size, username: username),
-        spacing(size),
+        spacing(size: size, height: 0.02),
         Foodcategories(size: size, food: food),
         SizedBox(
           height: size.height * 0.02,
