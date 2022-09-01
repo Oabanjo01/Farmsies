@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:farmsies/Models/usermodel.dart';
 
 import '../../Provider/auth_provider.dart';
-import '../../Widgets/wrapper.dart';
+import '../../wrapper.dart';
 import '../tabpages/homescreen.dart';
 import 'login.dart';
 
@@ -38,17 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Future.delayed(
             const Duration(seconds: 3),
             () {
-              return  StreamBuilder<User?>(
-                stream: Provider.of<Authprovider>(context, listen: false).user,
-                builder: (BuildContext ctx, AsyncSnapshot<User?> snapshot) {
-                  print(snapshot.data);
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    final User? user = snapshot.data;
-                    return user == null ? LoginScreen() : HomeScreen();
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                });
+              return Wrapper();
             });}
       });
   }

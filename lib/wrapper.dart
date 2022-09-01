@@ -11,11 +11,11 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<Authprovider>(context);
-    return StreamBuilder<User?>(
+    return StreamBuilder<Users?>(
       stream: authProvider.user,
-      builder: (BuildContext ctx, AsyncSnapshot<User?> snapshot) {
+      builder: (BuildContext ctx, AsyncSnapshot<Users?> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          final User? user = snapshot.data;
+          final Users? user = snapshot.data;
           return user == null ? LoginScreen() : HomeScreen();
         } else {
           return const Center(child: CircularProgressIndicator());

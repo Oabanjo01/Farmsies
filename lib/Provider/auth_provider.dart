@@ -15,22 +15,22 @@ class Authprovider with ChangeNotifier {
   // GoogleSignInAccount? _user;
   // GoogleSignInAccount get user => _user!;
 
-  User? _userFromFirebase(auth.User? user) {
+  Users? _userFromFirebase(auth.User? user) {
     if (user == null) {
       return null;
     }
-    return User(
+    return Users(
       userId: user.uid,
       userMail: user.email,
       userDisplayname: user.displayName,
     );
   }
 
-  Stream<User?>? get user {
+  Stream<Users?>? get user {
     return firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
-  Future<User?> signInWithEmailAndPassword({
+  Future<Users?> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -41,7 +41,7 @@ class Authprovider with ChangeNotifier {
     return _userFromFirebase(credential.user);
   }
 
-  Future<User?> createUserWithEmailAndPassword(
+  Future<Users?> createUserWithEmailAndPassword(
     {required String email, required String password}) async {
       final credential = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,

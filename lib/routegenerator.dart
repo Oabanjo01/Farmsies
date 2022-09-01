@@ -2,9 +2,9 @@ import 'package:farmsies/Screens/settings.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:flutter/material.dart';
 
-import '../Screens/auth-page/login.dart';
-import '../Screens/auth-page/signupscreen.dart';
-import '../Widgets/homepage.dart';
+import 'Screens/auth-page/login.dart';
+import 'Screens/auth-page/signupscreen.dart';
+import 'Widgets/homepage.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
