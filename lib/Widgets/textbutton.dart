@@ -16,7 +16,7 @@ class Textbutton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('Aleady have an account?'),
+        const Text('Already have an account?'),
         TextButton(
           style: ButtonStyle(
               overlayColor:

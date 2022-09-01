@@ -1,7 +1,8 @@
 import 'package:farmsies/Constants/colors.dart';
+import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Routes/routegenerator.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'Screens/auth-page/splash_screen.dart';
@@ -26,25 +27,31 @@ class _FarmsiesState extends State<Farmsies> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-      onGenerateRoute: RouteGenerator.generateRoute,
-      themeMode: ThemeMode.system,
-      theme: ThemeData(
-        colorScheme: ThemeData().colorScheme.copyWith(
-          primary: primaryColor,
-          secondary: secondaryColor.withOpacity(0.5),
-          brightness: Brightness.light,
-          
-        )
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ThemeData().colorScheme.copyWith(
-          primary: primaryDarkColor,
-          secondary: secondaryColor.withOpacity(0.5),
-          brightness: Brightness.dark
-        )
+    // final test = provider.
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: Authprovider())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const SplashScreen(),
+        onGenerateRoute: RouteGenerator.generateRoute,
+        themeMode: ThemeMode.system,
+        theme: ThemeData(
+          colorScheme: ThemeData().colorScheme.copyWith(
+            primary: primaryColor,
+            secondary: secondaryColor.withOpacity(0.5),
+            brightness: Brightness.light,
+            
+          )
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ThemeData().colorScheme.copyWith(
+            primary: primaryDarkColor,
+            secondary: secondaryColor.withOpacity(0.5),
+            brightness: Brightness.dark
+          )
+        ),
       ),
     );
   }

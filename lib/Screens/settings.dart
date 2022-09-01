@@ -11,3 +11,14 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+
+// body: StreamBuilder(
+//         stream: FirebaseAuth.instance.authStateChanges(),
+//         builder: ((context, snapshot) {
+//           if(snapshot.connectionState == ConnectionState.waiting) {
+//             return const Center(child: CircularProgressIndicator(),);
+//           } else if (snapshot.hasError) {
+//             return erroDialogue(context);
+//           } else if (snapshot.hasData) {
+//             return HomeScreen();
+//           } else {

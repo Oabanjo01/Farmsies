@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 enum Category { fruits, vegetables, fats, carbonhydrates, proteins, dairy }
