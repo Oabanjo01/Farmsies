@@ -4,18 +4,22 @@ import 'package:flutter/material.dart';
 class textField extends StatelessWidget {
   const textField(
       {Key? key,
+      required this.color,
+      required this.baseColor,
       required this.controller,
-      required this.helperText,
+      required this.labelText,
       this.hideText = false,
       required this.icon,
       // required this.textFieldFunction
       })
       : super(key: key);
 
-  final String helperText;
+  final String labelText;
   final TextEditingController controller;
   final bool hideText;
   final Icon icon;
+  final  Color color;
+  final Color baseColor;
   // final Function textFieldFunction;
 
   @override
@@ -28,20 +32,23 @@ class textField extends StatelessWidget {
       maxLines: 1,
       decoration: InputDecoration(
           // contentPadding: EdgeInsets.only(left: 10, right: 10),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          filled: true,
+          fillColor: baseColor,
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: icon,
           ),
-          focusColor: primaryColor,
+          focusColor: color,
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: primaryColor, width: 1.5)),
+              borderSide: BorderSide(color: color, width: 0.2)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide:
-                  BorderSide(color: primaryColor.withOpacity(0.5), width: 1.5)),
-          helperText: helperText,
-          helperStyle: TextStyle(color: primaryColor.withOpacity(0.6))),
+                  BorderSide(color: color.withOpacity(0.5), width: 0.2)),
+          labelText: labelText,
+          labelStyle: TextStyle(color: color.withOpacity(0.6))),
     );
   }
 }

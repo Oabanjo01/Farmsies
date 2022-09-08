@@ -1,6 +1,7 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../Constants/colors.dart';
+import '../../Constants/colors.dart';
 
 
 class Headboard extends StatelessWidget {
@@ -16,11 +17,10 @@ class Headboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(left: size.width * 0.05),
         height: size.height * 0.1,
         child: Row(children: [
           CircleAvatar(
-            child: Text(
+            child: const Text(
               'picture',
             ),
             radius: size.width * 0.1,
@@ -32,7 +32,7 @@ class Headboard extends StatelessWidget {
           Expanded(
               child: Container(
             alignment: Alignment.centerLeft,
-            child: Text('Welcome ${username!.toUpperCase()}'),
+            child: Text('Welcome ${StringUtils.capitalize(username!.toUpperCase())}', style: TextStyle(fontSize: 20),),
           ))
         ]),
       );

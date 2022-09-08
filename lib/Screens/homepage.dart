@@ -4,9 +4,12 @@ import 'package:farmsies/Screens/tabpages/homescreen.dart';
 import 'package:farmsies/Screens/tabpages/orderscreen.dart';
 import 'package:farmsies/Screens/tabpages/profilescreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, this.userDetails}) : super(key: key);
+
+    var userDetails;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,6 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent
+      )
+    );
     return Scaffold(
       // appBar: AppBar(
       //   elevation: 0,

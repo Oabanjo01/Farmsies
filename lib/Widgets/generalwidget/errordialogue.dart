@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-errorDialogue (BuildContext context) {
+errorDialogue (BuildContext context, String error) {
   showDialog(context: context, builder: ((context) {
     return AlertDialog(
-      content: const Text('User does not exist'),
+      content: Text(error),
       actions: [
-        TextButton(onPressed: () {}, child: const Text('Ok!'))
+        TextButton(onPressed: () {
+          Navigator.pop(context);
+        }, child: const Text('Ok!'))
       ],
     );
   }));

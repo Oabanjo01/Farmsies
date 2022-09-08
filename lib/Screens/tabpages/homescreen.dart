@@ -1,22 +1,32 @@
 import 'package:farmsies/Models/item-model.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/confirmationdialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:farmsies/Widgets/generalwidget/errordialogue.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Constants/colors.dart';
 import '../../Constants/othermethods.dart';
-import '../../Widgets/headboard.dart';
+import '../../Widgets/HomeScreen/PopularDeals.dart';
+import '../../Widgets/HomeScreen/headboard.dart';
+import '../../Widgets/HomeScreen/homescreenHeaders.dart';
+import '../../Widgets/generalwidget/textfields.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key, this.userDetails}) : super(key: key);
+
+  final String? userDetails;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
+  final TextEditingController searchController = TextEditingController();
   List<ItemModel> food = [
     ItemModel(
         title: 'title',
@@ -68,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
         id: 2,
         price: 200),
   ];
-
   @override
   void initState() {
     food.shuffle();
@@ -78,65 +87,127 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final username = FirebaseAuth.instance.currentUser!.email;
+    final userDetails = ModalRoute.of(context)!.settings.arguments;
+    final firebaseUser = _firebaseAuth.currentUser!;
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent));
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: secondaryColor.withOpacity(0.2),
-        actions: [
-          IconButton(
-              tooltip: 'Log-out',
-              onPressed: () async {
-                confirm(
-                    context: context,
-                    title: 'Confirm Log out',
-                    content: 'Are you sure you want to log out?',
-                    onClicked1: () {
-                      // try {
-                      //   final signOut =
-                      //       Provider.of<Authprovider>(context, listen: false)
-                      //           .signOut()
-                      //           .then((value) {
-                      //     Navigator.popAndPushNamed(context, '/loginScreen');
-                      //   });
-                      //   if (signOut == 'Signed out successfully') {
-                      //     print('Signed out successfully');
-                      //   }
-                      //   // Navigator.popAndPushNamed(context, '/loginScreen');
-                      // } catch (e) {
-                      //   print(e.toString());
-                      // }
-                    },
-                    onClicked2: () {
-                      Navigator.pop(context);
-                    },
-                    textbutton1: 'Yes',
-                    textbutton2: 'No');
-              },
-              icon: Icon(
-                Icons.logout_rounded,
-                color: primaryColor,
+        appBar: appBar(context, userDetails),
+        extendBodyBehindAppBar: false,
+        backgroundColor: secondaryColor,
+        body: Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: SingleChildScrollView(
+            child: Column(children: [
+              Headboard(
+                  size: size,
+                  username: firebaseUser.displayName ??
+                      firebaseUser.email!.toLowerCase()),
+              spacing(size: size, height: 0.02),
+              Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: textField(
+                    controller: searchController,
+                    labelText: 'Search',
+                    icon: const Icon(Icons.search),
+                    color: Colors.transparent,
+                    baseColor: Colors.grey.shade200,
+                  )),
+              spacing(size: size, height: 0.02),
+              const HomescreenHeader(text1: 'Categories', text2: 'See All'),
+              Foodcategories(size: size, food: food),
+              const HomescreenHeader(
+                  text1: 'Special Deals for You', text2: 'See All'),
+              Fooddex(size: size, food: food),
+              spacing(size: size, height: 0.02),
+              const HomescreenHeader(text1: 'Popular Deals', text2: 'See All'),
+              spacing(size: size, height: 0.01),
+              PopularDeals(size: size, food: food),
+              spacing(size: size, height: 0.01),
+              SizedBox(
+                  child: TextButton(
+                child: const Text('Contact us'),
+                onPressed: (() => _launchMail(
+                    email: 'banjolakunri@gmail.com',
+                    messageBody: 'Hello Olabanjo,\n I would like to make enquiries',
+                    subject: 'I need more info')),
               )),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: popupdialog(context),
-          )
-        ],
-        elevation: 0,
-      ),
-      backgroundColor: secondaryColor,
-      body: ListView(children: [
-        // Headboard(size: size, username: username),
-        spacing(size: size, height: 0.02),
-        Foodcategories(size: size, food: food),
-        SizedBox(
-          height: size.height * 0.02,
-        ),
-        Fooddex(size: size, food: food),
-        SizedBox(
-          height: size.height * 0.02,
-        ),
-        FoodforSale(size: size, food: food),
-      ]),
+              spacing(size: size, height: 0.01)
+            ]),
+          ),
+        ));
+  }
+
+  String? encodeQueryParameters(Map<String, String> parameters) {
+    return parameters.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
+  Future _launchMail(
+      {required String email,
+      required String subject,
+      required String messageBody}) async {
+    final url =
+        'mailto: $email?subject=${Uri.encodeFull(subject)}&body=${Uri.encodeFull(messageBody)}';
+    final Uri mailtoUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: 'subject=' + Uri.encodeComponent(subject) + '&body=' + Uri.encodeComponent(messageBody)
+      // encodeQueryParameters(<String, String>{subject: messageBody}),
+      // queryParameters: {subject: messageBody},
+    );
+    if (await canLaunchUrl(mailtoUri)) {
+      await launchUrl(mailtoUri);
+      print(email);
+    } else {
+      print('error');
+    }
+  }
+
+  AppBar appBar(BuildContext context, Object? userDetails) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      actions: [
+        IconButton(
+            tooltip: 'Log-out',
+            onPressed: () async {
+              confirm(
+                  context: context,
+                  title: 'Confirm Log out',
+                  content: 'Are you sure you want to log out?',
+                  onClicked1: () {
+                    try {
+                      final signOut =
+                          Provider.of<Authprovider>(context, listen: false)
+                              .signOut()
+                              .then((value) {
+                        Navigator.popAndPushNamed(context, '/loginScreen');
+                        print(userDetails);
+                      });
+                    } catch (e) {
+                      errorDialogue(context, e.toString());
+                    }
+                  },
+                  onClicked2: () {
+                    Navigator.pop(context);
+                  },
+                  textbutton1: 'Yes',
+                  textbutton2: 'No');
+            },
+            icon: Icon(
+              Icons.logout_rounded,
+              color: primaryColor,
+            )),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: popupdialog(context),
+        )
+      ],
+      elevation: 0,
     );
   }
 
@@ -185,41 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class FoodforSale extends StatelessWidget {
-  const FoodforSale({
-    Key? key,
-    required this.size,
-    required this.food,
-  }) : super(key: key);
-
-  final Size size;
-  final List<ItemModel> food;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: size.width * 0.03,
-        right: size.width * 0.03,
-      ),
-      height: size.height * 0.5,
-      child: GridView.builder(
-          itemCount: food.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisExtent: size.height * 0.2,
-              crossAxisCount: 2,
-              crossAxisSpacing: size.width * 0.02,
-              mainAxisSpacing: size.width * 0.02),
-          itemBuilder: (BuildContext ctx, int index) {
-            return Container(
-              decoration: BoxDecoration(border: Border.all(width: 1)),
-              child: Center(child: Text(food[index].title)),
-            );
-          }),
-    );
-  }
-}
-
 class Fooddex extends StatelessWidget {
   const Fooddex({
     Key? key,
@@ -233,10 +269,6 @@ class Fooddex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: size.width * 0.05,
-        right: size.width * 0.05,
-      ),
       child: GridView.builder(
           clipBehavior: Clip.antiAlias,
           scrollDirection: Axis.horizontal,
@@ -277,31 +309,27 @@ class Foodcategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.only(left: size.width * 0.05, right: size.width * 0.05),
-      child: Container(
-        height: size.height * 0.1,
-        child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                SizedBox(width: size.width * 0.03),
-            itemCount: food.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (BuildContext ctx, index) {
-              return Container(
-                // margin: EdgeInsets.only(left: size.width * 0.04),
-                // height: size.width * 0.1,
-                width: size.width * 0.15,
-                child: Center(
-                  child: Text(food[index].id.toString()),
-                ),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: primaryColor,
-                ),
-              );
-            }),
-      ),
+    return Container(
+      height: size.height * 0.1,
+      child: ListView.separated(
+          separatorBuilder: (context, index) =>
+              SizedBox(width: size.width * 0.03),
+          itemCount: food.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext ctx, index) {
+            return Container(
+              // margin: EdgeInsets.only(left: size.width * 0.04),
+              // height: size.width * 0.1,
+              width: size.width * 0.15,
+              child: Center(
+                child: Text(food[index].id.toString()),
+              ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primaryColor,
+              ),
+            );
+          }),
     );
   }
 }

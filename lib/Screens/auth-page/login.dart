@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:farmsies/Constants/colors.dart';
-import 'package:farmsies/Widgets/textfields.dart';
+import 'package:farmsies/Widgets/generalwidget/textfields.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../Constants/images.dart';
-import '../../Widgets/textbutton.dart';
+import '../../Widgets/generalwidget/textbutton.dart';
 import 'signupscreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,6 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     var _isLoading;
+     SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent
+      )
+    );
     return Scaffold(
         body:
             // StreamBuilder(
@@ -126,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       cursorColor: primaryColor.withOpacity(0.7),
                       controller: passwordController,
-                      obscureText: _showPassword == true ? true : false,
+                      obscureText: _showPassword == true ? false : true,
                       maxLines: 1,
                       decoration: passwordfieldDecoration(),
                     ),
@@ -160,18 +168,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           _isLoading = true;
                         });
                         try {
-                          final user = await Provider.of<Authprovider>(context)
+                          final userCredential = await Provider.of<Authprovider>(context, listen: false)
                             .signInWithEmailAndPassword(
                                 email: userController.text,
                                 password: passwordController.text);
-                        //   if (user == 'Sign in succesful') {
-                        //     Navigator.of(context).popAndPushNamed('/homepage');
-                        //     print('Succesful');
-                        //   } else {
-                        //     print('There is an error');
-                        // }
+                          Navigator.of(context,).popAndPushNamed('/homepage', arguments: userCredential!.userMail);
                         } catch (e) {
-
+                          errorDialogue(context, e.toString());
                         }
                       }
                       print(userController.text);

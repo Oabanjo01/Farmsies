@@ -1,6 +1,6 @@
-class Users {
+class UserModel {
   String userId;
   String? userMail;
   String? userDisplayname;
-  Users({required this.userId, this.userMail, this.userDisplayname});
+  UserModel({required this.userId, this.userMail, this.userDisplayname});
 }

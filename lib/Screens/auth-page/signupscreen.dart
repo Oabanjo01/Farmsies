@@ -2,7 +2,7 @@ import 'package:farmsies/Constants/colors.dart';
 import 'package:farmsies/Constants/images.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/errordialogue.dart';
-import 'package:farmsies/Widgets/textfields.dart';
+import 'package:farmsies/Widgets/generalwidget/textfields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -264,15 +264,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 context,
                                 listen: false)
                             .createUserWithEmailAndPassword(
+                              username: usernameController.text,
                                 email: emailController.text,
                                 password: passwordContoller.text);
-                        if (response == 'Sign up successful') {
-                          Navigator.of(context).pop();
-                        } else if (response == 'weak-password') {
-                          errorDialogue(context);
-                        }
+                        response != null ? Navigator.of(context).pop() : errorDialogue(context, 'Error');
                       } catch (e) {
-                        print(e.toString());
+                        errorDialogue(context, e.toString());
                       }
                     }
                   },

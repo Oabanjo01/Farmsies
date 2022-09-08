@@ -1,6 +1,7 @@
 import 'package:farmsies/Screens/auth-page/login.dart';
 import 'package:farmsies/Screens/tabpages/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,45 +16,53 @@ class Authprovider with ChangeNotifier {
   // GoogleSignInAccount? _user;
   // GoogleSignInAccount get user => _user!;
 
-  Users? _userFromFirebase(auth.User? user) {
+  UserModel? _userFromFirebase(auth.User? user) {
     if (user == null) {
       return null;
     }
-    return Users(
+    return UserModel(
       userId: user.uid,
       userMail: user.email,
       userDisplayname: user.displayName,
     );
   }
 
-  Stream<Users?>? get user {
+  Stream<UserModel?>? get user {
     return firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
-  Future<Users?> signInWithEmailAndPassword({
+  Future<UserModel?> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     final credential = await firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
-    );
+    ); 
+    notifyListeners();
     return _userFromFirebase(credential.user);
   }
 
-  Future<Users?> createUserWithEmailAndPassword(
-    {required String email, required String password}) async {
-      final credential = await firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    return _userFromFirebase(credential.user);
+  Future<UserModel?> createUserWithEmailAndPassword(
+    {required String email, required String password, required username}) async {
+      try {
+        final credential = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        User? user = credential.user;
+        user!.updateDisplayName(username);
+        notifyListeners();
+        return _userFromFirebase(credential.user);
+      } catch (e) {
+        rethrow;
+      }
     }
 
-  Future<void> signOut(
-      {required String email, required String password}) async {
-        return await firebaseAuth.signOut();
-      }
+  Future<void> signOut() async {
+      await firebaseAuth.signOut();
+      notifyListeners();
+    }
 
   // handleAuthState() {
   //   return StreamBuilder(

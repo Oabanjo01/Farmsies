@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Future.delayed(
             const Duration(seconds: 3),
             () {
-              return Wrapper();
+              return Navigator.of(context).popAndPushNamed('/wrapper');
             });}
       });
   }
@@ -71,9 +71,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    // SystemChrome.setSystemUIOverlayStyle(
-
-    // )
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent
+      )
+    );
     return Scaffold(
         backgroundColor: primaryColor,
         body: Stack(
