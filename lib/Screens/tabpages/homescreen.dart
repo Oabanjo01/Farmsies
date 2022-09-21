@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../Constants/colors.dart';
 import '../../Constants/othermethods.dart';
+import '../../Constants/samples.dart';
 import '../../Widgets/HomeScreen/PopularDeals.dart';
 import '../../Widgets/HomeScreen/headboard.dart';
 import '../../Widgets/HomeScreen/homescreenHeaders.dart';
@@ -27,57 +28,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final TextEditingController searchController = TextEditingController();
-  List<ItemModel> food = [
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1585540083814-ea6ee8af9e4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8bmlnZXJpYXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=600&q=60',
-        id: 1,
-        price: 100),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8bWFya2V0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8bWFya2V0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1601599561213-832382fd07ba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fG1hcmtldHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1572816225927-d08fb138f2b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8bmlnZXJpYXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1565958923272-e96dbb1e8414?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fG5pZ2VyaWF8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-    ItemModel(
-        title: 'title',
-        description: 'description',
-        imagepath:
-            'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bWFya2V0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60',
-        id: 2,
-        price: 200),
-  ];
+
   @override
   void initState() {
     food.shuffle();
@@ -116,13 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     baseColor: Colors.grey.shade200,
                   )),
               spacing(size: size, height: 0.02),
-              const HomescreenHeader(text1: 'Categories', text2: 'See All'),
+              HomescreenHeader(text1: 'Categories', text2: 'See All', navigate: () => () {
+                return Navigator.of(context).pushNamed('/foodCategory');
+              }),
               Foodcategories(size: size, food: food),
-              const HomescreenHeader(
-                  text1: 'Special Deals for You', text2: 'See All'),
+              HomescreenHeader(
+                  text1: 'Special Deals for You', text2: 'See All', navigate: () => null),
               Fooddex(size: size, food: food),
               spacing(size: size, height: 0.02),
-              const HomescreenHeader(text1: 'Popular Deals', text2: 'See All'),
+              HomescreenHeader(text1: 'Popular Deals', text2: 'See All', navigate: () => null),
               spacing(size: size, height: 0.01),
               PopularDeals(size: size, food: food),
               spacing(size: size, height: 0.01),
@@ -314,19 +267,24 @@ class Foodcategories extends StatelessWidget {
       child: ListView.separated(
           separatorBuilder: (context, index) =>
               SizedBox(width: size.width * 0.03),
-          itemCount: food.length,
+          itemCount: foodcategories.length = 5,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext ctx, index) {
-            return Container(
-              // margin: EdgeInsets.only(left: size.width * 0.04),
-              // height: size.width * 0.1,
-              width: size.width * 0.15,
-              child: Center(
-                child: Text(food[index].id.toString()),
-              ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primaryColor,
+            return InkWell(
+              onTap: () {},
+              child: Column(
+                children: [
+                  SizedBox(
+                    // margin: EdgeInsets.only(left: size.width * 0.04),
+                    // height: size.width * 0.1,
+                    width: size.width * 0.15,
+                    child: Center(
+                      child: Image.asset(foodcategories[index]['food icon']),
+                    ),
+                  ),
+                  spacing(size: size, height: 0.01),
+                  Text(foodcategories[index]['food name'], style: const TextStyle(overflow: TextOverflow.fade),)
+                ],
               ),
             );
           }),

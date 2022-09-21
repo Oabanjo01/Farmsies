@@ -17,14 +17,13 @@ class Headboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(right: 10, left: 20),
         height: size.height * 0.1,
         child: Row(children: [
           CircleAvatar(
-            child: const Text(
-              'picture',
-            ),
+            child: Image.asset('assets/Avatar/icons8-circled-user-neutral-skin-type-3-80.png'),
             radius: size.width * 0.1,
-            backgroundColor: primaryColor,
+            backgroundColor: Colors.transparent,
           ),
           SizedBox(
             width: size.width * 0.07,
@@ -32,7 +31,7 @@ class Headboard extends StatelessWidget {
           Expanded(
               child: Container(
             alignment: Alignment.centerLeft,
-            child: Text('Welcome ${StringUtils.capitalize(username!.toUpperCase())}', style: TextStyle(fontSize: 20),),
+            child: Text('Welcome ${StringUtils.capitalize(username!.toUpperCase())}', style: const TextStyle(fontSize: 20),),
           ))
         ]),
       );

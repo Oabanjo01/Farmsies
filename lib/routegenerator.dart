@@ -1,3 +1,4 @@
+import 'package:farmsies/Screens/allfoodcategories.dart';
 import 'package:farmsies/Screens/settings.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:farmsies/wrapper.dart';
@@ -25,6 +26,8 @@ class RouteGenerator {
           return MaterialPageRoute(builder: (_) => SettingsPage());
       case '/wrapper':
           return MaterialPageRoute(builder: (_) => const Wrapper());
+      case '/foodCategory':
+          return MaterialPageRoute(builder: (_) => const AllFoodCategories());
       default: 
         return _errorRoute();
     }

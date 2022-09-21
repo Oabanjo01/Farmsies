@@ -6,11 +6,13 @@ class HomescreenHeader extends StatelessWidget {
   const HomescreenHeader({
     Key? key,
     required this.text1,
-    required this.text2
+    required this.text2,
+    required this.navigate
   }) : super(key: key);
 
   final String text1;
   final String text2;
+  final Function navigate;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,7 +21,7 @@ class HomescreenHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
         Text(text1, style: TextStyle(fontSize: 20),), 
-        TextButton(child: Text(text2, style: TextStyle(color: primaryColor),), onPressed: () {})
+        TextButton(child: Text(text2, style: TextStyle(color: primaryColor),), onPressed: navigate())
       ],),
     );
   }
