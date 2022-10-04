@@ -30,9 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
 
   @override
-  void initState() {
-    food.shuffle();
-    super.initState();
+  void didChangeDependencies() {
+    // food.shuffle();
+    super.didChangeDependencies();
   }
 
   @override
@@ -40,57 +40,60 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
     final userDetails = ModalRoute.of(context)!.settings.arguments;
     final firebaseUser = _firebaseAuth.currentUser!;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent));
-    return Scaffold(
-        appBar: appBar(context, userDetails),
-        extendBodyBehindAppBar: false,
-        backgroundColor: secondaryColor,
-        body: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: SingleChildScrollView(
-            child: Column(children: [
-              Headboard(
-                  size: size,
-                  username: firebaseUser.displayName ??
-                      firebaseUser.email!.toLowerCase()),
-              spacing(size: size, height: 0.02),
-              Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: textField(
-                    controller: searchController,
-                    labelText: 'Search',
-                    icon: const Icon(Icons.search),
-                    color: Colors.transparent,
-                    baseColor: Colors.grey.shade200,
-                  )),
-              spacing(size: size, height: 0.02),
-              HomescreenHeader(text1: 'Categories', text2: 'See All', navigate: () => () {
-                return Navigator.of(context).pushNamed('/foodCategory');
-              }),
-              Foodcategories(size: size, food: food),
-              HomescreenHeader(
-                  text1: 'Special Deals for You', text2: 'See All', navigate: () => null),
-              Fooddex(size: size, food: food),
-              spacing(size: size, height: 0.02),
-              HomescreenHeader(text1: 'Popular Deals', text2: 'See All', navigate: () => null),
-              spacing(size: size, height: 0.01),
-              PopularDeals(size: size, food: food),
-              spacing(size: size, height: 0.01),
-              SizedBox(
-                  child: TextButton(
-                child: const Text('Contact us'),
-                onPressed: (() => _launchMail(
-                    email: 'banjolakunri@gmail.com',
-                    messageBody: 'Hello Olabanjo,\n I would like to make enquiries',
-                    subject: 'I need more info')),
-              )),
-              spacing(size: size, height: 0.01)
-            ]),
-          ),
-        ));
+    return SafeArea(
+      child: Scaffold(
+          appBar: appBar(context, userDetails),
+          extendBodyBehindAppBar: false,
+          body: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: SingleChildScrollView(
+              child: Column(children: [
+                Headboard(
+                    size: size,
+                    username: firebaseUser.displayName ??
+                        firebaseUser.email!.toLowerCase()),
+                spacing(size: size, height: 0.02),
+                Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: textField(
+                      controller: searchController,
+                      labelText: 'Search',
+                      icon: const Icon(Icons.search),
+                      color: Colors.transparent,
+                      baseColor: Colors.grey.shade200,
+                    )),
+                spacing(size: size, height: 0.02),
+                HomescreenHeader(
+                    text1: 'Categories',
+                    text2: 'See All',
+                    navigate: () => () {
+                          return Navigator.of(context).pushNamed('/foodCategory');
+                        }),
+                Foodcategories(size: size, food: food),
+                Container(margin: EdgeInsets.only(bottom: size.height * 0.02, left: 8), alignment: Alignment.centerLeft, child: const Text('Tips You Should Know', style: const TextStyle(fontSize: 20))),
+                Fooddex(size: size, food: food),
+                spacing(size: size, height: 0.01),
+                HomescreenHeader(
+                    text1: 'Popular Deals',
+                    text2: 'See All',
+                    navigate: () => null),
+                spacing(size: size, height: 0.01),
+                PopularDeals(size: size, food: food),
+                spacing(size: size, height: 0.01),
+                SizedBox(
+                    child: TextButton(
+                  child: const Text('Contact us'),
+                  onPressed: (() => _launchMail(
+                      email: 'banjolakunri@gmail.com',
+                      messageBody:
+                          'Hello Olabanjo,\n I would like to make enquiries',
+                      subject: 'I need more info')),
+                )),
+                spacing(size: size, height: 0.01)
+              ]),
+            ),
+          )),
+    );
   }
 
   String? encodeQueryParameters(Map<String, String> parameters) {
@@ -107,12 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final url =
         'mailto: $email?subject=${Uri.encodeFull(subject)}&body=${Uri.encodeFull(messageBody)}';
     final Uri mailtoUri = Uri(
-      scheme: 'mailto',
-      path: email,
-      query: 'subject=' + Uri.encodeComponent(subject) + '&body=' + Uri.encodeComponent(messageBody)
-      // encodeQueryParameters(<String, String>{subject: messageBody}),
-      // queryParameters: {subject: messageBody},
-    );
+        scheme: 'mailto',
+        path: email,
+        query: 'subject=' +
+            Uri.encodeComponent(subject) +
+            '&body=' +
+            Uri.encodeComponent(messageBody)
+        // encodeQueryParameters(<String, String>{subject: messageBody}),
+        // queryParameters: {subject: messageBody},
+        );
     if (await canLaunchUrl(mailtoUri)) {
       await launchUrl(mailtoUri);
       print(email);
@@ -138,7 +144,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           Provider.of<Authprovider>(context, listen: false)
                               .signOut()
                               .then((value) {
-                        Navigator.popAndPushNamed(context, '/loginScreen');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/loginScreen',
+                          (route) => false,
+                        );
                         print(userDetails);
                       });
                     } catch (e) {
@@ -221,29 +231,63 @@ class Fooddex extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: GridView.builder(
           clipBehavior: Clip.antiAlias,
           scrollDirection: Axis.horizontal,
           itemCount: food.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 1,
-            mainAxisSpacing: size.width * 0.02,
+            mainAxisSpacing: size.width * 0.05,
             mainAxisExtent: size.width * 0.8,
           ),
           itemBuilder: ((context, index) {
-            return Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              child: ClipRRect(
-                child: Image.network(
-                  food[index].imagepath,
-                  fit: BoxFit.cover,
+            return Stack(children: [
+              Container(
+                width: size.width * 0.8,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: ClipRRect(
+                  child: Image.network(
+                    food[index].imagepath,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
               ),
-            );
+              Positioned(
+                bottom: size.height * 0.02,
+                right: size.height * 0.03,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                        alignment: Alignment.centerRight,
+                        width: size.width * 0.55,
+                        child: Text(
+                          food[index].title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.5,
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic),
+                        )),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: size.width * 0.6,
+                      child: Text(
+                        food[index].description,
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ]);
           })),
       height: size.height * 0.25,
     );
@@ -263,27 +307,35 @@ class Foodcategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.height * 0.1,
+      height: size.height * 0.12,
+      // padding: const EdgeInsets.only(right: 10),
       child: ListView.separated(
+          shrinkWrap: true,
           separatorBuilder: (context, index) =>
               SizedBox(width: size.width * 0.03),
-          itemCount: foodcategories.length = 5,
+          itemCount: 6,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext ctx, index) {
             return InkWell(
-              onTap: () {},
+              onTap: () {
+                print(foodcategories.length);
+              },
               child: Column(
                 children: [
                   SizedBox(
                     // margin: EdgeInsets.only(left: size.width * 0.04),
                     // height: size.width * 0.1,
                     width: size.width * 0.15,
+                    height: size.height * 0.07,
                     child: Center(
                       child: Image.asset(foodcategories[index]['food icon']),
                     ),
                   ),
                   spacing(size: size, height: 0.01),
-                  Text(foodcategories[index]['food name'], style: const TextStyle(overflow: TextOverflow.fade),)
+                  Text(
+                    foodcategories[index]['food name'],
+                    style: const TextStyle(overflow: TextOverflow.fade),
+                  )
                 ],
               ),
             );

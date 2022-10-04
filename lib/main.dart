@@ -2,6 +2,7 @@ import 'package:farmsies/Constants/colors.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/routegenerator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -38,6 +39,7 @@ class _FarmsiesState extends State<Farmsies> {
         onGenerateRoute: RouteGenerator.generateRoute,
         themeMode: ThemeMode.system,
         theme: ThemeData(
+          appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark, foregroundColor: primaryDarkColor),
           colorScheme: ThemeData().colorScheme.copyWith(
             primary: primaryColor,
             secondary: secondaryColor.withOpacity(0.5),
@@ -46,9 +48,10 @@ class _FarmsiesState extends State<Farmsies> {
           )
         ),
         darkTheme: ThemeData(
+          appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.light, foregroundColor: primaryColor),
           colorScheme: ThemeData().colorScheme.copyWith(
             primary: primaryDarkColor,
-            secondary: secondaryColor.withOpacity(0.5),
+            secondary: primaryDarkColor.withOpacity(0.5),
             brightness: Brightness.dark
           )
         ),

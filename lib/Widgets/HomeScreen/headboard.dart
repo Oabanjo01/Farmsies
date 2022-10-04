@@ -21,7 +21,7 @@ class Headboard extends StatelessWidget {
         height: size.height * 0.1,
         child: Row(children: [
           CircleAvatar(
-            child: Image.asset('assets/Avatar/icons8-circled-user-neutral-skin-type-3-80.png'),
+            child: Image.asset('assets/Avatars/icons8-circled-user-male-skin-type-6-80.png'),
             radius: size.width * 0.1,
             backgroundColor: Colors.transparent,
           ),

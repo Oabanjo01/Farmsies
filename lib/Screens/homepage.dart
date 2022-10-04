@@ -41,31 +41,33 @@ class _HomePageState extends State<HomePage> {
         systemNavigationBarColor: Colors.transparent
       )
     );
-    return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   backgroundColor: secondaryColor,
-      //   leading: Icon(Icons.menu, color: primaryColor,),
-      //   title: Text('Home', style: TextStyle(color: primaryColor),),
-      // ),
-      body: _screens[initialBar],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white24,
-        showUnselectedLabels: true,
-        selectedFontSize: 16,
-        unselectedFontSize: 10,
-        type: BottomNavigationBarType.shifting,
-        elevation: 1,
-        currentIndex: initialBar,
-        onTap: (index) => setState(() => initialBar = index), 
-        unselectedItemColor: primaryColor.withOpacity(0.7),
-        selectedItemColor: primaryColor,
-        items: [
-          BottomNavigationBarItem(icon: Icon(_tabs[0]['icon']), label: _tabs[0]['label'], tooltip: _tabs[0]['label'], activeIcon: const Icon(Icons.home)),
-          BottomNavigationBarItem(icon: Icon(_tabs[1]['icon']), label: _tabs[1]['label'], tooltip: _tabs[1]['label'], activeIcon: const Icon(Icons.shopping_cart_rounded)),
-          BottomNavigationBarItem(icon: Icon(_tabs[2]['icon']), label: _tabs[2]['label'], tooltip: _tabs[2]['label'], activeIcon: const Icon(Icons.motorcycle_rounded)),
-          BottomNavigationBarItem(icon: Icon(_tabs[3]['icon']), label: _tabs[3]['label'], tooltip: _tabs[3]['label'], activeIcon: const Icon(Icons.person)),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        // appBar: AppBar(
+        //   elevation: 0,
+        //   backgroundColor: secondaryColor,
+        //   leading: Icon(Icons.menu, color: primaryColor,),
+        //   title: Text('Home', style: TextStyle(color: primaryColor),),
+        // ),
+        body: _screens[initialBar],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white24,
+          showUnselectedLabels: true,
+          selectedFontSize: 16,
+          unselectedFontSize: 10,
+          type: BottomNavigationBarType.shifting,
+          elevation: 1,
+          currentIndex: initialBar,
+          onTap: (index) => setState(() => initialBar = index), 
+          unselectedItemColor: primaryColor.withOpacity(0.7),
+          selectedItemColor: primaryColor,
+          items: [
+            BottomNavigationBarItem(icon: Icon(_tabs[0]['icon']), label: _tabs[0]['label'], tooltip: _tabs[0]['label'], activeIcon: const Icon(Icons.home)),
+            BottomNavigationBarItem(icon: Icon(_tabs[1]['icon']), label: _tabs[1]['label'], tooltip: _tabs[1]['label'], activeIcon: const Icon(Icons.shopping_cart_rounded)),
+            BottomNavigationBarItem(icon: Icon(_tabs[2]['icon']), label: _tabs[2]['label'], tooltip: _tabs[2]['label'], activeIcon: const Icon(Icons.motorcycle_rounded)),
+            BottomNavigationBarItem(icon: Icon(_tabs[3]['icon']), label: _tabs[3]['label'], tooltip: _tabs[3]['label'], activeIcon: const Icon(Icons.person)),
+          ],
+        ),
       ),
     );
   }

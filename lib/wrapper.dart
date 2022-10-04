@@ -18,8 +18,8 @@ class Wrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           final UserModel? user = snapshot.data;
           return user == null ? LoginScreen() : HomePage();
-        } else {
-          return const Center(child: CircularProgressIndicator());
+        }else {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
       });
   }
