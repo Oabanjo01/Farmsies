@@ -46,8 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
           extendBodyBehindAppBar: false,
           body: Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
-            child: SingleChildScrollView(
-              child: Column(children: [
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
                 Headboard(
                     size: size,
                     username: firebaseUser.displayName ??
@@ -92,8 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing(size: size, height: 0.01)
               ]),
             ),
-          )),
-    );
+          ));
   }
 
   String? encodeQueryParameters(Map<String, String> parameters) {
@@ -227,7 +227,7 @@ class Fooddex extends StatelessWidget {
   }) : super(key: key);
 
   final Size size;
-  final List<ItemModel> food;
+  final List food;
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +302,7 @@ class Foodcategories extends StatelessWidget {
   }) : super(key: key);
 
   final Size size;
-  final List<ItemModel> food;
+  final List<TipsDeck> food;
 
   @override
   Widget build(BuildContext context) {

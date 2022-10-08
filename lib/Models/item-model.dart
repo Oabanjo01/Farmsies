@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum Category { fruits, vegetables, fats, carbonhydrates, proteins, dairy }
-
 class ItemModel {
   int id;
   String title; // name of produce
