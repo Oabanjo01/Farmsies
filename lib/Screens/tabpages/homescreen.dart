@@ -1,10 +1,8 @@
-import 'package:farmsies/Models/item-model.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/confirmationdialog.dart';
 import 'package:farmsies/Widgets/generalwidget/errordialogue.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,59 +39,70 @@ class _HomeScreenState extends State<HomeScreen> {
     final userDetails = ModalRoute.of(context)!.settings.arguments;
     final firebaseUser = _firebaseAuth.currentUser!;
     return SafeArea(
-      child: Scaffold(
-          appBar: appBar(context, userDetails),
-          extendBodyBehindAppBar: false,
-          body: Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                Headboard(
-                    size: size,
-                    username: firebaseUser.displayName ??
-                        firebaseUser.email!.toLowerCase()),
-                spacing(size: size, height: 0.02),
-                Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: textField(
-                      controller: searchController,
-                      labelText: 'Search',
-                      icon: const Icon(Icons.search),
-                      color: Colors.transparent,
-                      baseColor: Colors.grey.shade200,
-                    )),
-                spacing(size: size, height: 0.02),
-                HomescreenHeader(
-                    text1: 'Categories',
-                    text2: 'See All',
-                    navigate: () => () {
-                          return Navigator.of(context).pushNamed('/foodCategory');
-                        }),
-                Foodcategories(size: size, food: food),
-                Container(margin: EdgeInsets.only(bottom: size.height * 0.02, left: 8), alignment: Alignment.centerLeft, child: const Text('Tips You Should Know', style: const TextStyle(fontSize: 20))),
-                Fooddex(size: size, food: food),
-                spacing(size: size, height: 0.01),
-                HomescreenHeader(
-                    text1: 'Popular Deals',
-                    text2: 'See All',
-                    navigate: () => null),
-                spacing(size: size, height: 0.01),
-                PopularDeals(size: size, food: food),
-                spacing(size: size, height: 0.01),
-                SizedBox(
-                    child: TextButton(
-                  child: const Text('Contact us'),
-                  onPressed: (() => _launchMail(
-                      email: 'banjolakunri@gmail.com',
-                      messageBody:
-                          'Hello Olabanjo,\n I would like to make enquiries',
-                      subject: 'I need more info')),
-                )),
-                spacing(size: size, height: 0.01)
-              ]),
-            ),
-          ));
+        child: Scaffold(
+      appBar: appBar(context, userDetails),
+      extendBodyBehindAppBar: false,
+      body: Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        child: ListView(shrinkWrap: true, children: <Widget>[
+          Headboard(
+              size: size,
+              username: firebaseUser.displayName ??
+                  firebaseUser.email!.toLowerCase()),
+          spacing(size: size, height: 0.02),
+          Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: textField(
+                controller: searchController,
+                labelText: 'Search',
+                icon: const Icon(Icons.search),
+                color: Colors.transparent,
+                baseColor: Colors.grey.shade200,
+              )),
+          spacing(size: size, height: 0.02),
+          HomescreenHeader(
+              text1: 'Categories',
+              text2: 'See All',
+              navigate: () => () {
+                    return Navigator.of(context).pushNamed('/foodCategory');
+                  }),
+          Foodcategories(size: size, food: food),
+          Container(
+              margin: EdgeInsets.only(bottom: size.height * 0.02, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text('Tips You Should Know',
+                  style: const TextStyle(fontSize: 20))),
+          Fooddex(size: size, food: food),
+          spacing(size: size, height: 0.01),
+          Container(
+              margin: const EdgeInsets.only(left: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('All Deals', style: TextStyle(fontSize: 20)),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.filter_list_alt,
+                        color: primaryColor,
+                      ))
+                ],
+              )),
+          spacing(size: size, height: 0.01),
+          PopularDeals(size: size, food: food),
+          spacing(size: size, height: 0.01),
+          SizedBox(
+              child: TextButton(
+            child: const Text('Contact us'),
+            onPressed: (() => _launchMail(
+                email: 'banjolakunri@gmail.com',
+                messageBody: 'Hello Olabanjo,\n I would like to make enquiries',
+                subject: 'I need more info')),
+          )),
+          spacing(size: size, height: 0.01)
+        ]),
+      ),
+    ));
   }
 
   String? encodeQueryParameters(Map<String, String> parameters) {
@@ -232,15 +241,11 @@ class Fooddex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: GridView.builder(
-          clipBehavior: Clip.antiAlias,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => SizedBox(width: size.width * 0.05,),
+          shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemCount: food.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            mainAxisSpacing: size.width * 0.05,
-            mainAxisExtent: size.width * 0.8,
-          ),
           itemBuilder: ((context, index) {
             return Stack(children: [
               Container(
@@ -251,6 +256,19 @@ class Fooddex extends StatelessWidget {
                 child: ClipRRect(
                   child: Image.network(
                     food[index].imagepath,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        loadingProgress == null
+                            ? child
+                            : Center(
+                                child: CircularProgressIndicator(
+                                    color: primaryColor),
+                              ),
+                    errorBuilder: (context, error, stackTrace) => Center(
+                      child: Text(
+                        'Error, might be your internet',
+                        style: TextStyle(color: errorColor),
+                      ),
+                    ),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: const BorderRadius.all(
@@ -281,7 +299,10 @@ class Fooddex extends StatelessWidget {
                       width: size.width * 0.6,
                       child: Text(
                         food[index].description,
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: primaryColor),
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: primaryColor),
                       ),
                     ),
                   ],

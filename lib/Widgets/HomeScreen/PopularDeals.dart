@@ -21,8 +21,8 @@ class PopularDeals extends StatelessWidget {
     return SizedBox(
       // height: size.height * 0.7,
       child: GridView.builder(
-        shrinkWrap: true,
-        primary: false,
+          shrinkWrap: true,
+          primary: false,
           physics: const ScrollPhysics(parent: NeverScrollableScrollPhysics()),
           itemCount: imageLink.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -36,23 +36,44 @@ class PopularDeals extends StatelessWidget {
                 fit: FlexFit.tight,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    children: [
-                      Image.network(
-                        imageLink[index].imagepath,
-                        width: double.infinity,
-                        height: size.height * 0.22,
-                        errorBuilder: ((context, error, stackTrace) => const Center(
-                              child: Text(
-                                'My God',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            )),
-                        fit: BoxFit.cover,
-                      ),
-                      Positioned(left: 10, child: Chip(label: Text(imageLink[index].title), backgroundColor: Colors.transparent, elevation: 0,))
-                    ]
-                  ),
+                  child: Stack(children: [
+                    Stack(
+                      children: [
+                        Image.network(
+                          imageLink[index].imagepath,
+                          loadingBuilder: (context, child, loadingProgress) =>
+                            loadingProgress == null ? child :
+                              Center(
+                            child: CircularProgressIndicator(color: primaryColor),
+                          ),
+                          width: double.infinity,
+                          height: size.height * 0.22,
+                          errorBuilder: ((context, error, stackTrace) =>
+                              const Center(
+                                child: Text(
+                                  'My God',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              )),
+                          fit: BoxFit.cover,
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap:() => Navigator.of(context).pushNamed('/productDetail', arguments: imageLink[index]),
+                            splashColor: primaryColor.withOpacity(0.1),
+                          ),
+                        )
+                      ]
+                    ),
+                    Positioned(
+                        left: 10,
+                        child: Chip(
+                          label: Text(imageLink[index].title),
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                        ))
+                  ]),
                 ),
               ),
               SizedBox(

@@ -1,5 +1,6 @@
 import 'package:farmsies/Screens/allfoodcategories.dart';
 import 'package:farmsies/Screens/settings.dart';
+import 'package:farmsies/Screens/tabpages/prductdetail.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:farmsies/wrapper.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,11 @@ import 'Screens/homepage.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+    final dynamic args = settings.arguments;
 
     switch (settings.name) {
       case '/onboarding':
-        return MaterialPageRoute(builder: (_) => const onboardingScreen(
-        ));
+        return MaterialPageRoute(builder: (_) => const onboardingScreen());
       case '/loginScreen':
           return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/signupScreen':
@@ -28,6 +28,8 @@ class RouteGenerator {
           return MaterialPageRoute(builder: (_) => const Wrapper());
       case '/foodCategory':
           return MaterialPageRoute(builder: (_) => const AllFoodCategories());
+      case '/productDetail':
+          return MaterialPageRoute(builder: (_) => ProductDetail(productDetail: args,));
       default: 
         return _errorRoute();
     }

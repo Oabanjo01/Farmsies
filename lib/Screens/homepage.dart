@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     {'label': 'Profile', 'icon': Icons.person_outline_rounded,},
   ];
 
-  List _screens = [
+  final List _screens = [
     HomeScreen(),
     Cartspage(),
     Orderspage(),
