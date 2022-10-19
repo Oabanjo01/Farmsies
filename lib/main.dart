@@ -1,5 +1,7 @@
 import 'package:farmsies/Constants/colors.dart';
+import 'package:farmsies/Models/dealModel.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
+import 'package:farmsies/Provider/item_provider..dart';
 import 'package:farmsies/routegenerator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,13 +27,13 @@ class Farmsies extends StatefulWidget {
 }
 
 class _FarmsiesState extends State<Farmsies> {
-
   @override
   Widget build(BuildContext context) {
     // final test = provider.
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: Authprovider())
+        ChangeNotifierProvider.value(value: Authprovider()),
+        ChangeNotifierProvider.value(value: Itemprovider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,22 +41,28 @@ class _FarmsiesState extends State<Farmsies> {
         onGenerateRoute: RouteGenerator.generateRoute,
         themeMode: ThemeMode.system,
         theme: ThemeData(
-          appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark, foregroundColor: primaryDarkColor),
-          colorScheme: ThemeData().colorScheme.copyWith(
-            primary: primaryColor,
-            secondary: secondaryColor.withOpacity(0.5),
-            brightness: Brightness.light,
-            
-          )
-        ),
+            iconTheme: IconThemeData(
+              color: primaryColor,
+            ),
+            appBarTheme: AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle.dark,
+                foregroundColor: primaryDarkColor),
+            colorScheme: ThemeData().colorScheme.copyWith(
+                  primary: primaryColor,
+                  secondary: secondaryColor.withOpacity(0.5),
+                  brightness: Brightness.light,
+                )),
         darkTheme: ThemeData(
-          appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.light, foregroundColor: primaryColor),
-          colorScheme: ThemeData().colorScheme.copyWith(
-            primary: primaryDarkColor,
-            secondary: primaryDarkColor.withOpacity(0.5),
-            brightness: Brightness.dark
-          )
-        ),
+            iconTheme: IconThemeData(
+              color: primaryColor,
+            ),
+            appBarTheme: AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                foregroundColor: primaryColor),
+            colorScheme: ThemeData().colorScheme.copyWith(
+                primary: primaryDarkColor,
+                secondary: primaryDarkColor.withOpacity(0.5),
+                brightness: Brightness.dark)),
       ),
     );
   }

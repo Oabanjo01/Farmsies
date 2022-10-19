@@ -9,7 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../Constants/colors.dart';
 import '../../Constants/othermethods.dart';
 import '../../Constants/samples.dart';
-import '../../Widgets/HomeScreen/PopularDeals.dart';
+import '../../Models/tipsModel.dart';
+import '../../Widgets/HomeScreen/all-deals.dart';
 import '../../Widgets/HomeScreen/headboard.dart';
 import '../../Widgets/HomeScreen/homescreenHeaders.dart';
 import '../../Widgets/generalwidget/textfields.dart';
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
         child: Scaffold(
       appBar: appBar(context, userDetails),
-      extendBodyBehindAppBar: false,
+      extendBodyBehindAppBar: true,
       body: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),
         child: ListView(shrinkWrap: true, children: <Widget>[
