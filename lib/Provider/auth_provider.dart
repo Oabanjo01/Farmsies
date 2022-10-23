@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Screens/auth-page/login.dart';
 import 'package:farmsies/Screens/tabpages/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -13,6 +14,8 @@ class Authprovider with ChangeNotifier {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
       // scopes: <String>["email"]
       );
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // GoogleSignInAccount? _user;
   // GoogleSignInAccount get user => _user!;
 
@@ -38,31 +41,37 @@ class Authprovider with ChangeNotifier {
     final credential = await firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
-    ); 
+    );
     notifyListeners();
     return _userFromFirebase(credential.user);
   }
 
   Future<UserModel?> createUserWithEmailAndPassword(
-    {required String email, required String password, required username}) async {
-      try {
-        final credential = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        User? user = credential.user;
-        user!.updateDisplayName(username);
-        notifyListeners();
-        return _userFromFirebase(credential.user);
-      } catch (e) {
-        rethrow;
-      }
+      {required String email,
+      required String password,
+      required username}) async {
+    CollectionReference _displayPictures =
+        _firestore.collection('Users');
+    try {
+      final credential = await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      User? user = credential.user;
+      user!.updateDisplayName(username);
+      final newuser = {'email': email, 'username': username};
+      await _displayPictures.add(newuser);
+      notifyListeners();
+      return _userFromFirebase(credential.user);
+    } catch (e) {
+      rethrow;
     }
+  }
 
   Future<void> signOut() async {
-      await firebaseAuth.signOut();
-      notifyListeners();
-    }
+    await firebaseAuth.signOut();
+    notifyListeners();
+  }
 
   // handleAuthState() {
   //   return StreamBuilder(

@@ -27,13 +27,12 @@ class DealItem extends StatelessWidget {
                     loadingProgress == null
                         ? child
                         : Center(
-                            child: CircularProgressIndicator(
-                                color: primaryColor),
+                            child:
+                                CircularProgressIndicator(color: primaryColor),
                           ),
                 width: double.infinity,
                 height: size.height * 0.22,
-                errorBuilder: ((context, error, stackTrace) =>
-                    const Center(
+                errorBuilder: ((context, error, stackTrace) => const Center(
                       child: Text(
                         'My God',
                         style: TextStyle(color: Colors.red),
@@ -44,9 +43,8 @@ class DealItem extends StatelessWidget {
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => Navigator.of(context).pushNamed(
-                      '/productDetail',
-                      arguments: item),
+                  onTap: () => Navigator.of(context)
+                      .pushNamed('/productDetail', arguments: item),
                   splashColor: primaryColor.withOpacity(0.1),
                 ),
               )
@@ -80,19 +78,19 @@ class DealItem extends StatelessWidget {
                           description: 'description',
                           imagepath: 'imagepath'),
                     )
-                    .then((text) => print(text));
+                    .then(
+                      (text) => print(text),
+                    );
               },
             ),
-            Consumer<Itemprovider>(
-              builder: (context, value, child) {
-                return IconButton(
-                  icon: Provider.of<ItemModel>(context).isfavourited == true
-                      ? const Icon(Icons.favorite_rounded)
-                      : const Icon(Icons.favorite_border_rounded),
-                  onPressed: (() =>
-                      Provider.of<ItemModel>(context, listen: false)
-                          .toggleFavourite()),
-                );
+            Consumer<Itemprovider>(builder: (context, value, child) {
+              return IconButton(
+                icon: Provider.of<ItemModel>(context).isfavourited == true
+                    ? const Icon(Icons.favorite_rounded)
+                    : const Icon(Icons.favorite_border_rounded),
+                onPressed: (() => Provider.of<ItemModel>(context, listen: false)
+                    .toggleFavourite()),
+              );
             })
           ],
         ),
