@@ -1,9 +1,9 @@
-import 'package:farmsies/Constants/colors.dart';
-import 'package:farmsies/Constants/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+
+import '../Constants/colors.dart';
+import '../Constants/images.dart';
 
 class onboardingScreen extends StatelessWidget {
   const onboardingScreen({
@@ -89,7 +89,7 @@ class onboardingScreen extends StatelessWidget {
         activeColor: textColor2,
         activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3))
       ),
-      next: Text(
+      next: const Text(
         'Next',
       ),
       done: const Text('Done'),

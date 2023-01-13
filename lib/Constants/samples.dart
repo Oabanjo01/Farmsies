@@ -1,5 +1,5 @@
 import '../Models/item-model.dart';
-import '../Models/tipsModel.dart';
+import '../Models/tips-model.dart';
 
 
 

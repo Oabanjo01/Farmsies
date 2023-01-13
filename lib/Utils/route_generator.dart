@@ -1,13 +1,14 @@
-import 'package:farmsies/Screens/allfoodcategories.dart';
+import 'package:farmsies/Screens/all_food_categories.dart';
+import 'package:farmsies/Screens/order_complete.dart';
 import 'package:farmsies/Screens/settings.dart';
-import 'package:farmsies/Screens/tabpages/prductdetail.dart';
+import 'package:farmsies/Screens/product_detail/product_detail.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:farmsies/wrapper.dart';
 import 'package:flutter/material.dart';
 
-import 'Screens/auth-page/login.dart';
-import 'Screens/auth-page/signupscreen.dart';
-import 'Screens/homepage.dart';
+import '../Screens/auth-page/login.dart';
+import '../Screens/auth-page/signupscreen.dart';
+import '../Screens/homepage.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -30,6 +31,8 @@ class RouteGenerator {
           return MaterialPageRoute(builder: (_) => const AllFoodCategories());
       case '/productDetail':
           return MaterialPageRoute(builder: (_) => ProductDetail(productDetail: args,));
+      case '/orderComplete':
+          return MaterialPageRoute(builder: (_) => const OrderComplete());          
       default: 
         return _errorRoute();
     }

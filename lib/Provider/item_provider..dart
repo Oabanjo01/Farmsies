@@ -1,66 +1,160 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Models/item-model.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 
-import '../Constants/samples.dart';
+import 'dart:core';
 
 class Itemprovider with ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
 
-  bool _favourited = true;
+  final List<ItemModel> _itemsFavourited = [];
+  final List<ItemModel> _itemsCarted = [];
 
-  bool get favourited {
-    return _favourited;
+  List<ItemModel> get itemsfavourited {
+    return _itemsFavourited;
   }
 
-  final List <ItemModel> _items  = [
-  ItemModel(
-      id: 1,
-      description: 'Healthy white cockerels',
-      price: 2000,
-      title: 'Cockerels',
-      category: Category.poultry,
-      imagepath:
-          'https://images.unsplash.com/photo-1630090374791-c9eb7bab3935?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80'),
-  ItemModel(
-      id: 2,
-      description: 'Healthy layers and point of lay.',
-      price: 2000,
-      title: 'Layers',
-      category: Category.poultry,
-      imagepath:
-          'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8cG91bHRyeSUyMGZhcm18ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60'),
-  ];
-
-  List <ItemModel> get items {
-    return _items;
+  List<ItemModel> get itemsCarted {
+    return _itemsCarted;
   }
 
-  ItemModel findbyId (ItemModel item) {
-    return _items.singleWhere((element) => element.id == item.id);
+  Future<void> removeItem(ItemModel itemIndex) async {
+    _itemsFavourited.remove(itemIndex);
+    notifyListeners();
   }
 
-  // void toggleFavourite(ItemModel item) {
-  //   item.isfavourited = !item.isfavourited;
-  //   notifyListeners();
+  Future<void> addProduct(ItemModel item1) async {
+    final Map<String, dynamic> item = item1.toMap();
+    CollectionReference collectionReference = db.collection('Products');
+    try {
+      await collectionReference.add(item);
+    } catch (e) {}
+  }
+
+  Future<String> addtoCarts(QueryDocumentSnapshot data, String uid) async {
+    String docId = data.id;
+    try {
+      if (data['isCarted'] == true) {
+        await FirebaseFirestore.instance
+            .collection('Products')
+            .doc(docId)
+            .update({'isCarted': false}).then((value) async {
+          final CollectionReference collectionReference = FirebaseFirestore
+              .instance
+              .collection('Users')
+              .doc(uid)
+              .collection('Orders');
+          await collectionReference.doc(docId).delete();
+        });
+
+        return 'Removed from cart';
+      } else {
+        await FirebaseFirestore.instance
+            .collection('Products')
+            .doc(docId)
+            .update({'isCarted': true}).then((value) async {
+          final CollectionReference collectionReference = FirebaseFirestore
+              .instance
+              .collection('Users')
+              .doc(uid)
+              .collection('Orders');
+          await collectionReference.doc(docId).set({
+            'id': docId,
+            'title': data['title'],
+            'price': data['price'],
+            'amount': data['amount'],
+            'description': data['description'],
+            'imagepath': data['imagepath'],
+            'isFavourited': data['isFavourited'],
+            'isCarted': true,
+          });
+        });
+        return 'Added to your cart';
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> addtoFavourites(QueryDocumentSnapshot data, String uid) async {
+    final CollectionReference collectionReference = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection('Favourites');
+    String docId = data.id;
+    try {
+      if (data['isFavourited'] == true) {
+        await FirebaseFirestore.instance
+            .collection('Products')
+            .doc(docId)
+            .update({'isFavourited': false}).then((value) async {
+          await collectionReference.doc(docId).delete();
+        });
+        return 'Removed from favourites';
+      } else {
+        await FirebaseFirestore.instance
+            .collection('Products')
+            .doc(docId)
+            .update({'isFavourited': true}).then((value) async {
+          await collectionReference.doc(docId).set({
+            'id': docId,
+            'title': data['title'],
+            'price': data['price'],
+            'amount': data['amount'],
+            'description': data['description'],
+            'imagepath': data['imagepath'],
+            'isFavourited': true,
+            'isCarted': data['isCarted'],
+          });
+        });
+        return 'Added to favourites';
+      }
+    } catch (e) {
+      return e.toString();
+    }
+
+    // final Map<String, dynamic> item = itemModel.toMap();
+    // final String uid = firebaseAuth.currentUser!.uid;
+    // CollectionReference collectionReference = db.collection('Users').doc(uid).collection('Orders');
+    // try {
+    //   await collectionReference.add(item);
+    //   notifyListeners();
+    //   return 'Successful';
+    // } catch (e) {
+    //   return 'error';
+    // }
+  }
+
+  Future<String> deleteFireStoreOrder(DocumentReference id) async {
+    try {
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.delete(id);
+      });
+      notifyListeners();
+      return 'successful';
+    } catch (e) {
+      print(e.toString());
+      return 'error';
+    }
+  }
+
+  // Future <String> deletefromfavourites () {
+
   // }
 
-  toggleItemFavourite (ItemModel item) {
-    final itemToggled = findbyId(item);
-    bool isFavourite = itemToggled.isfavourited == true;
-    if (isFavourite) {
-      _favourited = false;
-    } else {
-      _favourited = true;
-    }
-    itemToggled.isfavourited = !itemToggled.isfavourited;
-    notifyListeners();
-  }
+  // Future <int> getOrderLength () async {
+  //   int items = await db.runTransaction((transaction) async {
+  //     final orderLength = await transaction.get(
+  //       db.doc('Orders').snapshots().
+  //     )
+  //   });
+  //   notifyListeners();
+  //   return items;
+  // }
 
-  Future <String> addFirestoreItem (ItemModel itemModel) async {
-    final Map<String, dynamic> item = itemModel.toMap();
-    DocumentReference docID= await db.collection('items').add(item);
-    notifyListeners();
-    return docID.id;
-  }
+  // int get orderSize {
+  //   return db.collection('orders')
+  // }
 }

@@ -1,16 +1,10 @@
 import 'dart:async';
 
-import 'package:farmsies/Constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:farmsies/Models/usermodel.dart';
 
-import '../../Provider/auth_provider.dart';
-import '../../wrapper.dart';
-import '../tabpages/homescreen.dart';
-import 'login.dart';
+import '../../Constants/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({

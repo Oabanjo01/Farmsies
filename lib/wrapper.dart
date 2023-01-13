@@ -1,8 +1,7 @@
 import 'package:farmsies/Provider/auth_provider.dart';
-import 'package:farmsies/Models/usermodel.dart';
+import 'package:farmsies/Models/user-model.dart';
 import 'package:farmsies/Screens/auth-page/login.dart';
 import 'package:farmsies/Screens/homepage.dart';
-import 'package:farmsies/Screens/tabpages/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

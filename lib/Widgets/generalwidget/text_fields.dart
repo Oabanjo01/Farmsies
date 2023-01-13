@@ -1,5 +1,6 @@
-import 'package:farmsies/Constants/colors.dart';
 import 'package:flutter/material.dart';
+
+import '../../Constants/colors.dart';
 
 class textField extends StatelessWidget {
   const textField(
@@ -10,6 +11,7 @@ class textField extends StatelessWidget {
       required this.labelText,
       this.hideText = false,
       required this.icon,
+      required this.icon2
       // required this.textFieldFunction
       })
       : super(key: key);
@@ -20,6 +22,7 @@ class textField extends StatelessWidget {
   final Icon icon;
   final  Color color;
   final Color baseColor;
+  final Widget icon2;
   // final Function textFieldFunction;
 
   @override
@@ -38,6 +41,10 @@ class textField extends StatelessWidget {
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: icon,
+          ),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: icon2,
           ),
           focusColor: color,
           focusedBorder: OutlineInputBorder(

@@ -7,7 +7,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(child: Text('Settings')),
+      body: const Center(
+        child: Text('Settings'),
+      ),
     );
   }
 }
