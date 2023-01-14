@@ -10,8 +10,10 @@ import '../../../../Utils/snack_bar.dart';
 class DealItem extends StatelessWidget {
   const DealItem({Key? key, required this.product}) : super(key: key);
   final QueryDocumentSnapshot product;
+
   @override
   Widget build(BuildContext context) {
+    final id = product['id'];
     final size = MediaQuery.of(context).size;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
@@ -72,23 +74,43 @@ class DealItem extends StatelessWidget {
                   ? const Icon(Icons.shopping_basket)
                   : const Icon(Icons.shopping_basket_outlined),
               onPressed: () async {
-                print(product.id);
-                await Provider.of<Itemprovider>(context, listen: false)
-                    .addtoCarts(product, uid)
-                    .then((value) {
-                  if (product['isCarted'] == false) {
-                    final SnackBar showSnackBar =
-                        snackBar('Added to your Cart', 2);
+                final CollectionReference collectionReference =
+                    FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(uid)
+                        .collection('Orders');
+                if (product['isCarted'] == false) {
+                  FirebaseFirestore.instance
+                      .collection('Products')
+                      .doc(id)
+                      .update({'isCarted': true}).then((value) async {
+                    await collectionReference.doc(id).set({
+                      'id': id,
+                      'title': product['title'],
+                      'price': product['price'],
+                      'amount': 1,
+                      'description': product['description'],
+                      'imagepath': product['imagepath'],
+                      'isFavourited': product['isFavourited'],
+                      'isCarted': true,
+                    });
+                    final SnackBar showSnackBar = snackBar('Carted', 2);
                     ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  } else if (product['isCarted'] == true) {
-                    final SnackBar showSnackBar =
-                        snackBar('Removed from Cart', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  } else {
-                    final SnackBar showSnackBar = snackBar('Error', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  }
-                });
+                  });
+                } else if (product['isCarted'] == true) {
+                  await FirebaseFirestore.instance
+                      .collection('Products')
+                      .doc(id)
+                      .update({'isCarted': false}).then((value) async {
+                    await collectionReference.doc(id).delete();
+                  });
+                  final SnackBar showSnackBar =
+                      snackBar('Removed from Cart', 2);
+                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+                } else {
+                  final SnackBar showSnackBar = snackBar('Error', 2);
+                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+                }
               },
             ),
             IconButton(

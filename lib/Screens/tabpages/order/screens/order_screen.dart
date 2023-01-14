@@ -70,7 +70,7 @@ class _OrderspageState extends State<Orderspage> {
                     ),
                     title: Text(list[index]['title']),
                     subtitle: Text(
-                      {list[index]['price'] * list[index]['amount']}.toString(),
+                      (list[index]['price'] * list[index]['amount']).toString(),
                     ),
                     trailing: IconButton(
                       onPressed: () async {
