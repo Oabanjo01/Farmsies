@@ -3,20 +3,28 @@ import 'package:farmsies/Provider/item_provider..dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 
 import '../../../../Constants/colors.dart';
-import '../../../../Utils/snack_bar.dart';
 
-class DealItem extends StatelessWidget {
+class DealItem extends StatefulWidget {
   const DealItem({Key? key, required this.product}) : super(key: key);
   final QueryDocumentSnapshot product;
 
   @override
+  State<DealItem> createState() => _DealItemState();
+}
+
+class _DealItemState extends State<DealItem> {
+  bool exists = false;
+
+  @override
   Widget build(BuildContext context) {
-    final id = product['id'];
     final size = MediaQuery.of(context).size;
+    final id = widget.product['id'];
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
+    final provider = Provider.of<Itemprovider>(context);
     return Column(children: [
       Flexible(
         fit: FlexFit.tight,
@@ -25,7 +33,7 @@ class DealItem extends StatelessWidget {
           child: Stack(children: [
             Stack(children: [
               Image.network(
-                product['imagepath'],
+                widget.product['imagepath'],
                 loadingBuilder: (context, child, loadingProgress) =>
                     loadingProgress == null
                         ? child
@@ -47,7 +55,7 @@ class DealItem extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed('/productDetail', arguments: product);
+                        .pushNamed('/productDetail', arguments: widget.product);
                   },
                   splashColor: primaryColor.withOpacity(0.1),
                 ),
@@ -56,7 +64,7 @@ class DealItem extends StatelessWidget {
             Positioned(
               left: 10,
               child: Chip(
-                label: Text(product['title']),
+                label: Text(widget.product['title']),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
               ),
@@ -69,76 +77,68 @@ class DealItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              icon: product['isCarted'] == true
-                  ? const Icon(Icons.shopping_basket)
-                  : const Icon(Icons.shopping_basket_outlined),
-              onPressed: () async {
-                final CollectionReference collectionReference =
-                    FirebaseFirestore.instance
-                        .collection('Users')
-                        .doc(uid)
-                        .collection('Orders');
-                if (product['isCarted'] == false) {
-                  FirebaseFirestore.instance
-                      .collection('Products')
-                      .doc(id)
-                      .update({'isCarted': true}).then((value) async {
-                    await collectionReference.doc(id).set({
-                      'id': id,
-                      'title': product['title'],
-                      'price': product['price'],
-                      'amount': 1,
-                      'description': product['description'],
-                      'imagepath': product['imagepath'],
-                      'isFavourited': product['isFavourited'],
-                      'isCarted': true,
-                    });
-                    final SnackBar showSnackBar = snackBar('Carted', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  });
-                } else if (product['isCarted'] == true) {
-                  await FirebaseFirestore.instance
-                      .collection('Products')
-                      .doc(id)
-                      .update({'isCarted': false}).then((value) async {
-                    await collectionReference.doc(id).delete();
-                  });
-                  final SnackBar showSnackBar =
-                      snackBar('Removed from Cart', 2);
-                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                } else {
-                  final SnackBar showSnackBar = snackBar('Error', 2);
-                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                }
-              },
-            ),
-            IconButton(
-              icon: product['isFavourited'] == true
-                  ? const Icon(Icons.favorite_rounded)
-                  : const Icon(Icons.favorite_border_rounded),
-              onPressed: () async {
-                Provider.of<Itemprovider>(context, listen: false)
-                    .addtoFavourites(product, uid)
-                    .then((value) {
-                  if (product['isFavourited'] == false) {
-                    final SnackBar showSnackBar =
-                        snackBar('Added to favourites', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  } else if (product['isCarted'] == true) {
-                    final SnackBar showSnackBar =
-                        snackBar('Removed from favourites', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
-                  } else {
-                    final SnackBar showSnackBar = snackBar('Error', 2);
-                    ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+            StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(uid)
+                    .collection('Orders')
+                    .doc(id)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return HeartbeatProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
+                  } else if (snapshot.hasError) {
+                    return GlowingProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
                   }
-                });
-              },
-            ),
+                  return IconButton(
+                      icon: snapshot.data!.exists
+                          ? const Icon(Icons.shopping_basket)
+                          : const Icon(Icons.shopping_basket_outlined),
+                      onPressed: () async {
+                        provider.toggler(
+                          widget.product,
+                          uid,
+                          'Orders',
+                          1,
+                          context,
+                          'Added to cart',
+                          'Removed from cart',
+                        );
+                      });
+                }),
+            StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(uid)
+                    .collection('Favourites')
+                    .doc(id)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return HeartbeatProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
+                  } else if (snapshot.hasError) {
+                    return GlowingProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
+                  }
+                  return IconButton(
+                    icon: snapshot.data!.exists
+                        ? const Icon(Icons.favorite_rounded)
+                        : const Icon(Icons.favorite_border_rounded),
+                    onPressed: () async {
+                      provider.toggler(
+                        widget.product,
+                        uid,
+                        'Favourites',
+                        1,
+                        context,
+                        'Added to favourites',
+                        'Removed from favourites',
+                      );
+                    },
+                  );
+                }),
           ],
         ),
-      ),
+      )
     ]);
   }
 }

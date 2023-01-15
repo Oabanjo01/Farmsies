@@ -116,21 +116,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                    //   child: textField(
-                    //     icon: const Icon(Icons.mail),
-                    //     controller: userController,
-                    //     helperText: 'Email',
-                    //   ),
-                    // ),
                     spacing(size: size, height: 0.01),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                       child: TextFormField(
                         validator: (String? value) {
-                          if (value!.isEmpty || value.length < 6) {
+                          if (value!.isEmpty) {
                             return 'Input your password';
+                          } else if (value.length < 6) {
+                            return 'Password too short';
                           }
                         },
                         onSaved: (newValue) {
@@ -197,7 +191,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               _isLoading = false;
                             });
-                            errorDialogue(context, e.toString());
+                            String error = Provider.of<Authprovider>(context,
+                                    listen: false)
+                                .errorMessage;
+                            if (error ==
+                                'User with this email doesn\'t exist.') {
+                              errorDialogue(context, error);
+                            } else {
+                              errorDialogue(context, error);
+                            }
                           }
                         }
                       },

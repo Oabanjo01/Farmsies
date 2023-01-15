@@ -5,25 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'dart:core';
 
+import '../Utils/snack_bar.dart';
+
 class Itemprovider with ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
-
-  final List<ItemModel> _itemsFavourited = [];
-  final List<ItemModel> _itemsCarted = [];
-
-  List<ItemModel> get itemsfavourited {
-    return _itemsFavourited;
-  }
-
-  List<ItemModel> get itemsCarted {
-    return _itemsCarted;
-  }
-
-  Future<void> removeItem(ItemModel itemIndex) async {
-    _itemsFavourited.remove(itemIndex);
-    notifyListeners();
-  }
 
   Future<void> addProduct(ItemModel item1) async {
     final Map<String, dynamic> item = item1.toMap();
@@ -78,6 +64,39 @@ class Itemprovider with ChangeNotifier {
     }
   }
 
+  Future<void> toggler(QueryDocumentSnapshot data, String uid,
+      String collection, int amount, BuildContext context, String carted, String unCarted) async {
+    String id = data.id;
+    final DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid)
+        .collection(collection)
+        .doc(id);
+    final doc = await documentReference.get();
+    if (doc.exists || doc.data() != null) {
+      await documentReference.delete().then((value) {
+        final SnackBar showSnackBar = snackBar(unCarted, 1);
+        ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+      });
+      notifyListeners();
+    } else if (!doc.exists) {
+      await documentReference.set({
+        'id': id,
+        'title': data['title'],
+        'price': data['price'],
+        'amount': amount,
+        'description': data['description'],
+        'imagepath': data['imagepath'],
+        'isFavourited': data['isFavourited'],
+        'isCarted': true,
+      }).then((value) {
+        final SnackBar showSnackBar = snackBar(carted, 1);
+        ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+      });
+      notifyListeners();
+    }
+  }
+
   Future<String> addtoFavourites(QueryDocumentSnapshot data, String uid) async {
     final CollectionReference collectionReference = FirebaseFirestore.instance
         .collection('Users')
@@ -87,15 +106,16 @@ class Itemprovider with ChangeNotifier {
     try {
       if (data['isFavourited'] == true) {
         await FirebaseFirestore.instance
-            .collection('Products')
+            .collection('Favourites')
             .doc(docId)
             .update({'isFavourited': false}).then((value) async {
           await collectionReference.doc(docId).delete();
         });
+        notifyListeners();
         return 'Removed from favourites';
       } else {
         await FirebaseFirestore.instance
-            .collection('Products')
+            .collection('Favourites')
             .doc(docId)
             .update({'isFavourited': true}).then((value) async {
           await collectionReference.doc(docId).set({
@@ -109,9 +129,11 @@ class Itemprovider with ChangeNotifier {
             'isCarted': data['isCarted'],
           });
         });
+        notifyListeners();
         return 'Added to favourites';
       }
     } catch (e) {
+      notifyListeners();
       return e.toString();
     }
 

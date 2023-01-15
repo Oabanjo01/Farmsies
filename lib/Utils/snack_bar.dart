@@ -5,6 +5,6 @@ SnackBar snackBar(String text, int time) {
   return SnackBar(
     backgroundColor: primaryColor,
     content: Text(text),
-    duration: Duration(seconds: time),
+    duration: const Duration(seconds: 1),
   );
 }

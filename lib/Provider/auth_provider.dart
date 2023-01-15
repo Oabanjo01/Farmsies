@@ -34,6 +34,12 @@ class Authprovider with ChangeNotifier {
     return firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
+  String _errorMessage = '';
+
+  String get errorMessage {
+    return _errorMessage;
+  }
+
   bool _isLoading = false;
 
   bool get isLoading {
@@ -56,26 +62,28 @@ class Authprovider with ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       _isLoading = false;
       switch (e.code) {
-        case "email-already-in-use":
-          return "Email already used. Go to login page.";
-        case "wrong-password":
-          return "Wrong email/password combination.";
-        case "ERROR_USER_NOT_FOUND":
-        case "user-not-found":
-          return "No user found with this email.";
-        case "ERROR_USER_DISABLED":
-        case "user-disabled":
-          return "User disabled.";
-        case "ERROR_TOO_MANY_REQUESTS":
-        case "operation-not-allowed":
-          return "Too many requests to log into this account.";
-        case "ERROR_OPERATION_NOT_ALLOWED":
-        case "ERROR_INVALID_EMAIL":
         case "invalid-email":
-          return "Email address is invalid.";
+          _errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "wrong-password":
+          _errorMessage = "Your password is wrong.";
+          break;
+        case "user-not-found":
+          _errorMessage = "User with this email doesn't exist.";
+          break;
+        case "user-disabled":
+          _errorMessage = "User with this email has been disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          _errorMessage = "Too many requests. Try again later.";
+          break;
+        case "operation-not-allowed":
+          _errorMessage = "Signing in with Email and Password is not enabled.";
+          break;
         default:
-          return "Login failed. Please try again.";
+          _errorMessage = "An undefined Error happened.";
       }
+      return _errorMessage;
     }
   }
 
@@ -105,7 +113,8 @@ class Authprovider with ChangeNotifier {
         'email': email,
         'username': username,
         'displayPicture': imagePath,
-        'userID': user.uid
+        'userID': user.uid,
+        'date': DateTime.now()
       };
       await _users.doc(user.uid).collection('User').doc().set(newuser);
       notifyListeners();

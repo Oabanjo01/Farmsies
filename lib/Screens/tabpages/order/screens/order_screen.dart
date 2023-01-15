@@ -119,7 +119,7 @@ class _OrderspageState extends State<Orderspage> {
 
               double totalPrice = 0;
               list.forEach((element) async {
-                totalPrice += element['price'];
+                totalPrice += element['price'] * element['amount'];
               });
               return CustomScrollView(
                 slivers: [

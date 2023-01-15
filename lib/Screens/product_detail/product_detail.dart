@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Utils/other_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:progress_indicators/progress_indicators.dart';
+import 'package:provider/provider.dart';
 
 import '../../Constants/colors.dart';
+import '../../Provider/item_provider..dart';
 import '../../Utils/snack_bar.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -22,6 +25,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget build(BuildContext context) {
     final id = widget.productDetail.id;
     final size = MediaQuery.of(context).size;
+    final provider = Provider.of<Itemprovider>(context);
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     final Map<String, dynamic> product = {
@@ -66,14 +70,15 @@ class _ProductDetailState extends State<ProductDetail> {
             } else {
               final data = snapshot.data!.data();
               return ListView(
-                padding: const EdgeInsets.only(
-                  top: 0,
-                ),
                 children: [
-                  SizedBox(
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 0.08),
                     height: size.height * 0.4,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
                         bottomLeft: Radius.circular(40),
                         bottomRight: Radius.circular(40),
                       ),
@@ -88,76 +93,59 @@ class _ProductDetailState extends State<ProductDetail> {
                     padding:
                         EdgeInsets.symmetric(horizontal: size.width * 0.08),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
                           product['title'],
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w700),
                         ),
-                        IconButton(
-                            onPressed: () async {
-                              final CollectionReference collectionReference =
-                                  FirebaseFirestore.instance
-                                      .collection('Users')
-                                      .doc(uid)
-                                      .collection('Favourites');
-                              if (data!['isFavourited'] == true) {
-                                await FirebaseFirestore.instance
-                                    .collection('Products')
-                                    .doc(id)
-                                    .update({'isFavourited': false}).then(
-                                        (value) async {
-                                  await collectionReference.doc(id).delete();
-                                  final SnackBar showSnackBar = snackBar(
-                                      'Removed from your favourites', 2);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(showSnackBar);
-                                });
-                              } else {
-                                await FirebaseFirestore.instance
-                                    .collection('Products')
-                                    .doc(id)
-                                    .update({'isFavourited': true}).then(
-                                        (value) async {
-                                  await collectionReference.doc(id).set({
-                                    'id': id,
-                                    'title': product['title'],
-                                    'price': product['price'],
-                                    'amount': product['amount'],
-                                    'description': product['description'],
-                                    'imagepath': product['imagepath'],
-                                    'isFavourited': true,
-                                    'isCarted': product['isCarted'],
-                                  });
-                                  final SnackBar showSnackBar =
-                                      snackBar('Added to your favourites', 2);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(showSnackBar);
-                                });
+                        StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(uid)
+                                .collection('Favourites')
+                                .doc(id)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              final data = snapshot.data;
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Icon(
+                                    Icons.favorite_border_rounded);
+                              } else if (snapshot.hasError) {
+                                return GlowingProgressIndicator(
+                                    child: const Icon(
+                                        Icons.favorite_border_rounded));
                               }
-                            },
-                            icon: Icon(
-                              data!['isFavourited'] == true
-                                  ? Icons.favorite_rounded
-                                  : Icons.favorite_border_rounded,
-                              color: primaryColor,
-                            ))
+                              return IconButton(
+                                icon: data!.exists
+                                    ? const Icon(Icons.favorite_rounded)
+                                    : const Icon(Icons.favorite_border_rounded),
+                                onPressed: () async {
+                                  provider.toggler(
+                                      widget.productDetail,
+                                      uid,
+                                      'Favourites',
+                                      1,
+                                      context,
+                                      'Added to your favourites',
+                                      'Removed from your favourites');
+                                },
+                              );
+                            })
                       ],
                     ),
                   ),
                   spacing(size: size, height: 0.01),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: size.width * 0.075),
-                        child: Text(
-                          itemAmount <= 0
-                              ? '₦ 0'
-                              : 'N${product['price'] * itemAmount}',
-                          style: TextStyle(fontSize: 17, color: primaryColor),
-                        ),
+                      Text(
+                        itemAmount <= 0
+                            ? '₦ 0'
+                            : 'N${product['price'] * itemAmount}',
+                        style: TextStyle(fontSize: 17, color: primaryColor),
                       ),
                       Padding(
                         padding: EdgeInsets.only(right: size.width * 0.025),
@@ -209,11 +197,11 @@ class _ProductDetailState extends State<ProductDetail> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  itemAmount >= data['amount']
+                                  itemAmount >= data!['amount']
                                       ? itemAmount = data['amount']
                                       : itemAmount = itemAmount + 1;
                                 });
-                                if (itemAmount >= data['amount']) {
+                                if (itemAmount >= data!['amount']) {
                                   final SnackBar showSnackBar = snackBar(
                                       'Only ${data['amount']} available, check back later!',
                                       2);
@@ -227,11 +215,11 @@ class _ProductDetailState extends State<ProductDetail> {
                               onTap: (() => setState(() {
                                     // conditions to limit ordering more that the orders expected
                                     setState(() {
-                                      itemAmount >= data['amount']
+                                      itemAmount >= data!['amount']
                                           ? itemAmount = data['amount']
                                           : itemAmount = itemAmount + 10;
                                     });
-                                    if (itemAmount >= data['amount']) {
+                                    if (itemAmount >= data!['amount']) {
                                       final SnackBar showSnackBar = snackBar(
                                           'Only ${data['amount']} available, check back later!',
                                           2);
@@ -260,97 +248,140 @@ class _ProductDetailState extends State<ProductDetail> {
                   spacing(size: size, height: 0.01),
                   divider(size),
                   spacing(size: size, height: 0.02),
-                  titles(size, 'Nutritions'),
+                  titles(size, 'Amount Available'),
                   spacing(size: size, height: 0.02),
-                  detail(size, 'Details'),
+                  detail(
+                      size,
+                      data!['amount'] >= 2
+                          ? '${data['amount']} ${data['title']}\'s are availabe for now'
+                          : 'Only ${data['amount']} ${data['title']} is availabe for now. Check back later!🙂'),
                   spacing(size: size, height: 0.02),
                   divider(size),
                   spacing(size: size, height: 0.035),
                   Container(
                     alignment: Alignment.centerLeft,
                     width: size.width * 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          child: data['isCarted']
-                              ? const Icon(Icons.shopping_cart)
-                              : const Icon(Icons.shopping_cart_outlined),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: size.width * 0.05),
-                          width: size.width * 0.5,
-                          height: size.height * 0.06,
-                          child: ElevatedButton(
-                            onPressed: itemAmount == 0
-                                ? null
-                                : () async {
-                                    final CollectionReference
-                                        collectionReference = FirebaseFirestore
-                                            .instance
-                                            .collection('Users')
-                                            .doc(uid)
-                                            .collection('Orders');
-                                    if (data['isCarted'] == true) {
-                                      await FirebaseFirestore.instance
-                                          .collection('Products')
-                                          .doc(id)
-                                          .update({'isCarted': false}).then(
-                                              (value) async {
-                                        await collectionReference
-                                            .doc(id)
-                                            .delete();
-                                        final SnackBar showSnackBar = snackBar(
-                                            'Removed from your carts', 2);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(showSnackBar);
-                                      });
-                                    } else if (data['isCarted'] == false) {
-                                      await FirebaseFirestore.instance
-                                          .collection('Products')
-                                          .doc(id)
-                                          .update({'isCarted': true}).then(
-                                              (value) async {
-                                        await collectionReference.doc(id).set({
-                                          'id': id,
-                                          'title': product['title'],
-                                          'price': product['price'],
-                                          'amount': itemAmount,
-                                          'description': product['description'],
-                                          'imagepath': product['imagepath'],
-                                          'isFavourited':
-                                              product['isFavourited'],
-                                          'isCarted': true,
-                                        });
-                                        final SnackBar showSnackBar =
-                                            snackBar('Carted', 2);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(showSnackBar);
-                                      });
-                                    } else {
-                                      final SnackBar showSnackBar =
-                                          snackBar('Error', 2);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(showSnackBar);
-                                    }
-                                  },
-                            child: data['isCarted']
-                                ? const Text('Remove from cart')
-                                : const Text('Add to cart'),
-                            style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                )),
-                                backgroundColor:
-                                    MaterialStateProperty.all(primaryColor)),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(uid)
+                            .collection('Orders')
+                            .doc(id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          final data2 = snapshot.data;
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: JumpingText(
+                              'Please wait',
+                              style: TextStyle(color: primaryColor),
+                            ));
+                          } else if (snapshot.hasError) {
+                            return JumpingText('Error');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (!snapshot.hasData || !data2!.exists) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const SizedBox(
+                                    child: Icon(Icons.shopping_cart_outlined),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: size.width * 0.05),
+                                    width: size.width * 0.5,
+                                    height: size.height * 0.06,
+                                    child: ElevatedButton(
+                                        child: itemAmount == 0 ||
+                                              itemAmount > data['amount'] ? const Text('No item in cart') : const Text('Add to cart'),
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          )),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  primaryColor),
+                                        ),
+                                        onPressed: itemAmount == 0 ||
+                                              itemAmount > data['amount']
+                                          ? null
+                                          : () async {
+                                              provider.toggler(
+                                                widget.productDetail,
+                                                uid,
+                                                'Orders',
+                                                itemAmount,
+                                                context,
+                                                'Added to your cart',
+                                                'Removed from your cart',
+                                              );
+                                            },),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Container(
+                                    child: data2['isCarted']
+                                        ? const Icon(Icons.shopping_cart)
+                                        : const Icon(
+                                            Icons.shopping_cart_outlined),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: size.width * 0.05),
+                                    width: size.width * 0.5,
+                                    height: size.height * 0.06,
+                                    child: ElevatedButton(
+                                      child: data2.exists
+                                          ? const Text('Remove from cart')
+                                          : const Text('Add to cart'),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        )),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                primaryColor),
+                                      ),
+                                      onPressed: itemAmount == 0 ||
+                                              itemAmount > data['amount']
+                                          ? null
+                                          : () async {
+                                              provider.toggler(
+                                                widget.productDetail,
+                                                uid,
+                                                'Orders',
+                                                itemAmount,
+                                                context,
+                                                'Added to your cart',
+                                                'Removed from your cart',
+                                              );
+                                            },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                          } else {
+                            return JumpingText('Error');
+                          }
+                        }),
                   ),
+                  spacing(size: size, height: 0.05),
                 ],
               );
             }
@@ -360,7 +391,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Padding detail(Size size, String details) {
     return Padding(
-      padding: EdgeInsets.only(left: size.width * 0.075),
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.075),
       child: Text(
         details,
         textAlign: TextAlign.left,
@@ -374,7 +405,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Padding titles(Size size, String title) {
     return Padding(
-      padding: EdgeInsets.only(left: size.width * 0.075),
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.075),
       child: Text(
         title,
         style: TextStyle(

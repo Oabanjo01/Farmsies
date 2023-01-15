@@ -415,6 +415,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.2.4"
+  progress_indicators:
+    dependency: "direct main"
+    description:
+      name: progress_indicators
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   provider:
     dependency: "direct main"
     description:
