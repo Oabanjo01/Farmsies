@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../Constants/colors.dart';
 import '../../../../Provider/item_provider..dart';
-import '../../../../Utils/snack_bar.dart';
 
 class Listview extends StatelessWidget {
   const Listview({
@@ -24,6 +23,7 @@ class Listview extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = MediaQuery.of(context).platformBrightness;
     final List list = snapshot.data!.docs;
+    final provider = Provider.of<Itemprovider>(context);
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         ((context, index) {
@@ -73,14 +73,7 @@ class Listview extends StatelessWidget {
                   width: size.width * 0.2,
                   child: IconButton(
                     onPressed: () async {
-                      await Provider.of<Itemprovider>(context, listen: false)
-                          .addtoFavourites(list[index], uid)
-                          .then((value) {
-                        final SnackBar showSnackBar =
-                            snackBar('Removed from favourites', 2);
-                        ScaffoldMessenger.of(context2)
-                            .showSnackBar(showSnackBar);
-                      });
+                      provider.toggler(list[index], uid, 'Favourites', 1, context, 'Removed from favourites', 'Removed from favourites');
                     },
                     icon: Icon(
                       Icons.favorite_rounded,

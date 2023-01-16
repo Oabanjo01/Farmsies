@@ -52,7 +52,7 @@ class OrderComplete extends StatelessWidget {
                   ),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('Done')),
+                child: const Text('Done')),
           )
         ]),
       ),

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:farmsies/Utils/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +17,7 @@ class Gridview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MediaQuery.of(context).platformBrightness;
+    final provider = Provider.of<Itemprovider>(context);
     final List list = snapshot.data!.docs;
     return SliverGrid(
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -63,12 +63,7 @@ class Gridview extends StatelessWidget {
                     color: primaryColor,
                   ),
                   onPressed: () async {
-                    await Provider.of<Itemprovider>(context, listen: false)
-                        .addtoFavourites(list[index], uid);
-                       final SnackBar showSnackBar =
-                              snackBar('Removed from favourites', 2);
-                          ScaffoldMessenger.of(context2)
-                              .showSnackBar(showSnackBar);
+                    provider.toggler(list[index], uid, 'Favourites', 1, context, 'Removed from favourites', 'Removed from favourites');
                   },
                 ),
               ),

@@ -1,10 +1,10 @@
+// ignore_for_file: body_might_complete_normally_nullable
+
 import 'package:farmsies/Utils/other_methods.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
-import 'package:farmsies/Screens/tabpages/home/screen/home_screen.dart';
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +13,7 @@ import '../../Constants/images.dart';
 import '../../Widgets/generalwidget/text_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    bool _isLoading;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -75,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Center(
                 child: Text(
@@ -171,7 +170,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         } else {
                           _globalKey.currentState!.save();
                           setState(() {
-                            _isLoading = true;
                           });
                           try {
                             final userCredential =
@@ -181,7 +179,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         email: userController.text,
                                         password: passwordController.text);
                             setState(() {
-                              _isLoading = false;
                             });
                             Navigator.of(
                               context,
@@ -189,7 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 arguments: userCredential!.userMail);
                           } catch (e) {
                             setState(() {
-                              _isLoading = false;
                             });
                             String error = Provider.of<Authprovider>(context,
                                     listen: false)

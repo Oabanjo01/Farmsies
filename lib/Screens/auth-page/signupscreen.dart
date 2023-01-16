@@ -1,3 +1,5 @@
+// ignore_for_file: body_might_complete_normally_nullable
+
 import 'dart:io';
 
 import 'package:farmsies/Provider/auth_provider.dart';
@@ -59,7 +61,6 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-  bool _isLoading;
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -416,7 +417,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                     } else {
                                       _formKey.currentState!.save();
                                       setState(() {
-                                        _isLoading = true;
                                       });
                                       try {
                                         final response =
@@ -430,14 +430,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                           password: passwordContoller.text,
                                         );
                                         setState(() {
-                                          _isLoading = false;
                                         });
                                         response != null
                                             ? Navigator.of(context).pop()
                                             : errorDialogue(context, 'Error');
                                       } catch (e) {
                                         setState(() {
-                                          _isLoading = false;
                                         });
                                         errorDialogue(context, e.toString());
                                       }

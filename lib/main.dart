@@ -15,11 +15,11 @@ main() async {
   await Firebase.initializeApp();
   // SharedPreferences _prefs = await preferences;
   // await _prefs.setInt('onboarding', 1);
-  runApp(Farmsies());
+  runApp(const Farmsies());
 }
 
 class Farmsies extends StatefulWidget {
-  Farmsies({Key? key}) : super(key: key);
+  const Farmsies({Key? key}) : super(key: key);
 
   @override
   State<Farmsies> createState() => _FarmsiesState();

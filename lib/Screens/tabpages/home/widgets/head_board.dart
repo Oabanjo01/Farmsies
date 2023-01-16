@@ -43,25 +43,31 @@ class _HeadboardState extends State<Headboard> {
       padding: const EdgeInsets.only(right: 10, left: 20),
       height: widget.size.height * 0.1,
       child: Row(children: [
-        CircleAvatar(
-          // 'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png'
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(widget.size.width * 0.1),
-            child: Image.network(
-              imageUrl,
-              errorBuilder: (context, error, stackTrace) => Image.asset(
-                          'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
-                        ),
-              loadingBuilder: (context, child, loadingProgress) =>
-                  loadingProgress == null
-                      ? child
-                      : const Center(
-                        child: CircularProgressIndicator(),
-                      )
+        Container(
+          color: primaryColor,
+          child: CircleAvatar(
+            // 'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png'
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(widget.size.width * 0.3),
+              child: SizedBox(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                              'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
+                            ),
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                ),
+              ),
             ),
+            radius: widget.size.width * 0.1,
+            backgroundColor: Colors.transparent,
           ),
-          radius: widget.size.width * 0.1,
-          backgroundColor: Colors.transparent,
         ),
         SizedBox(
           width: widget.size.width * 0.07,

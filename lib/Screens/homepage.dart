@@ -1,9 +1,10 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, must_be_immutable
+
 import 'package:farmsies/Screens/tabpages/favourites/screens/favourites_screen.dart';
 import 'package:farmsies/Screens/tabpages/home/screen/home_screen.dart';
 import 'package:farmsies/Screens/tabpages/order/screens/order_screen.dart';
 import 'package:farmsies/Screens/tabpages/profile/profilescreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../Constants/colors.dart';
 
@@ -27,9 +28,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List _screens = [
-    HomeScreen(),
-    FavouritesPage(),
-    Orderspage(),
+    const HomeScreen(),
+    const FavouritesPage(),
+    const Orderspage(),
     Profilepage()
   ];
 

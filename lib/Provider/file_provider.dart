@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,8 +16,6 @@ class FileProvider with ChangeNotifier {
   String _displayPicUrl = '';
 
   String get displayPicUrl => _displayPicUrl;
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
@@ -48,14 +45,11 @@ class FileProvider with ChangeNotifier {
   }
 
   Future <void> displayPicture (storgeId, userId) async{
-    final result = await _firebaseStorage.ref().child('DisplayPictures');
     // final picture = result.items.where((element) => element.name == userId);
   }
 
   Future<String> addDisplaypic(File displayPic, String uid) async {
     _status = true;
-    CollectionReference _displayPictures =
-        _firestore.collection('DisplayPictures');
 
     try {
       _message = 'Uploading image';

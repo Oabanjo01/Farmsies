@@ -1,8 +1,4 @@
-import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_svg/svg.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -12,10 +8,9 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _HomeState extends State<OnboardingScreen> {
-  final PageController _controller = PageController();
   @override
   Widget build(BuildContext context) {
-    return OnboardingScreen();
+    return const OnboardingScreen();
   }
 }
 

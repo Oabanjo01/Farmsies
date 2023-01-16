@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -16,7 +18,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // bool screenLoaded = false;
   var newLaunch;
   String developername = 'Xerxes';
 
@@ -77,14 +78,14 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Stack(
           children: [
             Center(
-              child: Container(
+              child: SizedBox(
                 width: size.width * 0.5,
                 child: Image.asset('assets/farmer (1).png'),
               ),
             ),
             Positioned(
                 bottom: 10,
-                child: Container(
+                child: SizedBox(
                   width: size.width * 1,
                   child: Column(
                     children: [
