@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../Utils/snack_bar.dart';
 import '../widgets/no_orders.dart';
 
 class Orderspage extends StatefulWidget {
@@ -49,6 +48,7 @@ class _OrderspageState extends State<Orderspage> {
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               ((context, index) {
+                final provider = Provider.of<Itemprovider>(context);
                 return Container(
                   margin: EdgeInsets.only(bottom: size.height * 0.015),
                   decoration: BoxDecoration(
@@ -74,15 +74,7 @@ class _OrderspageState extends State<Orderspage> {
                     ),
                     trailing: IconButton(
                       onPressed: () async {
-                        await Provider.of<Itemprovider>(
-                          context,
-                          listen: false,
-                        ).addtoCarts(list[index], uid).then((value) {
-                               final SnackBar showSnackBar =
-                            snackBar('Removed from Carts', 2);
-                        ScaffoldMessenger.of(context2)
-                            .showSnackBar(showSnackBar);
-                        });
+                        provider.toggler(list[index], uid, 'Orders', 1, context, 'Removed from Carts', 'Removed from Carts');
                       },
                       icon: Icon(
                         Icons.delete,

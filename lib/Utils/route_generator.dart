@@ -18,13 +18,13 @@ class RouteGenerator {
       case '/onboarding':
         return MaterialPageRoute(builder: (_) => const onboardingScreen());
       case '/loginScreen':
-          return MaterialPageRoute(builder: (_) => LoginScreen());
+          return MaterialPageRoute(builder: (_) => const LoginScreen());
       case '/signupScreen':
-          return MaterialPageRoute(builder: (_) => SignupScreen());
+          return MaterialPageRoute(builder: (_) => const SignupScreen());
       case '/homepage':
           return MaterialPageRoute(builder: (_) => HomePage(userDetails: args),);
       case '/settings':
-          return MaterialPageRoute(builder: (_) => SettingsPage());
+          return MaterialPageRoute(builder: (_) => const SettingsPage());
       case '/wrapper':
           return MaterialPageRoute(builder: (_) => const Wrapper());
       case '/foodCategory':

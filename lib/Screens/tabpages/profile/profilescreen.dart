@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import '../../../Constants/colors.dart';
 
 class Profilepage extends StatefulWidget {
-  Profilepage({Key? key}) : super(key: key);
+  const Profilepage({Key? key}) : super(key: key);
 
   @override
   State<Profilepage> createState() => _ProfilepageState();

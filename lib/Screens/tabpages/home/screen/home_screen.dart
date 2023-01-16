@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
-import 'package:farmsies/Provider/item_provider..dart';
 import 'package:farmsies/Widgets/generalwidget/confirmation_dialog.dart';
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -10,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/colors.dart';
 import '../../../../Constants/samples.dart';
-import '../../../../Models/item-model.dart';
 import '../../../../Utils/other_methods.dart';
 import '../widgets/all-deals.dart';
 import '../../../../Widgets/generalwidget/text_fields.dart';
@@ -32,28 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final TextEditingController searchController = TextEditingController();
 
-  final List<ItemModel> _items = [
-    ItemModel(
-        id: 1,
-        description: 'Healthy white cockerels',
-        price: 2000,
-        title: 'Cockerels',
-        category: Category.poultry,
-        imagepath:
-            'https://images.unsplash.com/photo-1630090374791-c9eb7bab3935?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80'),
-    ItemModel(
-        id: 2,
-        description: 'Healthy layers and point of lay.',
-        price: 2000,
-        title: 'Layers',
-        category: Category.poultry,
-        imagepath:
-            'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8cG91bHRyeSUyMGZhcm18ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60'),
-  ];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final userDetails = ModalRoute.of(context)!.settings.arguments;
     final firebaseUser = _firebaseAuth.currentUser!;
     return SafeArea(
       child: GestureDetector(
@@ -88,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   '/loginScreen',
                                   (route) => false,
                                 );
-                                print(userDetails);
                               });
                             } catch (e) {
                               errorDialogue(context, e.toString());
@@ -246,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {},
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
         ),
       ),
@@ -280,9 +257,8 @@ class _HomeScreenState extends State<HomeScreen> {
         );
     if (await canLaunchUrl(mailtoUri)) {
       await launchUrl(mailtoUri);
-      print(email);
     } else {
-      print('error');
+      return;
     }
   }
 
@@ -299,7 +275,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   content: 'Are you sure you want to log out?',
                   onClicked1: () {
                     try {
-                      final signOut =
                           Provider.of<Authprovider>(context, listen: false)
                               .signOut()
                               .then((value) {
@@ -308,7 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           '/loginScreen',
                           (route) => false,
                         );
-                        print(userDetails);
                       });
                     } catch (e) {
                       errorDialogue(context, e.toString());
