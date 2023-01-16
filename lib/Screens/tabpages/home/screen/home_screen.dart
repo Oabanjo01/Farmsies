@@ -166,20 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const Text('All Deals', style: TextStyle(fontSize: 20)),
                       IconButton(
                         onPressed: () async {
-                          // await FirebaseFirestore.instance
-                          //     .collection('Products')
-                          //     .doc('tV65U7VMYE1Kon4bRYjT')
-                          //     .set({
-                          //   'id': 'tV65U7VMYE1Kon4bRYjT',
-                          //   'title': 'Layers',
-                          //   'price': 2000,
-                          //   'amount': 15,
-                          //   'description': 'Healthy layers and point of lay.',
-                          //   'imagepath':
-                          //       'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8cG91bHRyeSUyMGZhcm18ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60',
-                          //   'isFavourited': false,
-                          //   'isCarted': false,
-                          // });
+                          
                         },
                         icon: Icon(
                           Icons.filter_list_alt,

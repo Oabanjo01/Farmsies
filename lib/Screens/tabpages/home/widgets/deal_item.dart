@@ -86,7 +86,7 @@ class _DealItemState extends State<DealItem> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return HeartbeatProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
+                    return GlowingProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
                   } else if (snapshot.hasError) {
                     return GlowingProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
                   }
@@ -115,7 +115,7 @@ class _DealItemState extends State<DealItem> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return HeartbeatProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
+                    return GlowingProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
                   } else if (snapshot.hasError) {
                     return GlowingProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
                   }

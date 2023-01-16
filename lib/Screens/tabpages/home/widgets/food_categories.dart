@@ -19,7 +19,6 @@ class Foodcategories extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: size.height * 0.12,
-      // padding: const EdgeInsets.only(right: 10),
       child: ListView.separated(
           shrinkWrap: true,
           separatorBuilder: (context, index) =>

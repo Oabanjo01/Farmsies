@@ -43,13 +43,11 @@ class _HeadboardState extends State<Headboard> {
       padding: const EdgeInsets.only(right: 10, left: 20),
       height: widget.size.height * 0.1,
       child: Row(children: [
-        Container(
-          color: primaryColor,
+        SizedBox(
           child: CircleAvatar(
-            // 'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png'
             child: ClipRRect(
               borderRadius: BorderRadius.circular(widget.size.width * 0.3),
-              child: SizedBox(
+              child: SizedBox.expand(
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.fill,

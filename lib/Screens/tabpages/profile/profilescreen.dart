@@ -85,18 +85,24 @@ class _ProfilepageState extends State<Profilepage> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
           sliver: SliverToBoxAdapter(
             child: ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(size.width * 0.1),
-                child: Image.network(imageUrl,
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
-                          'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
-                        ),
-                    loadingBuilder: (context, child, loadingProgress) =>
-                        loadingProgress == null
-                            ? child
-                            : const Center(
-                                child: CircularProgressIndicator(),
-                              )),
+              contentPadding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+              leading: CircleAvatar(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(size.width * 0.1),
+                  child: SizedBox.expand(
+                    child: Image.network(imageUrl,
+                    fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                              'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
+                            ),
+                        loadingBuilder: (context, child, loadingProgress) =>
+                            loadingProgress == null
+                                ? child
+                                : const Center(
+                                    child: CircularProgressIndicator(),
+                                  )),
+                  ),
+                ),
               ),
               title: Text(
                 firebaseUser.displayName ?? firebaseUser.email!.toLowerCase(),
