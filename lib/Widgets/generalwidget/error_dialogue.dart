@@ -11,7 +11,7 @@ errorDialogue(BuildContext context, String error) {
           TextButton(
               onPressed: () {
                 error == 'User with this email doesn\'t exist.'
-                    ? Navigator.pushNamed(context, '/signupScreen')
+                    ? Navigator.pushNamed(context, '/signupScreen').then((value) => Navigator.pop(context))
                     : Navigator.pop(context);
               },
               child: error == 'User with this email doesn\'t exist.'

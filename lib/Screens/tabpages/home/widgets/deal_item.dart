@@ -32,24 +32,41 @@ class _DealItemState extends State<DealItem> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(children: [
             Stack(children: [
-              Image.network(
-                widget.product['imagepath'],
-                loadingBuilder: (context, child, loadingProgress) =>
-                    loadingProgress == null
-                        ? child
-                        : Center(
-                            child:
-                                CircularProgressIndicator(color: primaryColor),
-                          ),
+              FadeInImage(
+                fadeOutDuration: const Duration(milliseconds: 200),
+                fadeOutCurve: Curves.easeOutBack,
+                placeholder: const AssetImage('assets/harvest.png'),
+                image: NetworkImage(
+                  widget.product['imagepath'],
+                ),
+                placeholderFit: BoxFit.scaleDown,
+                fit: BoxFit.cover,
                 width: double.infinity,
-                height: size.height * 0.22,
-                errorBuilder: ((context, error, stackTrace) => Center(
+                height: double.infinity,
+                imageErrorBuilder: ((context, error, stackTrace) => Center(
                       child: Image.asset(
                           'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
                           fit: BoxFit.fitHeight),
                     )),
-                fit: BoxFit.cover,
               ),
+              // Image.network(
+              //   widget.product['imagepath'],
+              //   loadingBuilder: (context, child, loadingProgress) =>
+              //       loadingProgress == null
+              //           ? child
+              //           : Center(
+              //               child:
+              //                   CircularProgressIndicator(color: primaryColor),
+              //             ),
+              //   width: double.infinity,
+              //   height: size.height * 0.22,
+              //   errorBuilder: ((context, error, stackTrace) => Center(
+              //         child: Image.asset(
+              //             'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
+              //             fit: BoxFit.fitHeight),
+              //       )),
+              //   fit: BoxFit.cover,
+              // ),
               Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -77,18 +94,20 @@ class _DealItemState extends State<DealItem> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
+            FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
                     .collection('Users')
                     .doc(uid)
                     .collection('Orders')
                     .doc(id)
-                    .snapshots(),
+                    .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return GlowingProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
+                    return GlowingProgressIndicator(
+                        child: const Icon(Icons.shopping_basket_outlined));
                   } else if (snapshot.hasError) {
-                    return GlowingProgressIndicator(child: const Icon(Icons.shopping_basket_outlined));
+                    return GlowingProgressIndicator(
+                        child: const Icon(Icons.shopping_basket_outlined));
                   }
                   return IconButton(
                       icon: snapshot.data!.exists
@@ -106,18 +125,20 @@ class _DealItemState extends State<DealItem> {
                         );
                       });
                 }),
-            StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
+            FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
                     .collection('Users')
                     .doc(uid)
                     .collection('Favourites')
                     .doc(id)
-                    .snapshots(),
+                    .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return GlowingProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
+                    return GlowingProgressIndicator(
+                        child: const Icon(Icons.favorite_border_rounded));
                   } else if (snapshot.hasError) {
-                    return GlowingProgressIndicator(child: const Icon(Icons.favorite_border_rounded));
+                    return GlowingProgressIndicator(
+                        child: const Icon(Icons.favorite_border_rounded));
                   }
                   return IconButton(
                     icon: snapshot.data!.exists

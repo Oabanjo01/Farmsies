@@ -29,7 +29,6 @@ class _ProductDetailState extends State<ProductDetail> {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     final Map<String, dynamic> product = {
-      // 'id': widget.productDetail.id,
       'title': widget.productDetail['title'] as String,
       'price': widget.productDetail['price'] as int,
       'amount': widget.productDetail['amount'] <= 1
@@ -54,10 +53,11 @@ class _ProductDetailState extends State<ProductDetail> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const SizedBox(
+              return SizedBox(
                 child: Center(
-                  child: Text(
-                    'An error occured',
+                  child: JumpingText(
+                    'Error',
+                    style: TextStyle(color: primaryColor),
                   ),
                 ),
               );
@@ -82,9 +82,23 @@ class _ProductDetailState extends State<ProductDetail> {
                         bottomLeft: Radius.circular(40),
                         bottomRight: Radius.circular(40),
                       ),
-                      child: Image.network(
-                        product['imagepath'],
+                      child: FadeInImage(
+                        fadeOutDuration: const Duration(milliseconds: 200),
+                        fadeOutCurve: Curves.easeOutBack,
+                        placeholder: const AssetImage('assets/harvest.png'),
+                        image: NetworkImage(
+                          product['imagepath'],
+                        ),
+                        placeholderFit: BoxFit.scaleDown,
                         fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        imageErrorBuilder: ((context, error, stackTrace) =>
+                            Center(
+                              child: Image.asset(
+                                  'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
+                                  fit: BoxFit.fitHeight),
+                            )),
                       ),
                     ),
                   ),
@@ -278,7 +292,12 @@ class _ProductDetailState extends State<ProductDetail> {
                               style: TextStyle(color: primaryColor),
                             ));
                           } else if (snapshot.hasError) {
-                            return JumpingText('Error');
+                            return Center(
+                              child: JumpingText(
+                                'Error',
+                                style: TextStyle(color: primaryColor),
+                              ),
+                            );
                           }
                           if (snapshot.connectionState ==
                               ConnectionState.active) {
@@ -296,20 +315,22 @@ class _ProductDetailState extends State<ProductDetail> {
                                     width: size.width * 0.5,
                                     height: size.height * 0.06,
                                     child: ElevatedButton(
-                                        child: itemAmount == 0 ||
-                                              itemAmount > data['amount'] ? const Text('No item in cart') : const Text('Add to cart'),
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          )),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  primaryColor),
-                                        ),
-                                        onPressed: itemAmount == 0 ||
+                                      child: itemAmount == 0 ||
+                                              itemAmount > data['amount']
+                                          ? const Text('No item in cart')
+                                          : const Text('Add to cart'),
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        )),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                primaryColor),
+                                      ),
+                                      onPressed: itemAmount == 0 ||
                                               itemAmount > data['amount']
                                           ? null
                                           : () async {
@@ -322,7 +343,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 'Added to your cart',
                                                 'Removed from your cart',
                                               );
-                                            },),
+                                            },
+                                    ),
                                   ),
                                 ],
                               );

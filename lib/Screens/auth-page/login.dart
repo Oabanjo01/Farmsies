@@ -45,31 +45,22 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-          body:
-              // StreamBuilder(
-              //   stream: FirebaseAuth.instance.authStateChanges(),
-              //   builder: ((context, snapshot) {
-              //     if(snapshot.connectionState == ConnectionState.waiting) {
-              //       return const Center(child: CircularProgressIndicator(),);
-              //     } else if (snapshot.connectionState == ConnectionState.done) {
-              //       if (snapshot.hasData) {
-              //         return HomeScreen();
-              //       } else {
-              // return
-              Stack(children: [
+          body: Stack(children: [
         Center(
           child: Container(
-              padding: EdgeInsets.only(
-                left: size.width * 0.03,
-                right: size.width * 0.03,
+            padding: EdgeInsets.only(
+              left: size.width * 0.03,
+              right: size.width * 0.03,
+            ),
+            height: size.height * 0.8,
+            child: Opacity(
+              opacity: 0.1,
+              child: SvgPicture.asset(
+                login,
+                alignment: Alignment.center,
               ),
-              height: size.height * 0.8,
-              child: Opacity(
-                  opacity: 0.1,
-                  child: SvgPicture.asset(
-                    login,
-                    alignment: Alignment.center,
-                  ))),
+            ),
+          ),
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -169,8 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           return;
                         } else {
                           _globalKey.currentState!.save();
-                          setState(() {
-                          });
+                          setState(() {});
                           try {
                             final userCredential =
                                 await Provider.of<Authprovider>(context,
@@ -178,23 +168,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .signInWithEmailAndPassword(
                                         email: userController.text,
                                         password: passwordController.text);
-                            setState(() {
-                            });
+                            setState(() {});
                             Navigator.of(
                               context,
                             ).popAndPushNamed('/homepage',
                                 arguments: userCredential!.userMail);
                           } catch (e) {
-                            setState(() {
-                            });
+                            setState(() {});
                             String error = Provider.of<Authprovider>(context,
                                     listen: false)
                                 .errorMessage;
                             if (error ==
                                 'User with this email doesn\'t exist.') {
                               errorDialogue(context, error);
+                              // Navigator.pop(context);
                             } else {
                               errorDialogue(context, error);
+                              // Navigator.pop(context);
                             }
                           }
                         }
@@ -213,15 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
               customBorder: const CircleBorder(),
               highlightColor: Colors.transparent,
               splashColor: primaryColor.withOpacity(0.1),
-              onTap: () {
-                // Provider.of<Authprovider>(context, listen: false)
-                //     .signIn()
-                //     .then((value) {
-                //   Navigator.pop(context, '/homepage');
-                // }).catchError((e) {
-                //   errorDialogue(context);
-                // });
-              },
+              onTap: () {},
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -315,9 +297,3 @@ class _LoginScreenState extends State<LoginScreen> {
         labelStyle: TextStyle(color: primaryColor.withOpacity(0.6)));
   }
 }
-// else {
-//   return errorDialogue(context);
-// }
-// }),
-//   )),
-// );

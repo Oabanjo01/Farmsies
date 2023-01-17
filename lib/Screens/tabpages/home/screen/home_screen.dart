@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                 sliver: SliverToBoxAdapter(
                   child: textField(
                     controller: searchController,
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }),
               ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 sliver: SliverToBoxAdapter(
                   child: Foodcategories(size: size, food: food),
                 ),
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 sliver: SliverToBoxAdapter(
                   child: Fooddex(size: size, food: food),
                 ),
@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const Text('All Deals', style: TextStyle(fontSize: 20)),
                       IconButton(
                         onPressed: () async {
-                          
+
                         },
                         icon: Icon(
                           Icons.filter_list_alt,
@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: spacing(size: size, height: 0.01),
               ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 sliver: SliverToBoxAdapter(
                   child: AllDeals(
                     size: size,
