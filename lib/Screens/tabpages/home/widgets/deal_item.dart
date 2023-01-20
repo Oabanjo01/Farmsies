@@ -114,6 +114,7 @@ class _DealItemState extends State<DealItem> {
                           ? const Icon(Icons.shopping_basket)
                           : const Icon(Icons.shopping_basket_outlined),
                       onPressed: () async {
+                        print(snapshot.data!.exists);
                         provider.toggler(
                           widget.product,
                           uid,
@@ -141,10 +142,11 @@ class _DealItemState extends State<DealItem> {
                         child: const Icon(Icons.favorite_border_rounded));
                   }
                   return IconButton(
-                    icon: snapshot.data!.exists
+                    icon: (snapshot.data != null) && snapshot.data!.exists
                         ? const Icon(Icons.favorite_rounded)
                         : const Icon(Icons.favorite_border_rounded),
                     onPressed: () async {
+                      print(snapshot.data!.id.toString());
                       provider.toggler(
                         widget.product,
                         uid,

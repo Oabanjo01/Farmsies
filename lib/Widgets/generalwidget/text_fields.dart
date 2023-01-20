@@ -14,13 +14,14 @@ class textField extends StatelessWidget {
       required this.labelText,
       this.hideText = false,
       required this.icon,
-      required this.icon2,
+      required this.icon2, required this.products,
       // required this.focusNode
       // required this.textFieldFunction
       })
       : super(key: key);
 
   final String labelText;
+  final List products;
   // final FocusNode focusNode;
   final TextEditingController controller;
   final bool hideText;
@@ -34,7 +35,7 @@ class textField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       onTap: () => 
-                      showSearch(context: context, delegate: CustomSearchBar()),
+                      showSearch(context: context, delegate: CustomSearchBar(searchProducts: products)),
       // focusNode: focusNode,
       readOnly: true,
       // validator: textFieldFunction(),

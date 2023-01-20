@@ -5,22 +5,6 @@ import '../Models/tips-model.dart';
 
 List<ItemModel> imageLink = [
   ItemModel(
-      id: 1,
-      description: 'Healthy white cockerels',
-      price: 2000,
-      title: 'Cockerels',
-      category: Category.poultry,
-      imagepath:
-          'https://images.unsplash.com/photo-1630090374791-c9eb7bab3935?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80'),
-  ItemModel(
-      id: 2,
-      description: 'Healthy layers and point of lay.',
-      price: 2000,
-      title: 'Layers',
-      category: Category.poultry,
-      imagepath:
-          'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8cG91bHRyeSUyMGZhcm18ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60'),
-  ItemModel(
       category: Category.poultry,
       id: 3,
       description: 'Day old chicks for sale.',
@@ -132,14 +116,6 @@ List<ItemModel> imageLink = [
       title: 'fresh Crayfish',
       imagepath:
           'https://images.unsplash.com/photo-1504309250229-4f08315f3b5c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzZ8fGZpc2glMjBtYXJrZXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60'),
-  ItemModel(
-      category: Category.pig,
-      id: 17,
-      description: 'Massive healthy pigs for sale',
-      price: 200000,
-      title: 'Pig',
-      imagepath:
-          'https://images.unsplash.com/photo-1545468258-576dbac5faa9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cGlnJTIwZmFybXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=600&q=60'),
   ItemModel(
       category: Category.fish,
       id: 18,

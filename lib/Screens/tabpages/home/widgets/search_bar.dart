@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends SearchDelegate {
-  List<String> searchTerms = ['apple', 'orange'];
+  CustomSearchBar({required this.searchProducts});
+  final List searchProducts;
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -20,13 +21,13 @@ class CustomSearchBar extends SearchDelegate {
         onPressed: () {
           close(context, null);
         },
-        icon: const Icon(Icons.clear));
+        icon: const Icon(Icons.arrow_back));
   }
 
   @override
   Widget buildResults(BuildContext context) {
     List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
+    for (var fruit in searchProducts) {
       if (fruit.toLowerCase().contains(query.toLowerCase())) {
         matchQuery.add(fruit);
       }
@@ -45,7 +46,7 @@ class CustomSearchBar extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
+    for (var fruit in searchProducts) {
       if (fruit.toLowerCase().contains(query.toLowerCase())) {
         matchQuery.add(fruit);
       }

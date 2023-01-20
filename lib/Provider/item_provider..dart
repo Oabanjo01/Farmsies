@@ -13,6 +13,12 @@ class Itemprovider with ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
 
+  bool _isToggled = false;
+
+  bool get isToggled {
+    return _isToggled;
+  }
+
   Future<void> addProduct(ItemModel item1) async {
     final Map<String, dynamic> item = item1.toMap();
     CollectionReference collectionReference = db.collection('Products');
@@ -35,6 +41,7 @@ class Itemprovider with ChangeNotifier {
     if (doc.exists || doc.data() != null) {
       await documentReference.delete().then((value) {
         final SnackBar showSnackBar = snackBar(unCarted, 1);
+        _isToggled = false;
         ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
       });
       notifyListeners();
@@ -46,10 +53,11 @@ class Itemprovider with ChangeNotifier {
         'amount': amount,
         'description': data['description'],
         'imagepath': data['imagepath'],
-        'isFavourited': data['isFavourited'],
+        'isFavourited': true,
         'isCarted': true,
       }).then((value) {
         final SnackBar showSnackBar = snackBar(carted, 1);
+_isToggled = true;
         ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
       });
       notifyListeners();

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/confirmation_dialog.dart';
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
@@ -29,6 +30,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final TextEditingController searchController = TextEditingController();
+
+  List _allProducts = [];
+  late Future<dynamic> productsLoaded;
+
+  getAllProducts() async {
+    final data = await FirebaseFirestore.instance.collection('Products').get();
+    setState(() {
+      _allProducts = data.docs;
+    });
+    return 'Completed';
+  }
+
+  searchResultList() {
+    List showResults = [];
+    if (searchController.text != "") {
+    } else {
+      _allProducts = [];
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    productsLoaded = getAllProducts();
+    super.didChangeDependencies();
+  }
 
   // final FocusNode _focusNode = FocusNode();
 
@@ -121,6 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                 sliver: SliverToBoxAdapter(
                   child: textField(
+                    products: _allProducts,
                     // focusNode: _focusNode,
                     controller: searchController,
                     labelText: 'Search',
@@ -130,7 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: primaryColor,
                         size: 30,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        for (var a in imageLink) {
+                          
+                        }
+                      },
                     ),
                     icon: Icon(
                       Icons.search,
@@ -203,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 sliver: SliverToBoxAdapter(
                   child: AllDeals(
+                    allProducts: _allProducts,
                     size: size,
                   ),
                 ),
@@ -357,5 +389,3 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 }
-
-
