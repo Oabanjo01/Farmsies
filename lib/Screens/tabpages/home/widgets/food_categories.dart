@@ -4,7 +4,6 @@ import '../../../../Constants/samples.dart';
 import '../../../../Models/tips-model.dart';
 import '../../../../Utils/other_methods.dart';
 
-
 class Foodcategories extends StatelessWidget {
   const Foodcategories({
     Key? key,
@@ -19,10 +18,14 @@ class Foodcategories extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: size.height * 0.12,
-      child: ListView.separated(
+      child: GridView.builder(
           shrinkWrap: true,
-          separatorBuilder: (context, index) =>
-              SizedBox(width: size.width * 0.03),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            childAspectRatio: 1,
+            mainAxisExtent: size.width * 0.18,
+            mainAxisSpacing: size.width * 0.03,
+          ),
           itemCount: 6,
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext ctx, index) {

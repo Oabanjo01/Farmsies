@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../../Constants/colors.dart';
+import '../../Screens/tabpages/home/widgets/search_bar.dart';
 
 class textField extends StatelessWidget {
   const textField(
@@ -13,12 +14,14 @@ class textField extends StatelessWidget {
       required this.labelText,
       this.hideText = false,
       required this.icon,
-      required this.icon2
+      required this.icon2,
+      // required this.focusNode
       // required this.textFieldFunction
       })
       : super(key: key);
 
   final String labelText;
+  // final FocusNode focusNode;
   final TextEditingController controller;
   final bool hideText;
   final Icon icon;
@@ -30,6 +33,10 @@ class textField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onTap: () => 
+                      showSearch(context: context, delegate: CustomSearchBar()),
+      // focusNode: focusNode,
+      readOnly: true,
       // validator: textFieldFunction(),
       cursorColor: primaryColor.withOpacity(0.7),
       controller: controller,

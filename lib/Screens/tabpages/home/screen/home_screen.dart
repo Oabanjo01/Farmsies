@@ -15,6 +15,7 @@ import '../widgets/food_categories.dart';
 import '../widgets/food_dex.dart';
 import '../widgets/head_board.dart';
 import '../widgets/homescreen_headers.dart';
+import '../widgets/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, this.userDetails}) : super(key: key);
@@ -28,6 +29,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final TextEditingController searchController = TextEditingController();
+
+  // final FocusNode _focusNode = FocusNode();
+
+  // @override
+  // void initState() {
+  //   _focusNode.addListener(_onFocusChanged);
+  //   super.initState();
+  // }
+
+  // void _onFocusChanged() {
+  //   print('I can hear you');
+  // }
+
+  // @override
+  // void dispose() {
+  //   _focusNode.removeListener(_onFocusChanged);
+  //   _focusNode.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                 sliver: SliverToBoxAdapter(
                   child: textField(
+                    // focusNode: _focusNode,
                     controller: searchController,
                     labelText: 'Search',
                     icon2: IconButton(
@@ -165,9 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text('All Deals', style: TextStyle(fontSize: 20)),
                       IconButton(
-                        onPressed: () async {
-
-                        },
+                        onPressed: () async {},
                         icon: Icon(
                           Icons.filter_list_alt,
                           color: primaryColor,
@@ -262,9 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   content: 'Are you sure you want to log out?',
                   onClicked1: () {
                     try {
-                          Provider.of<Authprovider>(context, listen: false)
-                              .signOut()
-                              .then((value) {
+                      Provider.of<Authprovider>(context, listen: false)
+                          .signOut()
+                          .then((value) {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           '/loginScreen',
@@ -338,3 +357,5 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 }
+
+

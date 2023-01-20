@@ -91,6 +91,7 @@ class _ProfilepageState extends State<Profilepage> {
                   borderRadius: BorderRadius.circular(size.width * 0.1),
                   child: SizedBox.expand(
                     child: Image.network(imageUrl,
+                    alignment: Alignment.topCenter,
                     fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Image.asset(
                               'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',

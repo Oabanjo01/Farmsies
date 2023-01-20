@@ -40,35 +40,36 @@ class _HeadboardState extends State<Headboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(right: 10, left: 20),
-      height: widget.size.height * 0.1,
+      padding: EdgeInsets.only(right: widget.size.width * 0.025, left: widget.size.width * 0.08),
+      height: widget.size.height * 0.11,
       child: Row(children: [
-        SizedBox(
-          child: CircleAvatar(
+        Flexible(
+          fit: FlexFit.loose,
+          child: Container(
+            height: widget.size.width * 0.17,
+            width: widget.size.width * 0.17,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(widget.size.width * 0.3),
-              child: SizedBox.expand(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.fill,
+              borderRadius: BorderRadius.circular(200),
+              child: Image.network(imageUrl,
+                  alignment: Alignment.topCenter,
+                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Image.asset(
-                              'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
-                            ),
+                        'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
+                      ),
                   loadingBuilder: (context, child, loadingProgress) =>
                       loadingProgress == null
                           ? child
                           : const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                ),
-              ),
+                              child: CircularProgressIndicator(),
+                            )),
             ),
-            radius: widget.size.width * 0.1,
-            backgroundColor: Colors.transparent,
           ),
         ),
         SizedBox(
-          width: widget.size.width * 0.07,
+          width: widget.size.width * 0.05,
         ),
         Expanded(
             child: Container(
