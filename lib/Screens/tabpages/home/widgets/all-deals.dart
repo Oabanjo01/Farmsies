@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'deal_item.dart';
@@ -12,7 +13,7 @@ class AllDeals extends StatefulWidget {
   }) : super(key: key);
 
   final Size size;
-  final List allProducts;
+  final List<DocumentSnapshot>? allProducts;
 
   @override
   State<AllDeals> createState() => _AllDealsState();
@@ -21,13 +22,11 @@ class AllDeals extends StatefulWidget {
 class _AllDealsState extends State<AllDeals> {
   @override
   Widget build(BuildContext context) {
-    if (widget.allProducts.isEmpty) {
+    if (widget.allProducts!.isEmpty) {
       return SizedBox(
         height: widget.size.height * 0.3,
         child: const Center(
-          child: Text(
-            'No products available',
-          ),
+          child: CircularProgressIndicator.adaptive()
         ),
       );
     }
@@ -44,9 +43,9 @@ class _AllDealsState extends State<AllDeals> {
               crossAxisSpacing: widget.size.width * 0.05,
               mainAxisSpacing: widget.size.width * 0.02),
           itemBuilder: (BuildContext ctx, int index) {
-            return DealItem(product: widget.allProducts[index]);
+            return DealItem(product: widget.allProducts![index]);
           },
-          itemCount: widget.allProducts.length),
+          itemCount: widget.allProducts!.length),
     );
     // builder: (context, snapshot) {
     //   if (snapshot.connectionState == ConnectionState.waiting) {

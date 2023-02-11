@@ -21,8 +21,7 @@ class ItemModel with ChangeNotifier {
   final String title;
   final int price;
   bool isCarted;
-  final int id;
-  final Category category; // name of produce
+  final String id; // name of produce
   int amount; // amount uploader
   String description; // description of produce
   String imagepath; // image of produce
@@ -30,7 +29,6 @@ class ItemModel with ChangeNotifier {
 
   ItemModel({
     required this.id,
-    required this.category,
     this.isCarted = false,
     required this.price,
     required this.title,
@@ -46,7 +44,6 @@ class ItemModel with ChangeNotifier {
       isCarted: map['isCarted'],
       isfavourited: map['isfavourited'],
       amount: map['amount'],
-      category: map['category'],
       price: map['price'],
       title: map['title'],
       description: map['description'],
@@ -55,15 +52,16 @@ class ItemModel with ChangeNotifier {
   }
 
   factory ItemModel.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot)  {
     final data = snapshot.data();
     return ItemModel(
       id: data!['id'],
-      price: data['price'],
+      isCarted: data['isCarted'] as bool,
+      isfavourited: data['isFavourited'] as bool,
+      amount: data['amount'] as int,
+      price: data['price'] as int,
       title: data['title'],
       description: data['description'],
-      category: data['category'],
       imagepath: data['imagepath'],
     );
   }
@@ -79,14 +77,6 @@ class ItemModel with ChangeNotifier {
       'isCarted': isCarted,
     };
   }
-
-  Future<void> toggleCarted() async {
-    isCarted = !isCarted;
-    notifyListeners();
-  }
-
-  Future<void> toggleFavourite() async {
-    isfavourited = !isfavourited;
-    notifyListeners();
-  }
 }
+
+

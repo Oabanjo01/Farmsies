@@ -1,5 +1,6 @@
 import 'package:farmsies/Screens/all_food_categories.dart';
 import 'package:farmsies/Screens/order_complete.dart';
+import 'package:farmsies/Screens/search/screens/search_results.dart';
 import 'package:farmsies/Screens/settings.dart';
 import 'package:farmsies/Screens/product_detail/product_detail.dart';
 import 'package:farmsies/Widgets/onboarding.dart';
@@ -32,7 +33,9 @@ class RouteGenerator {
       case '/productDetail':
           return MaterialPageRoute(builder: (_) => ProductDetail(productDetail: args,));
       case '/orderComplete':
-          return MaterialPageRoute(builder: (_) => const OrderComplete());          
+          return MaterialPageRoute(builder: (_) => const OrderComplete());  
+      case '/searchResult':
+          return MaterialPageRoute(builder: (_) => SearchList(searchItem: args));          
       default: 
         return _errorRoute();
     }

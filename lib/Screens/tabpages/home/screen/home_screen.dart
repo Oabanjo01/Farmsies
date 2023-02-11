@@ -16,7 +16,6 @@ import '../widgets/food_categories.dart';
 import '../widgets/food_dex.dart';
 import '../widgets/head_board.dart';
 import '../widgets/homescreen_headers.dart';
-import '../widgets/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, this.userDetails}) : super(key: key);
@@ -31,49 +30,41 @@ class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final TextEditingController searchController = TextEditingController();
 
-  List _allProducts = [];
-  late Future<dynamic> productsLoaded;
+  List<DocumentSnapshot> allProducts = [];
+  final CollectionReference collection =
+      FirebaseFirestore.instance.collection('Products');
 
-  getAllProducts() async {
-    final data = await FirebaseFirestore.instance.collection('Products').get();
-    setState(() {
-      _allProducts = data.docs;
+  Stream<QuerySnapshot> get products {
+    return collection.snapshots();
+  }
+
+  void listentpProductChanges() {
+    FirebaseFirestore.instance.collection('Products').get().then((value) {
+      setState(() {});
+      allProducts = value.docs;
     });
-    return 'Completed';
+    // products.listen((QuerySnapshot snapshot) {
+    //   allProducts = snapshot.docs;
+    // });
   }
 
-  searchResultList() {
-    List showResults = [];
-    if (searchController.text != "") {
-    } else {
-      _allProducts = [];
-    }
-  }
+  // Future<void> getallProducts() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('Products')
+  //       .get()
+  //       .then((QuerySnapshot snapshot) {
+  //     for (var element in snapshot.docs) {
+  //       allProducts.add(element);
+  //       setState(() {});
+  //     }
+  //   });
+  // }
 
   @override
-  void didChangeDependencies() {
-    productsLoaded = getAllProducts();
-    super.didChangeDependencies();
+  void initState() {
+    listentpProductChanges();
+    super.initState();
   }
-
-  // final FocusNode _focusNode = FocusNode();
-
-  // @override
-  // void initState() {
-  //   _focusNode.addListener(_onFocusChanged);
-  //   super.initState();
-  // }
-
-  // void _onFocusChanged() {
-  //   print('I can hear you');
-  // }
-
-  // @override
-  // void dispose() {
-  //   _focusNode.removeListener(_onFocusChanged);
-  //   _focusNode.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -147,8 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                 sliver: SliverToBoxAdapter(
                   child: textField(
-                    products: _allProducts,
-                    // focusNode: _focusNode,
                     controller: searchController,
                     labelText: 'Search',
                     icon2: IconButton(
@@ -158,9 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         size: 30,
                       ),
                       onPressed: () {
-                        for (var a in imageLink) {
-                          
-                        }
+                        print(allProducts);
                       },
                     ),
                     icon: Icon(
@@ -234,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 sliver: SliverToBoxAdapter(
                   child: AllDeals(
-                    allProducts: _allProducts,
+                    allProducts: allProducts,
                     size: size,
                   ),
                 ),
@@ -268,7 +255,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //
+  // for (var doc in products) {
+  //   allProducts.add(
+  //     ItemModel(
+  //       description: doc['description'],
+  //       id: doc['id'],
+  //       imagepath: doc['imagepath'],
+  //       price: doc['price'],
+  //       title: doc['title'],
+  //       amount: doc['amount'],
+  //     ),
+  //   );
+  //   print(allProducts[2].title);
+  // }
 
   String? encodeQueryParameters(Map<String, String> parameters) {
     return parameters.entries

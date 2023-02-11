@@ -90,7 +90,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
           stream: FirebaseFirestore.instance
               .collection('Users')
               .doc(uid)
-              .collection('Favourites')
+              .collection('Favourites').where('isFavourited', isEqualTo: true )
               .snapshots(),
           builder: (context, snapshot) {
             return CustomScrollView(
