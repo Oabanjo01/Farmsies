@@ -3,28 +3,54 @@ import 'package:farmsies/Provider/item_provider..dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
-import 'package:progress_indicators/progress_indicators.dart';
 
 import '../../../../Constants/colors.dart';
 
 class DealItem extends StatefulWidget {
   const DealItem({Key? key, required this.product}) : super(key: key);
-  final QueryDocumentSnapshot product;
+  final DocumentSnapshot product;
 
   @override
   State<DealItem> createState() => _DealItemState();
 }
 
 class _DealItemState extends State<DealItem> {
-  bool exists = false;
+  bool toggleFavouriteMode = false;
+  bool toggleCartmode = false;
+
+  @override
+  void didChangeDependencies() {
+    getTogglemode();
+    super.didChangeDependencies();
+  }
+
+  void getTogglemode() async {
+    final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
+    final String uid = firebaseAuth.currentUser!.uid;
+    toggleFavouriteMode =
+        await Provider.of<Itemprovider>(context, listen: false).isToggledStatus(
+      widget.product,
+      widget.product.id,
+      uid,
+      'Favourites',
+    );
+    toggleCartmode =
+        await Provider.of<Itemprovider>(context, listen: false).isToggledStatus(
+      widget.product,
+      widget.product.id,
+      uid,
+      'Orders',
+    );
+    setState(() {
+      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final id = widget.product['id'];
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
-    final provider = Provider.of<Itemprovider>(context);
     return Column(children: [
       Flexible(
         fit: FlexFit.tight,
@@ -49,27 +75,8 @@ class _DealItemState extends State<DealItem> {
                           fit: BoxFit.fitHeight),
                     )),
               ),
-              // Image.network(
-              //   widget.product['imagepath'],
-              //   loadingBuilder: (context, child, loadingProgress) =>
-              //       loadingProgress == null
-              //           ? child
-              //           : Center(
-              //               child:
-              //                   CircularProgressIndicator(color: primaryColor),
-              //             ),
-              //   width: double.infinity,
-              //   height: size.height * 0.22,
-              //   errorBuilder: ((context, error, stackTrace) => Center(
-              //         child: Image.asset(
-              //             'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
-              //             fit: BoxFit.fitHeight),
-              //       )),
-              //   fit: BoxFit.cover,
-              // ),
               Material(
-                color: Colors.transparent,
-                child: InkWell(
+                color: Colors.transparent,child: InkWell(
                   onTap: () {
                     Navigator.of(context)
                         .pushNamed('/productDetail', arguments: widget.product);
@@ -90,78 +97,79 @@ class _DealItemState extends State<DealItem> {
         ),
       ),
       SizedBox(
-        height: size.height * 0.05,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('Users')
-                    .doc(uid)
-                    .collection('Orders')
-                    .doc(id)
-                    .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return GlowingProgressIndicator(
-                        child: const Icon(Icons.shopping_basket_outlined));
-                  } else if (snapshot.hasError) {
-                    return GlowingProgressIndicator(
-                        child: const Icon(Icons.shopping_basket_outlined));
-                  }
-                  return IconButton(
-                      icon: snapshot.data!.exists
-                          ? const Icon(Icons.shopping_basket)
-                          : const Icon(Icons.shopping_basket_outlined),
-                      onPressed: () async {
-                        print(snapshot.data!.exists);
-                        provider.toggler(
+          height: size.height * 0.05,
+          child: Consumer<Itemprovider>(
+            builder: (context, value, child) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  icon: toggleCartmode
+                      ? const Icon(Icons.shopping_basket)
+                      : const Icon(Icons.shopping_basket_outlined),
+                  onPressed: () async {
+                    await value.toggler(
+                      widget.product,
+                      uid,
+                      'Orders',
+                      1,
+                      context,
+                      'Added to cart',
+                      'Removed from cart',
+                    ).then((value) => 
+                    setState(() {
+                      toggleCartmode = !toggleCartmode;
+                    }));
+                  },
+                ),
+                IconButton(
+                  icon: toggleFavouriteMode
+                      ? const Icon(Icons.favorite_rounded)
+                      : const Icon(Icons.favorite_border_rounded),
+                  onPressed: () async {
+                    // print(snapshot.data!['isFavourited'].toString());
+                    await value
+                        .toggler(
                           widget.product,
                           uid,
-                          'Orders',
+                          'Favourites',
                           1,
                           context,
-                          'Added to cart',
-                          'Removed from cart',
-                        );
-                      });
-                }),
-            FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('Users')
-                    .doc(uid)
-                    .collection('Favourites')
-                    .doc(id)
-                    .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return GlowingProgressIndicator(
-                        child: const Icon(Icons.favorite_border_rounded));
-                  } else if (snapshot.hasError) {
-                    return GlowingProgressIndicator(
-                        child: const Icon(Icons.favorite_border_rounded));
-                  }
-                  return IconButton(
-                    icon: (snapshot.data != null) && snapshot.data!.exists
-                        ? const Icon(Icons.favorite_rounded)
-                        : const Icon(Icons.favorite_border_rounded),
-                    onPressed: () async {
-                      print(snapshot.data!.id.toString());
-                      provider.toggler(
-                        widget.product,
-                        uid,
-                        'Favourites',
-                        1,
-                        context,
-                        'Added to favourites',
-                        'Removed from favourites',
-                      );
-                    },
-                  );
-                }),
-          ],
-        ),
-      )
+                          'Added to favourites',
+                          'Removed from favourites',
+                        )
+                        .then((value) => setState(() {
+                              toggleFavouriteMode = !toggleFavouriteMode;
+                            }));
+                    // provider.toggler(
+                    //   widget.product,
+                    //   uid,
+                    //   'Favourites',
+                    //   1,
+                    //   context,
+                    //   'Added to favourites',
+                    //   'Removed from favourites',
+                    // );
+                  },
+                )
+              ],
+            ),
+          ))
     ]);
   }
 }
+
+
+// FutureBuilder<DocumentSnapshot>(
+//                     future: null
+//                     builder: (context, snapshot) {
+//                       if (snapshot.connectionState == ConnectionState.waiting) {
+//                         return GlowingProgressIndicator(
+//                             child: const Icon(Icons.favorite_border_rounded));
+//                       } else if (snapshot.hasError) {
+//                         return GlowingProgressIndicator(
+//                             child: const Icon(Icons.favorite_border_rounded));
+//                       } else if (!snapshot.data!.exists) {
+//                         GlowingProgressIndicator(
+//                             child: const Icon(Icons.favorite_border_rounded));
+//                       }
+//                       return 

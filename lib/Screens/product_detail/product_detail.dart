@@ -20,6 +20,35 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  bool toggleFavouriteMode = false;
+  bool toggleCartmode = false;
+  
+  void getTogglemode() async {
+    final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
+    final String uid = firebaseAuth.currentUser!.uid;
+    toggleFavouriteMode =
+        await Provider.of<Itemprovider>(context, listen: false).isToggledStatus(
+      widget.productDetail,
+      widget.productDetail.id,
+      uid,
+      'Favourites',
+    );
+    toggleCartmode =
+        await Provider.of<Itemprovider>(context, listen: false).isToggledStatus(
+      widget.productDetail,
+      widget.productDetail.id,
+      uid,
+      'Orders',
+    );
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getTogglemode();
+    super.initState();
+  }
+
   int itemAmount = 1;
   @override
   Widget build(BuildContext context) {
@@ -28,6 +57,7 @@ class _ProductDetailState extends State<ProductDetail> {
     final provider = Provider.of<Itemprovider>(context);
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
+
     final Map<String, dynamic> product = {
       'title': widget.productDetail['title'] as String,
       'price': widget.productDetail['price'] as int,
@@ -122,29 +152,31 @@ class _ProductDetailState extends State<ProductDetail> {
                                 .doc(id)
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              final data = snapshot.data;
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Icon(
-                                    Icons.favorite_border_rounded);
-                              } else if (snapshot.hasError) {
+                              if (snapshot.hasError) {
                                 return GlowingProgressIndicator(
                                     child: const Icon(
                                         Icons.favorite_border_rounded));
                               }
                               return IconButton(
-                                icon: data!.exists
+                                icon: toggleFavouriteMode
                                     ? const Icon(Icons.favorite_rounded)
                                     : const Icon(Icons.favorite_border_rounded),
                                 onPressed: () async {
-                                  provider.toggler(
-                                      widget.productDetail,
-                                      uid,
-                                      'Favourites',
-                                      1,
-                                      context,
-                                      'Added to your favourites',
-                                      'Removed from your favourites');
+                                  await provider
+                                      .toggler(
+                                          widget.productDetail,
+                                          uid,
+                                          'Favourites',
+                                          1,
+                                          context,
+                                          'Added to your favourites',
+                                          'Removed from your favourites')
+                                      .then((value) {
+                                    setState(() {
+                                      toggleFavouriteMode =
+                                          !toggleFavouriteMode;
+                                    });
+                                  });
                                 },
                               );
                             })
@@ -268,7 +300,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       size,
                       data!['amount'] >= 2
                           ? '${data['amount']} ${data['title']}\'s are availabe for now'
-                          : 'Only ${data['amount']} ${data['title']} is availabe for now. Check back later!🙂'),
+                          : 'Only ${data['amount']} ${data['title'].toString().toLowerCase()} is availabe for now. Check back later!🙂'),
                   spacing(size: size, height: 0.02),
                   divider(size),
                   spacing(size: size, height: 0.035),
