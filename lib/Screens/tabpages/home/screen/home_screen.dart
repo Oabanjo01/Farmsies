@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../Constants/colors.dart';
 import '../../../../Constants/samples.dart';
 import '../../../../Utils/other_methods.dart';
-import '../widgets/all-deals.dart';
+import '../widgets/all_deals.dart';
 import '../../../../Widgets/generalwidget/text_fields.dart';
 import '../widgets/food_categories.dart';
 import '../widgets/food_dex.dart';
@@ -28,7 +28,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
-  final TextEditingController searchController = TextEditingController();
 
   List<DocumentSnapshot> allProducts = [];
   final CollectionReference collection =
@@ -38,32 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return collection.snapshots();
   }
 
-  void listentpProductChanges() {
-    FirebaseFirestore.instance.collection('Products').get().then((value) {
+  void listentoProductChanges() async {
+    final snapshots = await collection.get();
+    if (snapshots.docs.isEmpty) {}
+    collection.get().then((value) {
       setState(() {});
       allProducts = value.docs;
     });
-    // products.listen((QuerySnapshot snapshot) {
-    //   allProducts = snapshot.docs;
-    // });
   }
 
-  // Future<void> getallProducts() async {
-  //   await FirebaseFirestore.instance
-  //       .collection('Products')
-  //       .get()
-  //       .then((QuerySnapshot snapshot) {
-  //     for (var element in snapshot.docs) {
-  //       allProducts.add(element);
-  //       setState(() {});
-  //     }
-  //   });
-  // }
-
   @override
-  void initState() {
-    listentpProductChanges();
-    super.initState();
+  void didChangeDependencies() {
+     listentoProductChanges();
+    super.didChangeDependencies();
   }
 
   @override
@@ -138,18 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                 sliver: SliverToBoxAdapter(
                   child: textField(
-                    controller: searchController,
                     labelText: 'Search',
-                    icon2: IconButton(
-                      icon: Icon(
-                        Icons.navigate_next_rounded,
-                        color: primaryColor,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        print(allProducts);
-                      },
-                    ),
                     icon: Icon(
                       Icons.search,
                       color: primaryColor,
@@ -247,7 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            backgroundColor: primaryColor.withOpacity(0.6),
+            elevation: 0,
+            tooltip: 'Add your product',
+
+            foregroundColor: secondaryColor,
+            onPressed: () {
+              Navigator.of(context).pushNamed('/addProduct');
+            },
             child: const Icon(Icons.add),
           ),
         ),
@@ -373,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
   onselected(BuildContext context, value) {
     switch (value) {
       case 0:
-        print(value);
+        Navigator.pushNamed(context, '/orderHistory');
         break;
       case 1:
         Navigator.pushNamed(context, '/settings');

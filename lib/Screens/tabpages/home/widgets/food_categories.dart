@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/samples.dart';
 import '../../../../Models/tips-model.dart';
@@ -41,7 +42,10 @@ class Foodcategories extends StatelessWidget {
                     width: size.width * 0.15,
                     height: size.height * 0.07,
                     child: Center(
-                      child: Image.asset(foodcategories[index]['food icon']),
+                      child: SvgPicture.asset(
+                                  foodcategories[index]['food icon'],
+                            alignment: Alignment.center,
+                          )
                     ),
                   ),
                   spacing(size: size, height: 0.01),

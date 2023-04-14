@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Models/item-model.dart';
 
-ListTile search_ListTile(ItemModel result, BuildContext context) {
+ListTile search_listTile(ItemModel result, BuildContext context) {
   final size = MediaQuery.of(context).size;
   return ListTile(
     title: Text(result.title),

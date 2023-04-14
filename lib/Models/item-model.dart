@@ -19,6 +19,7 @@ enum Category {
 
 class ItemModel with ChangeNotifier {
   final String title;
+  final String itemCreator;
   final int price;
   bool isCarted;
   final String id; // name of produce
@@ -26,8 +27,13 @@ class ItemModel with ChangeNotifier {
   String description; // description of produce
   String imagepath; // image of produce
   bool isfavourited; // favorited produce
+  String email;
+  DateTime date;
 
   ItemModel({
+    required this.itemCreator,
+    required this.date,
+    required this.email,
     required this.id,
     this.isCarted = false,
     required this.price,
@@ -40,6 +46,8 @@ class ItemModel with ChangeNotifier {
 
   factory ItemModel.fromMap(Map map) {
     return ItemModel(
+      email: map['email'],
+      date: map['date'],
       id: map['id'],
       isCarted: map['isCarted'],
       isfavourited: map['isfavourited'],
@@ -48,6 +56,7 @@ class ItemModel with ChangeNotifier {
       title: map['title'],
       description: map['description'],
       imagepath: map['imagepath'],
+      itemCreator: map['itemCreator'],
     );
   }
 
@@ -55,7 +64,10 @@ class ItemModel with ChangeNotifier {
       DocumentSnapshot<Map<String, dynamic>> snapshot)  {
     final data = snapshot.data();
     return ItemModel(
-      id: data!['id'],
+      email: data!['email'],
+      itemCreator: data['itemCreator'],
+      date: data['date'],
+      id: data['id'],
       isCarted: data['isCarted'] as bool,
       isfavourited: data['isFavourited'] as bool,
       amount: data['amount'] as int,
@@ -67,6 +79,7 @@ class ItemModel with ChangeNotifier {
   }
   Map<String, dynamic> toMap() {
     return {
+      'email': email,
       'id': id,
       'title': title,
       'price': price,

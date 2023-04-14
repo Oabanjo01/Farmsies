@@ -1,4 +1,5 @@
 import 'package:farmsies/Provider/auth_provider.dart';
+import 'package:farmsies/Provider/file_provider.dart';
 import 'package:farmsies/Provider/item_provider..dart';
 import 'package:farmsies/Utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _FarmsiesState extends State<Farmsies> {
       providers: [
         ChangeNotifierProvider.value(value: Authprovider()),
         ChangeNotifierProvider.value(value: Itemprovider()),
+        ChangeNotifierProvider.value(value: FileProvider()),
       ],
       child: GestureDetector(
         onTap: () {

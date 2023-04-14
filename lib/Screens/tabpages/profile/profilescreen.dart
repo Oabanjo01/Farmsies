@@ -1,8 +1,12 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:provider/provider.dart';
 
 import '../../../Constants/colors.dart';
+import '../../../Provider/auth_provider.dart';
+import '../../../Widgets/generalwidget/confirmation_dialog.dart';
+import '../../../Widgets/generalwidget/error_dialogue.dart';
 
 class Profilepage extends StatefulWidget {
   const Profilepage({Key? key}) : super(key: key);
@@ -24,14 +28,9 @@ class _ProfilepageState extends State<Profilepage> {
       'Leading Icon': Icons.shopping_basket_rounded
     },
     {
-      'Title': 'My Addresses',
-      'Subtitle': 'Manage your address',
-      'Leading Icon': Icons.edit_location_alt_rounded
-    },
-    {
       'Title': 'Preferences',
       'Subtitle': 'Customize our app',
-      'Leading Icon': Icons.settings
+      'Leading Icon': Icons.settings,
     },
     {
       'Title': 'Log out',
@@ -46,7 +45,8 @@ class _ProfilepageState extends State<Profilepage> {
     final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
     final url = await _firebaseStorage
         .ref()
-        .child('Files/DisplayPictures/${_firebaseAuth.currentUser!.uid}')
+        .child(
+            'Files/DisplayPictures/${_firebaseAuth.currentUser!.email}/${_firebaseAuth.currentUser!.uid}')
         .getDownloadURL();
     setState(() {
       imageUrl = url;
@@ -85,15 +85,18 @@ class _ProfilepageState extends State<Profilepage> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
           sliver: SliverToBoxAdapter(
             child: ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: size.width * 0.05),
               leading: CircleAvatar(
+                backgroundColor: Colors.transparent,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(size.width * 0.1),
                   child: SizedBox.expand(
                     child: Image.network(imageUrl,
-                    alignment: Alignment.topCenter,
-                    fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                        alignment: Alignment.topCenter,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
                               'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
                             ),
                         loadingBuilder: (context, child, loadingProgress) =>
@@ -130,19 +133,49 @@ class _ProfilepageState extends State<Profilepage> {
                 color:
                     theme == Brightness.light ? textColor2 : primaryDarkColor,
                 child: ListTile(
-                  leading: Icon(
-                    profileItems[index]['Leading Icon'],
-                    color: primaryColor,
-                  ),
-                  title: Text(profileItems[index]['Title']),
-                  subtitle: Text(
-                    profileItems[index]['Subtitle'],
-                  ),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: primaryColor,
-                  ),
-                ),
+                    onTap: () {
+                      if (index == 0) {
+                        Navigator.pushNamed(context, '/userAccount');
+                      } else if (index == 3) {
+                        confirm(
+                            context: context,
+                            title: 'Confirm Log out',
+                            content: 'Are you sure you want to log out?',
+                            onClicked1: () async {
+                              try {
+                                await Provider.of<Authprovider>(context,
+                                        listen: false)
+                                    .signOut()
+                                    .then((value) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/loginScreen',
+                                    (route) => false,
+                                  );
+                                });
+                              } catch (e) {
+                                errorDialogue(context, e.toString());
+                              }
+                            },
+                            onClicked2: () {
+                              Navigator.pop(context);
+                            },
+                            textbutton1: 'Yes',
+                            textbutton2: 'No');
+                      } else if (index == 1) {
+                        Navigator.pushNamed(context, '/orderHistory');
+                      } else if (index == 2) {
+                        Navigator.pushNamed(context, '/settings');
+                      } else {}
+                    },
+                    leading: Icon(
+                      profileItems[index]['Leading Icon'],
+                    ),
+                    title: Text(profileItems[index]['Title']),
+                    subtitle: Text(
+                      profileItems[index]['Subtitle'],
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded)),
               );
             }, childCount: profileItems.length),
           ),

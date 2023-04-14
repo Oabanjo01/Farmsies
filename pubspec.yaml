@@ -73,6 +73,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/Product-Categories/
     - assets/harvest.png
     - assets/undraw_order_confirmed_re_g0if.svg
     - assets/undraw_online_groceries_a02y.svg

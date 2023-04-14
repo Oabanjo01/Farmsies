@@ -107,14 +107,14 @@ class Authprovider with ChangeNotifier {
       File file = File(imagePath!);
       await _firebaseStorage
           .ref()
-          .child('Files/DisplayPictures/${user.uid}')
+          .child('Files/DisplayPictures/$email/${user.uid}')
           .putFile(file, metaData);
       final Map<String, dynamic> newuser = {
         'email': email,
         'username': username,
         'displayPicture': imagePath,
         'userID': user.uid,
-        'date': DateTime.now()
+        'date': DateTime.now().toIso8601String().split('T').first
       };
       await _users.doc(user.uid).collection('User').doc().set(newuser);
       notifyListeners();

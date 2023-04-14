@@ -5,23 +5,43 @@ import 'package:provider/provider.dart';
 import '../../../../Constants/colors.dart';
 import '../../../../Provider/item_provider..dart';
 
-class Gridview extends StatelessWidget {
+class Gridview extends StatefulWidget {
   const Gridview(
-      {Key? key, required this.snapshot, required this.size, required this.uid, required this.context2})
+      {Key? key,
+      required this.snapshot,
+      required this.size,
+      required this.uid,
+      required this.context2})
       : super(key: key);
 
   final AsyncSnapshot<QuerySnapshot> snapshot;
   final Size size;
   final String uid;
   final BuildContext context2;
+
+  @override
+  State<Gridview> createState() => _GridviewState();
+}
+
+class _GridviewState extends State<Gridview> {
+  late QueryDocumentSnapshot product;
+
+  void listentoProductChanges() {
+    FirebaseFirestore.instance.collection('Products').get().then((value) {
+      value.docs.where((element) => element['']);
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = MediaQuery.of(context).platformBrightness;
     final provider = Provider.of<Itemprovider>(context);
-    final List list = snapshot.data!.docs;
+    final List<QueryDocumentSnapshot> list = widget.snapshot.data!.docs;
     return SliverGrid(
         delegate: SliverChildBuilderDelegate((context, index) {
           final QueryDocumentSnapshot product = list[index];
+          print(product['isCarted']);
           return GridTile(
             child: ClipRRect(
               borderRadius: const BorderRadius.all(
@@ -63,7 +83,14 @@ class Gridview extends StatelessWidget {
                     color: primaryColor,
                   ),
                   onPressed: () async {
-                    provider.toggler(list[index], uid, 'Favourites', 1, context, 'Removed from favourites', 'Removed from favourites');
+                    provider.toggler(
+                        list[index],
+                        widget.uid,
+                        'Favourites',
+                        1,
+                        context,
+                        'Removed from favourites',
+                        'Removed from favourites');
                   },
                 ),
               ),
@@ -72,10 +99,10 @@ class Gridview extends StatelessWidget {
         }, childCount: list.length),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: size.height * 0.2,
+          mainAxisExtent: widget.size.height * 0.2,
           childAspectRatio: 2,
-          mainAxisSpacing: size.width * 0.1,
-          crossAxisSpacing: size.width * 0.05,
+          mainAxisSpacing: widget.size.width * 0.1,
+          crossAxisSpacing: widget.size.width * 0.05,
         ));
   }
 }

@@ -62,11 +62,14 @@ class Itemprovider with ChangeNotifier {
         _isToggled[id] = true;
         await documentReference.set({
           'id': id,
+          'itemCreator': data['itemCreator'],
           'title': data['title'],
           'price': data['price'],
           'amount': amount,
           'description': data['description'],
           'imagepath': data['imagepath'],
+          'date': DateTime.now().toIso8601String().split('T').first,
+          'email': firebaseAuth.currentUser!.email,
           'isFavourited': true,
           'isCarted': true,
         }).then((value) {

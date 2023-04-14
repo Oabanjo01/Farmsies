@@ -3,6 +3,7 @@ import 'package:farmsies/Provider/item_provider..dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 
 import '../../../../Constants/colors.dart';
 
@@ -41,13 +42,12 @@ class _DealItemState extends State<DealItem> {
       uid,
       'Orders',
     );
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    timeDilation = 2;
     final size = MediaQuery.of(context).size;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
@@ -58,26 +58,32 @@ class _DealItemState extends State<DealItem> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(children: [
             Stack(children: [
-              FadeInImage(
-                fadeOutDuration: const Duration(milliseconds: 200),
-                fadeOutCurve: Curves.easeOutBack,
-                placeholder: const AssetImage('assets/harvest.png'),
-                image: NetworkImage(
-                  widget.product['imagepath'],
-                ),
-                placeholderFit: BoxFit.scaleDown,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                imageErrorBuilder: ((context, error, stackTrace) => Center(
-                      child: Image.asset(
-                          'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
-                          fit: BoxFit.fitHeight),
-                    )),
+              Hero(
+                tag: widget.product.id,
+                child: FadeInImage(
+                    fadeOutDuration: const Duration(seconds: 2),
+                    fadeInCurve: Curves.bounceIn,
+                    fadeOutCurve: Curves.bounceOut,
+                    fadeInDuration: const Duration(seconds: 2),
+                    placeholder: const AssetImage('assets/harvest.png'),
+                    image: NetworkImage(
+                      widget.product['imagepath'],
+                    ),
+                    placeholderFit: BoxFit.scaleDown,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    imageErrorBuilder: ((context, error, stackTrace) => Center(
+                          child: Image.asset(
+                              'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
+                              fit: BoxFit.fitHeight),
+                        ))),
               ),
               Material(
-                color: Colors.transparent,child: InkWell(
+                color: Colors.transparent,
+                child: InkWell(
                   onTap: () {
+                    print( widget.product.id);
                     Navigator.of(context)
                         .pushNamed('/productDetail', arguments: widget.product);
                   },
@@ -107,18 +113,19 @@ class _DealItemState extends State<DealItem> {
                       ? const Icon(Icons.shopping_basket)
                       : const Icon(Icons.shopping_basket_outlined),
                   onPressed: () async {
-                    await value.toggler(
-                      widget.product,
-                      uid,
-                      'Orders',
-                      1,
-                      context,
-                      'Added to cart',
-                      'Removed from cart',
-                    ).then((value) => 
-                    setState(() {
-                      toggleCartmode = !toggleCartmode;
-                    }));
+                    await value
+                        .toggler(
+                          widget.product,
+                          uid,
+                          'Orders',
+                          1,
+                          context,
+                          'Added to cart',
+                          'Removed from cart',
+                        )
+                        .then((value) => setState(() {
+                              toggleCartmode = !toggleCartmode;
+                            }));
                   },
                 ),
                 IconButton(

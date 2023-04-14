@@ -44,10 +44,6 @@ class FileProvider with ChangeNotifier {
     }
   }
 
-  Future <void> displayPicture (storgeId, userId) async{
-    // final picture = result.items.where((element) => element.name == userId);
-  }
-
   Future<String> addDisplaypic(File displayPic, String uid) async {
     _status = true;
 

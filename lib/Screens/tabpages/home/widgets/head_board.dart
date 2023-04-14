@@ -1,5 +1,4 @@
 import 'package:basic_utils/basic_utils.dart';
-import 'package:farmsies/Constants/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class _HeadboardState extends State<Headboard> {
     final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
     final url = await _firebaseStorage
         .ref()
-        .child('Files/DisplayPictures/${widget.username!.uid}')
+        .child('Files/DisplayPictures/${widget.username!.email}/${widget.username!.uid}')
         .getDownloadURL();
     setState(() {
       imageUrl = url;

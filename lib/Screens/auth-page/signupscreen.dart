@@ -429,8 +429,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                           email: emailController.text,
                                           password: passwordContoller.text,
                                         );
-                                        setState(() {
-                                        });
                                         response != null
                                             ? Navigator.of(context).pop()
                                             : errorDialogue(context, 'Error');

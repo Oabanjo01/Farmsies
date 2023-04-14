@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {});
                             Navigator.of(
                               context,
-                            ).popAndPushNamed('/homepage',
+                            ).pushNamedAndRemoveUntil('/homepage', (route) => false,
                                 arguments: userCredential!.userMail);
                           } catch (e) {
                             setState(() {});

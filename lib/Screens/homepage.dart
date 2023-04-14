@@ -31,19 +31,13 @@ class _HomePageState extends State<HomePage> {
     const HomeScreen(),
     const FavouritesPage(),
     const Orderspage(),
-    Profilepage()
+    const Profilepage()
   ];
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   backgroundColor: secondaryColor,
-        //   leading: Icon(Icons.menu, color: primaryColor,),
-        //   title: Text('Home', style: TextStyle(color: primaryColor),),
-        // ),
         body: Stack(children: [
           _screens[initialBar]
         ],),

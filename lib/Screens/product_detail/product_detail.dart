@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Utils/other_methods.dart';
+import 'package:farmsies/Widgets/generalwidget/confirmation_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +24,7 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   bool toggleFavouriteMode = false;
   bool toggleCartmode = false;
-  
+
   void getTogglemode() async {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
@@ -70,12 +72,17 @@ class _ProductDetailState extends State<ProductDetail> {
       'isCarted': widget.productDetail['isCarted'] as bool,
     };
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_sharp),
+            onPressed: () => Navigator.pop(
+                  context,
+                )),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: primaryColor,
+        foregroundColor: Colors.white,
       ),
-      extendBodyBehindAppBar: true,
       body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>?>(
           stream: FirebaseFirestore.instance
               .collection('Products')
@@ -100,38 +107,61 @@ class _ProductDetailState extends State<ProductDetail> {
             } else {
               final data = snapshot.data!.data();
               return ListView(
+                padding: const EdgeInsets.only(top: 0),
                 children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * 0.08),
-                    height: size.height * 0.4,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
-                      ),
-                      child: FadeInImage(
-                        fadeOutDuration: const Duration(milliseconds: 200),
-                        fadeOutCurve: Curves.easeOutBack,
-                        placeholder: const AssetImage('assets/harvest.png'),
-                        image: NetworkImage(
-                          product['imagepath'],
+                  Stack(children: [
+                    SizedBox(
+                      height: size.height * 0.5,
+                      child: Hero(
+                        tag: id,
+                        child: FadeInImage(
+                          repeat: ImageRepeat.noRepeat,
+                          fadeOutDuration: const Duration(seconds: 5),
+                          fadeOutCurve: Curves.bounceOut,
+                          fadeInCurve: Curves.bounceIn,
+                          fadeInDuration: const Duration(seconds: 5),
+                          placeholder: const AssetImage('assets/harvest.png'),
+                          image: NetworkImage(
+                            product['imagepath'],
+                          ),
+                          placeholderFit: BoxFit.contain,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          imageErrorBuilder: ((context, error, stackTrace) =>
+                              Center(
+                                child: Image.asset(
+                                    'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
+                                    fit: BoxFit.fitHeight),
+                              )),
                         ),
-                        placeholderFit: BoxFit.scaleDown,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        imageErrorBuilder: ((context, error, stackTrace) =>
-                            Center(
-                              child: Image.asset(
-                                  'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
-                                  fit: BoxFit.fitHeight),
-                            )),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      right: size.width * 0.02,
+                      bottom: size.height * 0.02,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: size.width * 0.01),
+                        alignment: Alignment.center,
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            firebaseAuth.currentUser!.email ==
+                                    widget.productDetail['email']
+                                ? 'Your Shop'
+                                : '${widget.productDetail['itemCreator'].toString()}\'s Shop',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                        height: size.height * 0.1,
+                        width: size.height * 0.07,
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.white),
+                      ),
+                    )
+                  ]),
                   spacing(size: size, height: 0.01),
                   Padding(
                     padding:
@@ -341,43 +371,167 @@ class _ProductDetailState extends State<ProductDetail> {
                                   const SizedBox(
                                     child: Icon(Icons.shopping_cart_outlined),
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        left: size.width * 0.05),
-                                    width: size.width * 0.5,
-                                    height: size.height * 0.06,
-                                    child: ElevatedButton(
-                                      child: itemAmount == 0 ||
-                                              itemAmount > data['amount']
-                                          ? const Text('No item in cart')
-                                          : const Text('Add to cart'),
-                                      style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        )),
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                primaryColor),
-                                      ),
-                                      onPressed: itemAmount == 0 ||
-                                              itemAmount > data['amount']
-                                          ? null
-                                          : () async {
-                                              provider.toggler(
-                                                widget.productDetail,
-                                                uid,
-                                                'Orders',
-                                                itemAmount,
-                                                context,
-                                                'Added to your cart',
-                                                'Removed from your cart',
-                                              );
+                                  firebaseAuth.currentUser!.email ==
+                                          widget.productDetail['email']
+                                      ? Container(
+                                          margin: EdgeInsets.only(
+                                              left: size.width * 0.05),
+                                          width: size.width * 0.5,
+                                          height: size.height * 0.06,
+                                          child: ElevatedButton(
+                                            style: ButtonStyle(
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              )),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      primaryColor),
+                                            ),
+                                            onPressed: () {
+                                              final SnackBar showSnackBar =
+                                                  snackBar(
+                                                      'This is your item, long press for more actions',
+                                                      1);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(showSnackBar);
                                             },
-                                    ),
-                                  ),
+                                            onLongPress: () async {
+                                              try {
+                                                confirm(
+                                                  title: 'This is your product',
+                                                  content:
+                                                      'What would you like to do to this product?',
+                                                  onClicked1: () async {
+                                                    DocumentReference
+                                                        documentReference =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'Products')
+                                                            .doc(id);
+                                                    Navigator.pop(context);
+                                                    try {
+                                                      await confirm(
+                                                        title:
+                                                            'Delete your Product?',
+                                                        content:
+                                                            'Are you sure you want to delete your product',
+                                                        onClicked1: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        onClicked2: () async {
+                                                          Navigator
+                                                              .pushNamedAndRemoveUntil(
+                                                                  context,
+                                                                  '/homepage',
+                                                                  (route) => false,);
+                                                          await documentReference
+                                                              .delete()
+                                                              .then(
+                                                                  (value) async {
+                                                            final productImageReference =
+                                                                FirebaseStorage
+                                                                    .instance
+                                                                    .refFromURL(
+                                                                        widget.productDetail[
+                                                                            'imagepath']);
+                                                            await productImageReference
+                                                                .delete()
+                                                                .then((value) =>
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                      snackBar(
+                                                                          'Your item has been deleted successfully',
+                                                                          1),
+                                                                    ));
+                                                          });
+                                                        },
+                                                        textbutton1: 'No',
+                                                        textbutton2: 'Yes',
+                                                        context: context,
+                                                      );
+                                                    } catch (e) {
+                                                      print('Error');
+                                                    }
+                                                  },
+                                                  onClicked2: () async {
+                                                    itemAmount == 0 ||
+                                                            itemAmount >
+                                                                data['amount']
+                                                        ? ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(snackBar(
+                                                                'You need to have more than 0 items in your cart',
+                                                                1))
+                                                        : provider
+                                                            .toggler(
+                                                              widget
+                                                                  .productDetail,
+                                                              uid,
+                                                              'Orders',
+                                                              itemAmount,
+                                                              context,
+                                                              'Added to your item to cart',
+                                                              'Removed from your item from cart',
+                                                            )
+                                                            .then((value) =>
+                                                                Navigator.pop(
+                                                                    context));
+                                                  },
+                                                  textbutton1: 'Delete',
+                                                  textbutton2:
+                                                      'Add your item to your cart',
+                                                  context: context,
+                                                );
+                                              } catch (e) {
+                                                print('error');
+                                              }
+                                            },
+                                            child: const Text(
+                                                'This is your product'),
+                                          ),
+                                        )
+                                      : Container(
+                                          margin: EdgeInsets.only(
+                                              left: size.width * 0.05),
+                                          width: size.width * 0.5,
+                                          height: size.height * 0.06,
+                                          child: ElevatedButton(
+                                            child: itemAmount == 0 ||
+                                                    itemAmount > data['amount']
+                                                ? const Text('No item in cart')
+                                                : const Text('Add to cart'),
+                                            style: ButtonStyle(
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              )),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      primaryColor),
+                                            ),
+                                            onPressed: itemAmount == 0 ||
+                                                    itemAmount > data['amount']
+                                                ? null
+                                                : () async {
+                                                    provider.toggler(
+                                                      widget.productDetail,
+                                                      uid,
+                                                      'Orders',
+                                                      itemAmount,
+                                                      context,
+                                                      'Added to your cart',
+                                                      'Removed from your cart',
+                                                    );
+                                                  },
+                                          ),
+                                        ),
                                 ],
                               );
                             } else {
@@ -447,7 +601,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.075),
       child: Text(
-        details,
+        details.toLowerCase(),
         textAlign: TextAlign.left,
         style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
       ),

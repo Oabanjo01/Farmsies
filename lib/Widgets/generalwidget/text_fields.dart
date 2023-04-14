@@ -11,63 +11,50 @@ class textField extends StatelessWidget {
     Key? key,
     required this.color,
     required this.baseColor,
-    required this.controller,
     required this.labelText,
-    this.hideText = false,
     required this.icon,
-    required this.icon2,
-    // required this.focusNode
-    // required this.textFieldFunction
   }) : super(key: key);
 
   final String labelText;
-  // final FocusNode focusNode;
-  final TextEditingController controller;
-  final bool hideText;
   final Icon icon;
   final Color color;
   final Color baseColor;
-  final Widget icon2;
   // final Function textFieldFunction;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      
       onTap: () {
-        // showSearch(
-        //     context: context,
-        //     delegate: CustomSearchBar(searchProducts: products));
+        showSearch(context: context, delegate: CustomSearchBar());
       },
-      // focusNode: focusNode,
       readOnly: true,
-      // validator: textFieldFunction(),
       cursorColor: primaryColor.withOpacity(0.7),
-      controller: controller,
-      obscureText: hideText,
       maxLines: 1,
       decoration: InputDecoration(
-          // contentPadding: EdgeInsets.only(left: 10, right: 10),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
-          filled: true,
-          fillColor: baseColor,
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: icon,
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        filled: true,
+        fillColor: baseColor,
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: icon,
+        ),
+        focusColor: color,
+        focusedBorder: border(),
+        enabledBorder: border(),
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: color.withOpacity(
+            0.6,
           ),
-          suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: icon2,
-          ),
-          focusColor: color,
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: color, width: 0.2)),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide:
-                  BorderSide(color: color.withOpacity(0.5), width: 0.2)),
-          labelText: labelText,
-          labelStyle: TextStyle(color: color.withOpacity(0.6))),
+        ),
+      ),
     );
+  }
+
+  OutlineInputBorder border() {
+    return OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: color.withOpacity(0.5), width: 0.2));
   }
 }

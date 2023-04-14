@@ -20,11 +20,11 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
   @override
   void initState() {
-    getTogglemode();
+    _getTogglemode();
     super.initState();
   }
 
-  getTogglemode() async {
+  _getTogglemode() async {
     final bool? toggleMode = await method.getCurrentTogglemode();
     setState(
       () {
@@ -86,12 +86,12 @@ class _FavouritesPageState extends State<FavouritesPage> {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
+      body: FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance
               .collection('Users')
               .doc(uid)
-              .collection('Favourites').where('isFavourited', isEqualTo: true )
-              .snapshots(),
+              .collection('Favourites').where('isFavourited', isEqualTo: true)
+              .get(),
           builder: (context, snapshot) {
             return CustomScrollView(
               slivers: [

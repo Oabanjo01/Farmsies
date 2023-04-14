@@ -23,11 +23,11 @@ class _AllDealsState extends State<AllDeals> {
   @override
   Widget build(BuildContext context) {
     if (widget.allProducts!.isEmpty) {
-      return SizedBox(
+      return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: widget.size.width * 0.15),
         height: widget.size.height * 0.3,
-        child: const Center(
-          child: CircularProgressIndicator.adaptive()
-        ),
+        child: const Text('No Products yet, click on the floating button to add yours champ!', textAlign: TextAlign.center),
       );
     }
     return SizedBox(
