@@ -50,6 +50,11 @@ class _FarmsiesState extends State<Farmsies> {
           onGenerateRoute: RouteGenerator.generateRoute,
           themeMode: ThemeMode.system,
           theme: ThemeData(
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: primaryColor,
+              foregroundColor: screenColor, 
+              splashColor: screenColor
+            ),
               iconTheme: IconThemeData(
                 color: primaryColor,
               ),
@@ -62,6 +67,12 @@ class _FarmsiesState extends State<Farmsies> {
                     brightness: Brightness.light,
                   )),
           darkTheme: ThemeData(
+            backgroundColor: primaryDarkColor,
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: primaryDarkColor,
+              foregroundColor: primaryColor, 
+              splashColor: primaryColor
+            ),
               iconTheme: IconThemeData(
                 color: primaryColor,
               ),
@@ -69,6 +80,7 @@ class _FarmsiesState extends State<Farmsies> {
                   systemOverlayStyle: SystemUiOverlayStyle.light,
                   foregroundColor: primaryColor),
               colorScheme: ThemeData().colorScheme.copyWith(
+
                   primary: primaryDarkColor,
                   secondary: primaryDarkColor.withOpacity(0.5),
                   brightness: Brightness.dark)),
