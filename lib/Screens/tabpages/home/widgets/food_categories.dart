@@ -32,13 +32,11 @@ class Foodcategories extends StatelessWidget {
           itemBuilder: (BuildContext ctx, index) {
             return InkWell(
               onTap: () {
-                print(foodcategories.length);
+                Navigator.of(context).pushNamed('/foodCategory', arguments: index + 1);
               },
               child: Column(
                 children: [
                   SizedBox(
-                    // margin: EdgeInsets.only(left: size.width * 0.04),
-                    // height: size.width * 0.1,
                     width: size.width * 0.15,
                     height: size.height * 0.07,
                     child: Center(

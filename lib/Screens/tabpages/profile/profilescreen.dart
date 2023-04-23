@@ -63,8 +63,8 @@ class _ProfilepageState extends State<Profilepage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = MediaQuery.of(context).platformBrightness;
-    final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
-    final auth.User firebaseUser = _firebaseAuth.currentUser!;
+    final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
+    final auth.User firebaseUser = firebaseAuth.currentUser!;
     return Scaffold(
         body: CustomScrollView(
       slivers: [
@@ -114,7 +114,8 @@ class _ProfilepageState extends State<Profilepage> {
               subtitle: Text(
                 firebaseUser.email.toString().toLowerCase(),
               ),
-              trailing: Icon(Icons.edit, color: primaryColor),
+              trailing: IconButton(icon: Icon(Icons.edit, color: primaryColor), onPressed: () => 
+                        Navigator.pushNamed(context, '/userAccount'),),
               tileColor:
                   theme == Brightness.light ? textColor2 : primaryDarkColor,
               shape: RoundedRectangleBorder(

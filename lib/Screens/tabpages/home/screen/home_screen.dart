@@ -28,7 +28,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
-
   List<DocumentSnapshot> allProducts = [];
   final CollectionReference collection =
       FirebaseFirestore.instance.collection('Products');
@@ -56,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final firebaseUser = _firebaseAuth.currentUser!;
+    final theme = MediaQuery.of(context).platformBrightness;
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     text2: 'See All',
                     navigate: () => () {
                           return Navigator.of(context)
-                              .pushNamed('/foodCategory');
+                              .pushNamed('/foodCategory', arguments: 0);
                         }),
               ),
               SliverPadding(
@@ -222,11 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            backgroundColor: primaryColor.withOpacity(0.6),
             elevation: 0,
             tooltip: 'Add your product',
-
-            foregroundColor: secondaryColor,
             onPressed: () {
               Navigator.of(context).pushNamed('/addProduct');
             },
@@ -236,20 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // for (var doc in products) {
-  //   allProducts.add(
-  //     ItemModel(
-  //       description: doc['description'],
-  //       id: doc['id'],
-  //       imagepath: doc['imagepath'],
-  //       price: doc['price'],
-  //       title: doc['title'],
-  //       amount: doc['amount'],
-  //     ),
-  //   );
-  //   print(allProducts[2].title);
-  // }
 
   String? encodeQueryParameters(Map<String, String> parameters) {
     return parameters.entries
@@ -361,10 +344,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushNamed(context, '/settings');
         break;
       case 2:
-        print(value);
+        Navigator.pushNamed(context, '/aboutApp');
         break;
       case 3:
-        print(value);
+        Navigator.pushNamed(context, '/aboutDeveloper');
         break;
       default:
     }

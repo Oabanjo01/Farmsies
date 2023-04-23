@@ -116,7 +116,7 @@ class Authprovider with ChangeNotifier {
         'userID': user.uid,
         'date': DateTime.now().toIso8601String().split('T').first
       };
-      await _users.doc(user.uid).collection('User').doc().set(newuser);
+      await _users.doc(user.uid).collection('User').doc(email).set(newuser);
       notifyListeners();
       _isLoading = false;
       return _userFromFirebase(credential.user);

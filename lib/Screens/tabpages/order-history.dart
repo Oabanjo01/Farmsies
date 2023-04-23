@@ -14,7 +14,6 @@ class OrderHistory extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: const Text('Order History'),
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: primaryColor,

@@ -54,6 +54,8 @@ class _ProductDetailState extends State<ProductDetail> {
   int itemAmount = 1;
   @override
   Widget build(BuildContext context) {
+    
+    final theme = MediaQuery.of(context).platformBrightness;
     final id = widget.productDetail.id;
     final size = MediaQuery.of(context).size;
     final provider = Provider.of<Itemprovider>(context);
@@ -75,7 +77,7 @@ class _ProductDetailState extends State<ProductDetail> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_sharp),
+            icon: Icon(Icons.arrow_back, color: primaryColor),
             onPressed: () => Navigator.pop(
                   context,
                 )),
@@ -116,10 +118,10 @@ class _ProductDetailState extends State<ProductDetail> {
                         tag: id,
                         child: FadeInImage(
                           repeat: ImageRepeat.noRepeat,
-                          fadeOutDuration: const Duration(seconds: 5),
+                          fadeOutDuration: const Duration(seconds: 1),
                           fadeOutCurve: Curves.bounceOut,
                           fadeInCurve: Curves.bounceIn,
-                          fadeInDuration: const Duration(seconds: 5),
+                          fadeInDuration: const Duration(seconds: 1),
                           placeholder: const AssetImage('assets/harvest.png'),
                           image: NetworkImage(
                             product['imagepath'],
@@ -152,13 +154,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ? 'Your Shop'
                                 : '${widget.productDetail['itemCreator'].toString()}\'s Shop',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontWeight: FontWeight.w800),
+                            style: TextStyle(color: theme == Brightness.dark ? textColor : Colors.black, fontWeight: FontWeight.w800),
                           ),
                         ),
                         height: size.height * 0.1,
                         width: size.height * 0.07,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.white),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: theme == Brightness.dark ? primaryDarkColor.withOpacity(0.5) : textColor),
                       ),
                     )
                   ]),
@@ -258,13 +260,15 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                             Container(
                               padding: const EdgeInsets.all(10),
-                              color: secondaryColor,
+                              decoration: BoxDecoration(
+                                color: theme == Brightness.dark ? Colors.black.withOpacity(0.3) : secondaryColor,
+                                borderRadius: const BorderRadius.all(Radius.circular(10))
+                              ),
                               child: Text(
                                 itemAmount <= 0 ? '0' : '$itemAmount',
                                 style: TextStyle(
                                     fontSize: 17,
-                                    color: MediaQuery.of(context)
-                                                .platformBrightness ==
+                                    color: theme ==
                                             Brightness.dark
                                         ? primaryColor
                                         : Colors.black),

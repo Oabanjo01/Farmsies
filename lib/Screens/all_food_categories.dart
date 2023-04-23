@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:farmsies/Screens/tabpages/favourites/widgets/grid_view.dart';
-import 'package:farmsies/Screens/tabpages/favourites/widgets/list_view.dart';
 import 'package:farmsies/Screens/tabpages/home/widgets/deal_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +7,9 @@ import '../Constants/colors.dart';
 import '../Constants/samples.dart';
 
 class AllFoodCategories extends StatefulWidget {
-  const AllFoodCategories({Key? key}) : super(key: key);
+  const AllFoodCategories({Key? key, this.initialTabPage = 0}) : super(key: key);
+
+  final int initialTabPage;
 
   @override
   State<AllFoodCategories> createState() => _AllFoodCategoriesState();
@@ -22,7 +22,11 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 15, vsync: this);
+    _tabController = TabController(
+      length: 15,
+      vsync: this,
+      initialIndex: widget.initialTabPage,
+    );
     _tabController.addListener(_handleTabSelection);
   }
 
@@ -52,7 +56,6 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
       child: Scaffold(
         body: CustomScrollView(slivers: [
           SliverAppBar(
-            
             title: const Text('Categories'),
             elevation: 0,
             backgroundColor: Colors.transparent,

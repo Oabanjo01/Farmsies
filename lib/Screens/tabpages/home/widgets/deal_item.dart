@@ -47,7 +47,7 @@ class _DealItemState extends State<DealItem> {
 
   @override
   Widget build(BuildContext context) {
-    timeDilation = 2;
+    timeDilation = 1;
     final size = MediaQuery.of(context).size;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
@@ -62,8 +62,8 @@ class _DealItemState extends State<DealItem> {
                 tag: widget.product.id,
                 child: FadeInImage(
                     fadeOutDuration: const Duration(seconds: 2),
-                    fadeInCurve: Curves.bounceIn,
-                    fadeOutCurve: Curves.bounceOut,
+                    fadeInCurve: Curves.elasticIn,
+                    fadeOutCurve: Curves.elasticInOut,
                     fadeInDuration: const Duration(seconds: 2),
                     placeholder: const AssetImage('assets/harvest.png'),
                     image: NetworkImage(

@@ -1,6 +1,8 @@
+
+import '../Screens/about_me/about_app.dart';
+import '../Screens/about_me/about_developer.dart';
 import 'package:farmsies/Screens/all_food_categories.dart';
 import 'package:farmsies/Screens/order_complete.dart';
-import 'package:farmsies/Screens/search/screens/search_results.dart';
 import 'package:farmsies/Screens/settings.dart';
 import 'package:farmsies/Screens/product_detail/product_detail.dart';
 import 'package:farmsies/Screens/tabpages/order-history.dart';
@@ -36,7 +38,7 @@ class RouteGenerator {
       case '/wrapper':
         return MaterialPageRoute(builder: (_) => const Wrapper());
       case '/foodCategory':
-        return MaterialPageRoute(builder: (_) => const AllFoodCategories());
+        return MaterialPageRoute(builder: (_) => AllFoodCategories(initialTabPage: args,));
       case '/productDetail':
         return MaterialPageRoute(
             builder: (_) => ProductDetail(
@@ -48,6 +50,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const OrderHistory());
       case '/userAccount':
         return MaterialPageRoute(builder: (_) => const UserAccount());
+      case '/aboutApp':
+        return MaterialPageRoute(builder: (_) => const AboutApp());
+      case '/aboutDeveloper':
+        return MaterialPageRoute(builder: (_) => const AboutDeveloper());
       default:
         return _errorRoute();
     }

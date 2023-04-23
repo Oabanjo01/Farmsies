@@ -18,8 +18,8 @@ class DescriptionCard extends StatelessWidget {
       child: Container(
         child: Container(
         padding: EdgeInsets.symmetric(horizontal: size.width * 0.07, vertical: size.height* 0.08),
-          alignment: Alignment.topLeft,
-          child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 17),),
+          alignment: Alignment.bottomLeft,
+          child: Text(text, style: TextStyle(color: primaryColor, fontSize: 20),),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(size.width * 0.05),
             gradient: LinearGradient(
@@ -32,7 +32,7 @@ class DescriptionCard extends StatelessWidget {
             ),
           ),
         ),
-        margin: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+        margin: EdgeInsets.symmetric(horizontal: size.width * 0.05, vertical: size.height * 0.02),
         height: size.height * 0.3,
         decoration: const BoxDecoration(
           image:  DecorationImage(
