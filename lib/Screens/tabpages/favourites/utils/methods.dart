@@ -10,7 +10,6 @@ class Methods {
 
   Future <bool> getCurrentTogglemode () async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    // print(preferences.getBool(valueofSharedPrferences));
     final bool toggleMode = preferences.getBool(valueofSharedPrferences) ?? false;
     return toggleMode;
   }

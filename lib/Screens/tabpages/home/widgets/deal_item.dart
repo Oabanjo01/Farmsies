@@ -83,7 +83,6 @@ class _DealItemState extends State<DealItem> {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-                    print( widget.product.id);
                     Navigator.of(context)
                         .pushNamed('/productDetail', arguments: widget.product);
                   },
@@ -94,7 +93,7 @@ class _DealItemState extends State<DealItem> {
             Positioned(
               left: 10,
               child: Chip(
-                label: Text(widget.product['title']),
+                label: Text('₦${widget.product['price'].toString()}'),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
               ),
@@ -133,7 +132,6 @@ class _DealItemState extends State<DealItem> {
                       ? const Icon(Icons.favorite_rounded)
                       : const Icon(Icons.favorite_border_rounded),
                   onPressed: () async {
-                    // print(snapshot.data!['isFavourited'].toString());
                     await value
                         .toggler(
                           widget.product,

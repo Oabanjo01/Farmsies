@@ -93,7 +93,7 @@ class Authprovider with ChangeNotifier {
       String? imagePath,
       required username}) async {
     _isLoading = true;
-    CollectionReference _users = _firestore.collection('Users');
+    CollectionReference users = _firestore.collection('Users');
     final SettableMetadata metaData =
         SettableMetadata(customMetadata: {'Date': DateTime.now().toString()});
     try {
@@ -116,7 +116,7 @@ class Authprovider with ChangeNotifier {
         'userID': user.uid,
         'date': DateTime.now().toIso8601String().split('T').first
       };
-      await _users.doc(user.uid).collection('User').doc(email).set(newuser);
+      await users.doc(user.uid).collection('User').doc(email).set(newuser);
       notifyListeners();
       _isLoading = false;
       return _userFromFirebase(credential.user);

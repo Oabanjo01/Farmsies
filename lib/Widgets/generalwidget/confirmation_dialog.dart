@@ -8,8 +8,8 @@ confirm ({required String title, required String content, required Function() on
       title: Text(title),
       content: Text(content),
       actions: [
-        TextButton(child: Text(textbutton1), onPressed: onClicked1,),
-        TextButton(child: Text(textbutton2), onPressed: onClicked2,)
+        TextButton(onPressed: onClicked1,child: Text(textbutton1),),
+        TextButton(onPressed: onClicked2,child: Text(textbutton2),)
       ],
     );
   },);

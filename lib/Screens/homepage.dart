@@ -42,12 +42,10 @@ class _HomePageState extends State<HomePage> {
           _screens[initialBar]
         ],),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white24,
           showUnselectedLabels: true,
           selectedFontSize: 16,
           unselectedFontSize: 10,
-          type: BottomNavigationBarType.shifting,
-          elevation: 1,
+          type: BottomNavigationBarType.fixed,
           currentIndex: initialBar,
           onTap: (index) => setState(() => initialBar = index), 
           unselectedItemColor: primaryColor.withOpacity(0.7),

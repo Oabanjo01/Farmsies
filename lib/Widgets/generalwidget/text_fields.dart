@@ -1,6 +1,5 @@
 // ignore_for_file: camel_case_types
 
-import 'package:farmsies/Models/item-model.dart';
 import 'package:flutter/material.dart';
 
 import '../../Constants/colors.dart';

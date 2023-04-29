@@ -146,6 +146,10 @@ class _ProductDetailState extends State<ProductDetail> {
                         padding:
                             EdgeInsets.symmetric(horizontal: size.width * 0.01),
                         alignment: Alignment.center,
+                        height: size.height * 0.1,
+                        width: size.height * 0.07,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: theme == Brightness.dark ? primaryDarkColor.withOpacity(0.5) : textColor),
                         child: FittedBox(
                           fit: BoxFit.fitWidth,
                           child: Text(
@@ -154,13 +158,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ? 'Your Shop'
                                 : '${widget.productDetail['itemCreator'].toString()}\'s Shop',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: theme == Brightness.dark ? textColor : Colors.black, fontWeight: FontWeight.w800),
+                            style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textColor, fontWeight: FontWeight.w800),
                           ),
                         ),
-                        height: size.height * 0.1,
-                        width: size.height * 0.07,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: theme == Brightness.dark ? primaryDarkColor.withOpacity(0.5) : textColor),
                       ),
                     )
                   ]),
@@ -221,8 +221,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     children: [
                       Text(
                         itemAmount <= 0
-                            ? '₦ 0'
-                            : 'N${product['price'] * itemAmount}',
+                            ? '₦0'
+                            : '₦${product['price'] * itemAmount}',
                         style: TextStyle(fontSize: 17, color: primaryColor),
                       ),
                       Padding(
@@ -459,7 +459,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                                         context: context,
                                                       );
                                                     } catch (e) {
-                                                      print('Error');
                                                     }
                                                   },
                                                   onClicked2: () async {
@@ -492,7 +491,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                   context: context,
                                                 );
                                               } catch (e) {
-                                                print('error');
+
                                               }
                                             },
                                             child: const Text(
@@ -505,10 +504,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                           width: size.width * 0.5,
                                           height: size.height * 0.06,
                                           child: ElevatedButton(
-                                            child: itemAmount == 0 ||
-                                                    itemAmount > data['amount']
-                                                ? const Text('No item in cart')
-                                                : const Text('Add to cart'),
                                             style: ButtonStyle(
                                               shape: MaterialStateProperty.all<
                                                       RoundedRectangleBorder>(
@@ -534,6 +529,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       'Removed from your cart',
                                                     );
                                                   },
+                                            child: itemAmount == 0 ||
+                                                    itemAmount > data['amount']
+                                                ? const Text('No item in cart')
+                                                : const Text('Add to cart'),
                                           ),
                                         ),
                                 ],
@@ -555,9 +554,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                     width: size.width * 0.5,
                                     height: size.height * 0.06,
                                     child: ElevatedButton(
-                                      child: data2.exists
-                                          ? const Text('Remove from cart')
-                                          : const Text('Add to cart'),
                                       style: ButtonStyle(
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
@@ -583,6 +579,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 'Removed from your cart',
                                               );
                                             },
+                                      child: data2.exists
+                                          ? const Text('Remove from cart')
+                                          : const Text('Add to cart'),
                                     ),
                                   ),
                                 ],

@@ -1,6 +1,4 @@
-import 'package:farmsies/Constants/colors.dart';
 import 'package:farmsies/Models/item-model.dart';
-import 'package:farmsies/Screens/search/widget/list_tile.dart';
 import 'package:flutter/material.dart';
 
 class SearchList extends StatelessWidget {

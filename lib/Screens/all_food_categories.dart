@@ -5,9 +5,11 @@ import 'package:flutter_svg/svg.dart';
 
 import '../Constants/colors.dart';
 import '../Constants/samples.dart';
+import '../Utils/snack_bar.dart';
 
 class AllFoodCategories extends StatefulWidget {
-  const AllFoodCategories({Key? key, this.initialTabPage = 0}) : super(key: key);
+  const AllFoodCategories({Key? key, this.initialTabPage = 0})
+      : super(key: key);
 
   final int initialTabPage;
 
@@ -65,7 +67,6 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
               isScrollable: true,
               indicatorColor: primaryColor,
               labelColor: primaryColor,
-              unselectedLabelColor: Colors.black,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: <Widget>[
                 _tabs("All", _tabController, 0),
@@ -98,89 +99,105 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
             ),
             sliver: SliverFillRemaining(
               child: TabBarView(controller: _tabController, children: <Widget>[
-                GridView.builder(
-                  shrinkWrap: true,
-                  primary: false,
-                  physics: const ScrollPhysics(
-                    parent: NeverScrollableScrollPhysics(),
-                  ),
-                  itemCount: foodcategories.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: size.width * 0.03,
-                      mainAxisSpacing: size.width * 0.03,
-                      childAspectRatio: 0.8),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        _tabController.animateTo(index + 1);
-                      },
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                size.width * 0.05,
-                              ),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: primaryColor,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    Colors.grey.shade300,
-                                    primaryColor.withOpacity(0.08),
-                                  ],
-                                ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                              ),
-                              child: SvgPicture.asset(
-                                foodcategories[index]['food icon'],
-                                alignment: Alignment.center,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            width: size.width * 0.25,
-                            child: Chip(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              label: Text(
-                                foodcategories[index]['food name'],
-                                overflow: TextOverflow.fade,
-                              ),
-                              avatar: SvgPicture.asset(
-                                foodcategories[index]['food icon'],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                  GridView.builder(
+              shrinkWrap: true,
+              primary: false,
+              physics: const ScrollPhysics(
+                parent: NeverScrollableScrollPhysics(),
+              ),
+              itemCount: foodcategories.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: size.width * 0.03,
+                  mainAxisSpacing: size.width * 0.03,
+                  childAspectRatio: 0.8),
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    _tabController.animateTo(index + 1);
                   },
-                ),
-                _tabpages(foodcategories[0]['food name'], size, _tabController),
-                _tabpages(foodcategories[1]['food name'], size, _tabController),
-                _tabpages(foodcategories[2]['food name'], size, _tabController),
-                _tabpages(foodcategories[3]['food name'], size, _tabController),
-                _tabpages(foodcategories[4]['food name'], size, _tabController),
-                _tabpages(foodcategories[5]['food name'], size, _tabController),
-                _tabpages(foodcategories[6]['food name'], size, _tabController),
-                _tabpages(foodcategories[7]['food name'], size, _tabController),
-                _tabpages(foodcategories[8]['food name'], size, _tabController),
-                _tabpages(foodcategories[9]['food name'], size, _tabController),
-                _tabpages(
-                    foodcategories[10]['food name'], size, _tabController),
-                _tabpages(
-                    foodcategories[11]['food name'], size, _tabController),
-                _tabpages(
-                    foodcategories[12]['food name'], size, _tabController),
-                _tabpages(
-                    foodcategories[13]['food name'], size, _tabController),
-              ]),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(
+                            size.width * 0.05,
+                          ),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            gradient: RadialGradient(
+                              colors: [
+                                theme == Brightness.dark
+                                    ? Colors.grey.shade300
+                                    : primaryColor.withOpacity(0.5),
+                                theme == Brightness.dark
+                                    ? primaryDarkColor.withOpacity(0.08)
+                                    : screenColor.withOpacity(0.08),
+                              ],
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                          ),
+                          child: SvgPicture.asset(
+                            foodcategories[index]['food icon'],
+                            alignment: Alignment.center,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        width: size.width * 0.25,
+                        child: Chip(
+                          elevation: 0,
+                          backgroundColor: theme == Brightness.dark
+                              ? screenDarkColor
+                              : screenColor,
+                          label: Text(
+                            foodcategories[index]['food name'],
+                            overflow: TextOverflow.fade,
+                          ),
+                          avatar: SvgPicture.asset(
+                            foodcategories[index]['food icon'],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+                  ),
+                  _tabpages(
+                foodcategories[0]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[1]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[2]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[3]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[4]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[5]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[6]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[7]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[8]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[9]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[10]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[11]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[12]['food name'], size, _tabController),
+                  _tabpages(
+                foodcategories[13]['food name'], size, _tabController),
+                ]),
             ),
           ),
         ]),
@@ -188,7 +205,8 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
     );
   }
 
-  SizedBox _tabpages(String text, Size size, TabController controller) {
+  SizedBox _tabpages(String text, Size size, TabController controller,) {
+    final theme = MediaQuery.of(context).platformBrightness;
     return SizedBox(
         child: StreamBuilder(
             stream: getFoodItemsByCategory(text),
@@ -230,11 +248,16 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   }
 
   Tab _tabs(String text, TabController controller, int index) {
+    final theme = MediaQuery.of(context).platformBrightness;
     return Tab(
       child: Text(
         text,
         style: TextStyle(
-            color: controller.index == index ? primaryColor : Colors.black),
+            color: controller.index == index
+                ? primaryColor
+                : theme == Brightness.dark
+                    ? screenColor
+                    : primaryDarkColor),
       ),
     );
   }

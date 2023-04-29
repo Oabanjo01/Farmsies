@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Utils/snack_bar.dart';
 import '../widgets/no_orders.dart';
 
 class Orderspage extends StatefulWidget {
@@ -53,8 +54,8 @@ class _OrderspageState extends State<Orderspage> {
                   margin: EdgeInsets.only(bottom: size.height * 0.015),
                   decoration: BoxDecoration(
                     color: theme == Brightness.light
-                        ? textColor2
-                        : primaryDarkColor,
+                        ? screenDarkColor.withOpacity(0.1)
+                        : screenColor.withOpacity(0.06),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(20),
                     ),
@@ -65,16 +66,20 @@ class _OrderspageState extends State<Orderspage> {
                         horizontal: size.width * 0.051),
                     leading: CircleAvatar(
                       radius: size.width * 0.06,
-                      backgroundColor: primaryColor,
+                      backgroundColor: theme == Brightness.dark
+                          ? screenDarkColor
+                          : screenColor,
                       backgroundImage: NetworkImage(list[index]['imagepath']),
                     ),
                     title: Text(list[index]['title']),
                     subtitle: Text(
-                      (list[index]['price'] * list[index]['amount']).toString(),
+                      '₦${(list[index]['price'] * list[index]['amount'])}'
+                          .toString(),
                     ),
                     trailing: IconButton(
                       onPressed: () async {
-                        provider.toggler(list[index], uid, 'Orders', 1, context, 'Removed from Carts', 'Removed from Carts');
+                        provider.toggler(list[index], uid, 'Orders', 1, context,
+                            'Removed from Carts', 'Removed from Carts');
                       },
                       icon: Icon(
                         Icons.delete,
@@ -113,137 +118,149 @@ class _OrderspageState extends State<Orderspage> {
               list.forEach((element) async {
                 totalPrice += element['price'] * element['amount'];
               });
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    title: Text(
-                      'Orders',
-                      style: TextStyle(
-                        color: theme == Brightness.dark
-                            ? screenColor
-                            : primaryDarkColor,
+              return RefreshIndicator(
+                onRefresh: () async {
+                  final SnackBar showSnackBar = snackBar('Refreshed', 1,
+                      size.width * 0.3, primaryColor.withOpacity(0.1));
+                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+                },
+                color: primaryColor.withOpacity(0.1),
+                backgroundColor:
+                    theme == Brightness.dark ? screenDarkColor : screenColor,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      title: Text(
+                        'Orders',
+                        style: TextStyle(
+                          color: theme == Brightness.dark
+                              ? screenColor
+                              : primaryDarkColor,
+                        ),
                       ),
+                      backgroundColor: theme == Brightness.dark
+                          ? primaryDarkColor
+                          : Colors.white,
                     ),
-                    backgroundColor: theme == Brightness.dark
-                        ? primaryDarkColor
-                        : Colors.white,
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: size.height * 0.02),
-                  ),
-                  SliverToBoxAdapter(
-                    child: ListTile(
-                      title: const Text('Delivery Address'),
-                      subtitle: Text(
-                        'Sample Address',
-                        style: TextStyle(color: primaryColor),
-                      ),
-                      trailing: TextButton(
-                        child: Text(
-                          'change',
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: size.height * 0.02),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ListTile(
+                        title: const Text('Delivery Address'),
+                        subtitle: Text(
+                          'Sample Address',
                           style: TextStyle(color: primaryColor),
                         ),
-                        onPressed: () {
-                          // sumOfAmounts(list);
-                        },
+                        trailing: TextButton(
+                          child: Text(
+                            'change',
+                            style: TextStyle(color: primaryColor),
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/userAccount');
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: size.height * 0.02),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.05,
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: size.height * 0.02),
                     ),
-                    sliver: SliverToBoxAdapter(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Orders',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Icon(Icons.question_mark)
-                        ],
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.05,
+                      ),
+                      sliver: SliverToBoxAdapter(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text(
+                              'Orders',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Icon(Icons.question_mark)
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: size.height * 0.025),
-                  ),
-                  _buildOrders(context, snapshot, size, list, theme, uid),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: size.height * 0.02),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.05,
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: size.height * 0.025),
                     ),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Total amount'),
-                                Text('$totalPrice'),
-                              ],
+                    _buildOrders(context, snapshot, size, list, theme, uid),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: size.height * 0.02),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.05,
+                      ),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Total amount'),
+                                  Text('₦$totalPrice'),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: size.height * 0.02),
-                          SizedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Total orders'),
-                                Text(
-                                  '${list.length} items in total',
-                                  style: TextStyle(
-                                      color: primaryColor, fontSize: 16),
-                                )
-                              ],
+                            SizedBox(height: size.height * 0.02),
+                            SizedBox(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Total orders'),
+                                  Text(
+                                    '${list.length} items in total',
+                                    style: TextStyle(
+                                        color: primaryColor, fontSize: 16),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: size.height * 0.02),
-                          SizedBox(
-                            width: size.width * 0.65,
-                            height: size.height * 0.06,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                elevation: MaterialStateProperty.all(0),
-                                foregroundColor:
-                                    MaterialStateProperty.all(textColor),
-                                backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                            SizedBox(height: size.height * 0.02),
+                            SizedBox(
+                              width: size.width * 0.65,
+                              height: size.height * 0.06,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(0),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(textColor),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(primaryColor),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                   ),
                                 ),
+                                onPressed: list.isEmpty
+                                    ? null
+                                    : () {
+                                        Navigator.of(context)
+                                            .pushNamed('/orderComplete');
+                                      },
+                                child: list.isEmpty
+                                    ? const Text('No orders')
+                                    : const Text('Order'),
                               ),
-                              onPressed: list.isEmpty
-                                  ? null
-                                  : () {
-                                      Navigator.of(context)
-                                          .pushNamed('/orderComplete');
-                                    },
-                              child: list.isEmpty
-                                  ? const Text('No orders')
-                                  : const Text('Order'),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: size.height * 0.04),
-                  ),
-                ],
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: size.height * 0.04),
+                    ),
+                  ],
+                ),
               );
             }));
   }

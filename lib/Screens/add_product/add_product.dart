@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
+import '../../Utils/file_picker.dart';
 import '../../Utils/snack_bar.dart';
 
 class AddProduct extends StatefulWidget {
@@ -31,15 +32,15 @@ class _AddProductState extends State<AddProduct> {
   void initState() {
     super.initState();
     _dropdownItem = foodcategories.first["food name"];
-    print(foodcategories.first["food name"]);
   }
 
   final GlobalKey<FormState> _globalKey = GlobalKey();
 
   String url = '';
   Future<String> getDownloadURL(email, uid) async {
-    final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-    final imageurl = await _firebaseStorage
+    final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+    final theme = MediaQuery.of(context).platformBrightness;
+    final imageurl = await firebaseStorage
         .ref()
         .child('Files/ProductPictures/$email/$uid-${titleController.text}')
         .getDownloadURL();
@@ -65,7 +66,7 @@ class _AddProductState extends State<AddProduct> {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String? email = firebaseAuth.currentUser!.email;
     final String? user = firebaseAuth.currentUser!.displayName;
-    final String? uid = firebaseAuth.currentUser!.uid;
+    final String uid = firebaseAuth.currentUser!.uid;
     final String date = DateTime.now().toIso8601String().split('T').first;
     return SafeArea(
       top: true,
@@ -91,20 +92,6 @@ class _AddProductState extends State<AddProduct> {
                   child: image == ''
                       ? const SizedBox()
                       : Container(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * 0.05),
-                              gradient: LinearGradient(
-                                colors: [
-                                  screenColor.withOpacity(0.3),
-                                  primaryDarkColor.withOpacity(0.2)
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                          ),
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * 0.08),
                           height: size.height * 0.3,
@@ -121,6 +108,20 @@ class _AddProductState extends State<AddProduct> {
                             color: Colors.transparent,
                           ),
                           width: double.infinity,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(size.width * 0.05),
+                              gradient: LinearGradient(
+                                colors: [
+                                  screenColor.withOpacity(0.3),
+                                  primaryDarkColor.withOpacity(0.2)
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                          ),
                         ),
                 ),
                 _inputDescription(size, 'Name of your product'),
@@ -138,6 +139,7 @@ class _AddProductState extends State<AddProduct> {
                         } else if (value.length <= 4) {
                           return 'Your product name could be more descriptive';
                         }
+                        return null;
                       }),
                       onSaved: (newValue) {
                         titleController.text = newValue!;
@@ -161,6 +163,7 @@ class _AddProductState extends State<AddProduct> {
                         } else if (value.length <= 20) {
                           return 'Your product description could be more descriptive';
                         }
+                        return null;
                       }),
                       onSaved: (newValue) {
                         descriptionController.text = newValue!;
@@ -186,6 +189,7 @@ class _AddProductState extends State<AddProduct> {
                         } else if (value.length <= 2) {
                           return 'You are bigger than this sir/ma.';
                         }
+                        return null;
                       }),
                       onSaved: (newValue) {
                         priceController.text = newValue!;
@@ -212,6 +216,7 @@ class _AddProductState extends State<AddProduct> {
                         } else if (value.isEmpty) {
                           return 'You are bigger than this sir/ma.';
                         }
+                        return null;
                       }),
                       onSaved: (newValue) {
                         amountController.text = newValue!;
@@ -246,10 +251,10 @@ class _AddProductState extends State<AddProduct> {
                           items: foodcategories
                               .map<DropdownMenuItem<String>>((category) {
                             return DropdownMenuItem(
+                              value: category["food name"],
                               child: Text(
                                 category["food name"],
                               ),
-                              value: category["food name"],
                             );
                           }).toList(),
                           onChanged: (e) {
@@ -283,10 +288,8 @@ class _AddProductState extends State<AddProduct> {
                                       MaterialButton(
                                         minWidth: size.width * 0.2,
                                         shape: const CircleBorder(),
-                                        onPressed: () {
-                                          Provider.of<FileProvider>(context,
-                                                  listen: false)
-                                              .pickFile(context)
+                                        onPressed: () async {
+                                          await pickFile(ctx: context, pickMultipleImages: false,popBottomSheet: true)
                                               .then((value) {
                                             setState(() {
                                               image = value!;
@@ -440,7 +443,6 @@ class _AddProductState extends State<AddProduct> {
                                       .showSnackBar(showSnackBar);
                                 }
                               }
-                              ;
                             },
                             child: Text(
                               'Create Product',
@@ -472,17 +474,18 @@ class _AddProductState extends State<AddProduct> {
       padding: EdgeInsets.only(left: size.width * 0.08, top: size.width * 0.03),
       sliver: SliverToBoxAdapter(
         child: SizedBox(
+          height: size.height * 0.03,
           child: Text(
             text,
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
-          height: size.height * 0.03,
         ),
       ),
     );
   }
 
   InputDecoration _inputStyle(Size size, String text) {
+    final theme = MediaQuery.of(context).platformBrightness;
     return InputDecoration(
         contentPadding: EdgeInsets.only(
           left: size.width * 0.07,
@@ -493,7 +496,7 @@ class _AddProductState extends State<AddProduct> {
         alignLabelWithHint: true,
         focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: primaryDarkColor, width: 0.5)),
+            borderSide: BorderSide(color: errorColor, width: 0.5)),
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: errorColor, width: 0.3)),
@@ -502,9 +505,9 @@ class _AddProductState extends State<AddProduct> {
         ),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: primaryDarkColor, width: 0.5)),
+            borderSide: BorderSide(color: primaryColor, width: 0.9)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: primaryDarkColor, width: 0.3)));
+            borderSide: BorderSide(color: theme == Brightness.dark ? screenColor : screenDarkColor.withOpacity(0.3), width: 0.3)));
   }
 }

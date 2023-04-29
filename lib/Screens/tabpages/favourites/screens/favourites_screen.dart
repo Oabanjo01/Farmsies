@@ -25,10 +25,10 @@ class _FavouritesPageState extends State<FavouritesPage> {
   }
 
   _getTogglemode() async {
-    final bool? toggleMode = await method.getCurrentTogglemode();
+    final bool toggleMode = await method.getCurrentTogglemode();
     setState(
       () {
-        isListview = toggleMode!;
+        isListview = toggleMode;
       },
     );
   }

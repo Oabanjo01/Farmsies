@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Constants/colors.dart';
+import '../Utils/file_picker.dart';
 import '../Utils/snack_bar.dart';
 
 class UserAccount extends StatefulWidget {
@@ -94,10 +97,8 @@ class _UserAccountState extends State<UserAccount> {
     final Uri mailtoUri = Uri(
         scheme: 'mailto',
         path: email,
-        query: 'subject=' +
-            Uri.encodeComponent(subject) +
-            '&body=' +
-            Uri.encodeComponent(messageBody)
+        query:
+            'subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(messageBody)}'
         // encodeQueryParameters(<String, String>{subject: messageBody}),
         // queryParameters: {subject: messageBody},
         );
@@ -169,194 +170,267 @@ class _UserAccountState extends State<UserAccount> {
         }
       },
       child: Scaffold(
-          body: CustomScrollView(slivers: [
-        SliverAppBar(
-          title: const Text('Your Account'),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          foregroundColor: primaryColor,
-        ),
-        SliverToBoxAdapter(child: spacing(size, 0.04)),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: size.width * 0.2,
-                    height: size.width * 0.2,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(size.height * 1),
-                      child: Image.network(imageUrl,
-                          width: size.width * 0.12,
-                          alignment: Alignment.topCenter,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Image.asset(
-                                'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
-                              ),
-                          loadingBuilder: (context, child, loadingProgress) =>
-                              loadingProgress == null
-                                  ? child
-                                  : const Center(
-                                      child: CircularProgressIndicator(),
-                                    )),
+          body: RefreshIndicator(
+        onRefresh: () async {
+          getDownloadURL();
+          getUserDetail();
+          final SnackBar showSnackBar = snackBar(
+              'Refreshed',
+              1, size.width * 0.3, primaryColor.withOpacity(0.1));
+          ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+        },
+        color: primaryColor.withOpacity(0.1),
+        backgroundColor: theme == Brightness.dark ? screenDarkColor : screenColor,
+        child: CustomScrollView(slivers: [
+          SliverAppBar(
+            title: const Text('Your Account'),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            foregroundColor: primaryColor,
+          ),
+          SliverToBoxAdapter(child: spacing(size, 0.04)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: size.width * 0.2,
+                      height: size.width * 0.2,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(size.height * 1),
+                        child: InkWell(
+                          splashColor: primaryColor,
+                          borderRadius: BorderRadius.circular(100),
+                          onTap: () async {
+                            try {
+                              await pickFile(
+                                      ctx: context, popBottomSheet: false, pickMultipleImages: false,)
+                                  .then((value) async {
+                                if (value == '') {
+                                  return;
+                                } else if (value == 'Something went wrong') {
+                                  return;
+                                } else {
+                                  setState(() {
+                                    imageUrl = value!;
+                                  });
+                                  await _firebaseStorage
+                                      .ref()
+                                      .child(
+                                          'Files/DisplayPictures/${_firebaseAuth.currentUser!.email}/${_firebaseAuth.currentUser!.uid}')
+                                      .delete()
+                                      .then((value) {
+                                    File file = File(imageUrl);
+                                    final SettableMetadata metaData =
+                                        SettableMetadata(customMetadata: {
+                                      'Date': DateTime.now().toString()
+                                    });
+                                    _firestore
+                                        .collection('Users')
+                                        .doc(_firebaseAuth.currentUser!.uid)
+                                        .collection("User")
+                                        .doc(
+                                            '${_firebaseAuth.currentUser!.email}')
+                                        .update({
+                                      'displayPicture': imageUrl
+                                    }).then((value) async {
+                                      await _firebaseStorage
+                                          .ref()
+                                          .child(
+                                              'Files/DisplayPictures/${_firebaseAuth.currentUser!.email}/${_firebaseAuth.currentUser!.uid}')
+                                          .putFile(file, metaData)
+                                          .then((p0) async {
+                                        await getDownloadURL();
+                                      }).then((value) {
+                                        final SnackBar showSnackBar = snackBar(
+                                            'Your display picture has been updated, you can only change this a few more times',
+                                            5);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(showSnackBar);
+                                      });
+                                    });
+                                  });
+                                }
+                              });
+                            } catch (e) {}
+                          },
+                          child: Image.network(imageUrl,
+                              width: size.width * 0.12,
+                              alignment: Alignment.topCenter,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Image.asset(
+                                    'assets/Avatars/icons8-circled-user-male-skin-type-6-80.png',
+                                  ),
+                              loadingBuilder: (context, child,
+                                      loadingProgress) =>
+                                  loadingProgress == null
+                                      ? child
+                                      : const Center(
+                                          child: CircularProgressIndicator(),
+                                        )),
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.05,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            modify == false
-                                ? Text(
-                                    firebaseUser.displayName!,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                : Expanded(
-                                    child: Form(
-                                      key: _formKey,
-                                      child: TextFormField(
-                                        validator: (String? value) {
-                                          return _validator(
-                                              value,
-                                              'Input you a username',
-                                              'invalid username',
-                                              'Username should be longer',
-                                              2);
-                                        },
-                                        onSaved: (newValue) {
-                                          userNameController.text = newValue!;
-                                        },
-                                        cursorColor:
-                                            primaryColor.withOpacity(0.7),
-                                        controller: userNameController,
-                                        maxLength: 15,
-                                        maxLines: 1,
-                                        decoration: _textfieldDecoration(
-                                            'Username',
-                                            const Icon(Icons.person)),
+                    SizedBox(
+                      width: size.width * 0.05,
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              modify == false
+                                  ? Text(
+                                      firebaseUser.displayName!,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    )
+                                  : Expanded(
+                                      child: Form(
+                                        key: _formKey,
+                                        child: TextFormField(
+                                          validator: (String? value) {
+                                            return _validator(
+                                                value,
+                                                'Input you a username',
+                                                'invalid username',
+                                                'Username should be longer',
+                                                2);
+                                          },
+                                          onSaved: (newValue) {
+                                            userNameController.text = newValue!;
+                                          },
+                                          cursorColor:
+                                              primaryColor.withOpacity(0.7),
+                                          controller: userNameController,
+                                          maxLength: 15,
+                                          maxLines: 1,
+                                          decoration: _textfieldDecoration(
+                                              'Username',
+                                              const Icon(Icons.person)),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                            modify == false
-                                ? IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        modify = !modify;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.edit_rounded))
-                                : switchicon == true
-                                    ? IconButton(
-                                        onPressed: () async {
-                                          if (!_formKey.currentState!
-                                              .validate()) {
-                                            return;
-                                          }
-                                          {
-                                            try {
-                                              CollectionReference _users =
-                                                  _firestore
-                                                      .collection('Users');
-                                              firebaseUser
-                                                  .updateDisplayName(
-                                                      userNameController.text)
-                                                  .then((value) async {
-                                                await _users
-                                                    .doc(firebaseUser.uid)
-                                                    .collection('User')
-                                                    .doc(firebaseUser.email)
-                                                    .update({
-                                                  'username':
-                                                      userNameController.text
-                                                }).then((value) {
-                                                  final SnackBar showSnackBar =
-                                                      snackBar(
-                                                          'Your Username has been updated!',
-                                                          1);
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                          showSnackBar);
-                                                  setState(() {
-                                                    modify = !modify;
+                              modify == false
+                                  ? IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          modify = !modify;
+                                        });
+                                      },
+                                      icon: const Icon(Icons.edit_rounded))
+                                  : switchicon == true
+                                      ? IconButton(
+                                          onPressed: () async {
+                                            if (!_formKey.currentState!
+                                                .validate()) {
+                                              return;
+                                            }
+                                            {
+                                              try {
+                                                CollectionReference users =
+                                                    _firestore
+                                                        .collection('Users');
+                                                firebaseUser
+                                                    .updateDisplayName(
+                                                        userNameController.text)
+                                                    .then((value) async {
+                                                  await users
+                                                      .doc(firebaseUser.uid)
+                                                      .collection('User')
+                                                      .doc(firebaseUser.email)
+                                                      .update({
+                                                    'username':
+                                                        userNameController.text
+                                                  }).then((value) {
+                                                    final SnackBar
+                                                        showSnackBar = snackBar(
+                                                            'Your Username has been updated!',
+                                                            1);
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            showSnackBar);
+                                                    setState(() {
+                                                      modify = !modify;
+                                                    });
                                                   });
                                                 });
-                                              });
-                                            } catch (e) {}
-                                          }
-                                        },
-                                        icon: const Icon(
-                                          Icons.check_rounded,
+                                              } catch (e) {}
+                                            }
+                                          },
+                                          icon: const Icon(
+                                            Icons.check_rounded,
+                                          ),
+                                        )
+                                      : IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              modify = !modify;
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.catching_pokemon_rounded,
+                                          ),
                                         ),
-                                      )
-                                    : IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            modify = !modify;
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.catching_pokemon_rounded,
-                                        ),
-                                      ),
-                          ]),
-                    ),
-                  )
-                ]),
-          ),
-        ),
-        SliverToBoxAdapter(child: spacing(size, 0.04)),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
-            child:
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text(
-                'My Address',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              ),
-              const Divider(thickness: 1),
-              editableuserinfo('Address', firebaseUser, _firestore,
-                  address: address),
-              spacing(size, 0.04),
-              const Text(
-                'A bit about my business',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              ),
-              const Divider(thickness: 1),
-              editableuserinfo('Description', firebaseUser, _firestore,
-                  description: description),
-            ]),
-          ),
-        ),
-        SliverToBoxAdapter(child: spacing(size, 0.4)),
-        SliverToBoxAdapter(
-          child: SizedBox(
-            child: TextButton(
-              child: Text(
-                'Delete your account?',
-                style: TextStyle(color: primaryColor),
-              ),
-              onPressed: (() => _launchMail(
-                  email: 'banjolakunri@gmail.com',
-                  messageBody:
-                      'Hello Olabanjo,\n I would like to delete my account',
-                  subject: 'I would like to delete my account')),
+                            ]),
+                      ),
+                    )
+                  ]),
             ),
           ),
-        ),
-      ])),
+          SliverToBoxAdapter(child: spacing(size, 0.04)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'My Address',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    const Divider(thickness: 1),
+                    editableuserinfo('Address', firebaseUser, _firestore,
+                        address: address),
+                    spacing(size, 0.04),
+                    const Text(
+                      'A bit about my business',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    const Divider(thickness: 1),
+                    editableuserinfo('Description', firebaseUser, _firestore,
+                        description: description),
+                  ]),
+            ),
+          ),
+          SliverToBoxAdapter(child: spacing(size, 0.4)),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              child: TextButton(
+                onPressed: (() => _launchMail(
+                    email: 'banjolakunri@gmail.com',
+                    messageBody:
+                        'Hello Olabanjo,\n I would like to delete my account',
+                    subject: 'I would like to delete my account')),
+                child: Text(
+                  'Delete your account?',
+                  style: TextStyle(color: primaryColor),
+                ),
+              ),
+            ),
+          ),
+        ]),
+      )),
     );
   }
 
@@ -399,7 +473,7 @@ class _UserAccountState extends State<UserAccount> {
     );
   }
 
-  Row editableuserinfo(text, User firebaseUser, FirebaseFirestore _firestore,
+  Row editableuserinfo(text, User firebaseUser, FirebaseFirestore firestore,
       {String address = 'Address', String description = 'bescription'}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,8 +485,8 @@ class _UserAccountState extends State<UserAccount> {
                     ? Text(address)
                     : Expanded(
                         child: Text(
-                          address,
-                        ))
+                        address,
+                      ))
                 : Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10.0),
@@ -444,10 +518,10 @@ class _UserAccountState extends State<UserAccount> {
                 ? description.isEmpty
                     ? Text(description)
                     : Flexible(
-                      child: Text(
-                        description,
-                      ),
-                    )
+                        child: Text(
+                          description,
+                        ),
+                      )
                 : Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10.0),
@@ -494,9 +568,9 @@ class _UserAccountState extends State<UserAccount> {
                           }
                           {
                             try {
-                              CollectionReference _users =
-                                  _firestore.collection('Users');
-                              CollectionReference collectionReference = _users
+                              CollectionReference users =
+                                  firestore.collection('Users');
+                              CollectionReference collectionReference = users
                                   .doc(firebaseUser.uid)
                                   .collection('User')
                                   .doc(firebaseUser.email)
@@ -535,9 +609,7 @@ class _UserAccountState extends State<UserAccount> {
                                   });
                                 }
                               });
-                            } catch (e) {
-                              print(e);
-                            }
+                            } catch (e) {}
                           }
                         },
                         icon: const Icon(Icons.check_rounded))
@@ -569,9 +641,9 @@ class _UserAccountState extends State<UserAccount> {
                           }
                           {
                             try {
-                              CollectionReference _users =
-                                  _firestore.collection('Users');
-                              CollectionReference collectionReference = _users
+                              CollectionReference users =
+                                  firestore.collection('Users');
+                              CollectionReference collectionReference = users
                                   .doc(firebaseUser.uid)
                                   .collection('User')
                                   .doc(firebaseUser.email)
@@ -609,9 +681,7 @@ class _UserAccountState extends State<UserAccount> {
                                   });
                                 }
                               });
-                            } catch (e) {
-                              print(e);
-                            }
+                            } catch (e) {}
                           }
                         },
                         icon: const Icon(Icons.check_rounded))

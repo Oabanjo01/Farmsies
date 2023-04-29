@@ -83,48 +83,60 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: TextFormField(
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'Input you E-mail';
-                          } else if (!RegExp(
-                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                              .hasMatch(value)) {
-                            return 'invalid email';
-                          }
-                        },
-                        onSaved: (newValue) {
-                          userController.text = newValue!;
-                        },
-                        cursorColor: primaryColor.withOpacity(0.7),
-                        controller: userController,
-                        obscureText: false,
-                        maxLines: 1,
-                        decoration: userFieldDecoration(
-                          icon: const Icon(Icons.mail_rounded),
-                          labelText: 'E-mail',
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor,)),
+                        child: TextFormField(
+                          validator: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'Input you E-mail';
+                            } else if (!RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(value)) {
+                              return 'invalid email';
+                            }
+                          },
+                          onSaved: (newValue) {
+                            userController.text = newValue!;
+                          },
+                          cursorColor: primaryColor.withOpacity(0.7),
+                          controller: userController,
+                          obscureText: false,
+                          maxLines: 1,
+                          decoration: userFieldDecoration(
+                            icon: const Icon(Icons.mail_rounded),
+                            labelText: 'E-mail',
+                          ),
                         ),
                       ),
                     ),
                     spacing(size: size, height: 0.01),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: TextFormField(
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'Input your password';
-                          } else if (value.length < 6) {
-                            return 'Password too short';
-                          }
-                        },
-                        onSaved: (newValue) {
-                          passwordController.text = newValue!;
-                        },
-                        cursorColor: primaryColor.withOpacity(0.7),
-                        controller: passwordController,
-                        obscureText: _showPassword == true ? false : true,
-                        maxLines: 1,
-                        decoration: passwordfieldDecoration(),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor)),
+                        child: TextFormField(
+                          validator: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'Input your password';
+                            } else if (value.length < 6) {
+                              return 'Password too short';
+                            }
+                          },
+                          onSaved: (newValue) {
+                            passwordController.text = newValue!;
+                          },
+                          cursorColor: primaryColor.withOpacity(0.7),
+                          controller: passwordController,
+                          obscureText: _showPassword == true ? false : true,
+                          maxLines: 1,
+                          decoration: passwordfieldDecoration(),
+                        ),
                       ),
                     ),
                   ],
@@ -171,7 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {});
                             Navigator.of(
                               context,
-                            ).pushNamedAndRemoveUntil('/homepage', (route) => false,
+                            ).pushNamedAndRemoveUntil(
+                                '/homepage', (route) => false,
                                 arguments: userCredential!.userMail);
                           } catch (e) {
                             setState(() {});
@@ -239,7 +252,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 BorderSide(color: errorColor.withOpacity(0.8), width: 1.5)),
         prefixIcon: const Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Icon(Icons.password_rounded)),
+            child: Icon(
+              Icons.password_rounded,
+            )),
         suffixIcon: _showPassword == true
             ? IconButton(
                 onPressed: () {

@@ -33,8 +33,8 @@ class onboardingScreen extends StatelessWidget {
             image:
                 SvgPicture.asset(onboarding1, height: size.height * 0.5,),
             decoration: PageDecoration(
-              titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
-              bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
+              titleTextStyle: TextStyle(color: textDarkColor, fontSize: 25),
+              bodyTextStyle: TextStyle(color: textDarkColor, fontSize: 15),
               imageFlex: 3,
                 imagePadding: EdgeInsets.all(size.height * 0.05),)),
         PageViewModel(
@@ -43,8 +43,8 @@ class onboardingScreen extends StatelessWidget {
             image:
                 SvgPicture.asset(onboarding2, height: size.height * 0.5),
             decoration: PageDecoration(
-              titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
-              bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
+              titleTextStyle: TextStyle(color: textDarkColor, fontSize: 25),
+              bodyTextStyle: TextStyle(color: textDarkColor, fontSize: 15),
               imageFlex: 3,
               imagePadding: EdgeInsets.all(size.height * 0.05),)),
         PageViewModel(
@@ -52,8 +52,8 @@ class onboardingScreen extends StatelessWidget {
             body: 'Get your items at your door step in no time!',
             image: SvgPicture.asset(onboarding3, height: size.height * 0.5,),
             decoration: PageDecoration(
-              titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
-              bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
+              titleTextStyle: TextStyle(color: textDarkColor, fontSize: 25),
+              bodyTextStyle: TextStyle(color: textDarkColor, fontSize: 15),
               imageFlex: 3,
                 imagePadding: EdgeInsets.all(size.height * 0.05),)),
         PageViewModel(
@@ -64,8 +64,8 @@ class onboardingScreen extends StatelessWidget {
           title: 'Get Started',
           body: 'Sign up if you don\'t have an account',
           decoration: PageDecoration(
-            titleTextStyle: TextStyle(color: textColor2, fontSize: 25),
-            bodyTextStyle: TextStyle(color: textColor2, fontSize: 15),
+            titleTextStyle: TextStyle(color: textDarkColor, fontSize: 25),
+            bodyTextStyle: TextStyle(color: textDarkColor, fontSize: 15),
             bodyFlex: 1,
             imageFlex: 3
           )
@@ -74,21 +74,21 @@ class onboardingScreen extends StatelessWidget {
       initialPage: 0,
       scrollPhysics: const PageScrollPhysics(),
       skipStyle: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(textColor2),
-        overlayColor: MaterialStateProperty.all(textColor2.withOpacity(0.4)),
+        foregroundColor: MaterialStateProperty.all(textDarkColor),
+        overlayColor: MaterialStateProperty.all(textDarkColor.withOpacity(0.4)),
       ),
       nextStyle: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(textColor2),
-        overlayColor: MaterialStateProperty.all(textColor2.withOpacity(0.4)),
+        foregroundColor: MaterialStateProperty.all(textDarkColor),
+        overlayColor: MaterialStateProperty.all(textDarkColor.withOpacity(0.4)),
       ),
       doneStyle: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(textColor2),
-        overlayColor: MaterialStateProperty.all(textColor2.withOpacity(0.4)),
+        foregroundColor: MaterialStateProperty.all(textDarkColor),
+        overlayColor: MaterialStateProperty.all(textDarkColor.withOpacity(0.4)),
       ),
       showSkipButton: true,
       showNextButton: true,
       dotsDecorator: DotsDecorator(
-        activeColor: textColor2,
+        activeColor: textDarkColor,
         activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3))
       ),
       next: const Text(

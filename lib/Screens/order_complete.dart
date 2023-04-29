@@ -25,13 +25,13 @@ class OrderComplete extends StatelessWidget {
           ),
           Flexible(
             child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(size.height * 1)
+              ),
               child: Image.network(
                 orderCompleted,
                 scale: 1.0,
                 fit: BoxFit.cover,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(size.height * 1)
               ),
             ),
           ),

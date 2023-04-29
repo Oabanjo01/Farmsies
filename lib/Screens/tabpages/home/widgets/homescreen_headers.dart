@@ -21,7 +21,7 @@ class HomescreenHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
         Text(text1, style: const TextStyle(fontSize: 20),), 
-        TextButton(child: Text(text2!, style: TextStyle(color: primaryColor),), onPressed: navigate!())
+        TextButton(onPressed: navigate!(), child: Text(text2!, style: TextStyle(color: primaryColor),))
       ],),
     );
   }

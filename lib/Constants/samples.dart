@@ -1,4 +1,3 @@
-import '../Models/item-model.dart';
 import '../Models/tips-model.dart';
 
 List<TipsDeck> food = [

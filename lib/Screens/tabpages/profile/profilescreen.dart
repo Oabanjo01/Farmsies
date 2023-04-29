@@ -77,7 +77,7 @@ class _ProfilepageState extends State<Profilepage> {
               ),
             ),
             backgroundColor:
-                theme == Brightness.light ? textColor2 : primaryDarkColor),
+                theme == Brightness.light ? textDarkColor : primaryDarkColor),
         SliverToBoxAdapter(
           child: SizedBox(height: size.height * 0.05),
         ),
@@ -114,10 +114,13 @@ class _ProfilepageState extends State<Profilepage> {
               subtitle: Text(
                 firebaseUser.email.toString().toLowerCase(),
               ),
-              trailing: IconButton(icon: Icon(Icons.edit, color: primaryColor), onPressed: () => 
-                        Navigator.pushNamed(context, '/userAccount'),),
-              tileColor:
-                  theme == Brightness.light ? textColor2 : primaryDarkColor,
+              trailing: IconButton(
+                icon: Icon(Icons.edit, color: primaryColor),
+                onPressed: () => Navigator.pushNamed(context, '/userAccount'),
+              ),
+              tileColor: theme == Brightness.light
+                  ? screenDarkColor.withOpacity(0.1)
+                  : screenColor.withOpacity(0.06),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(size.width * 0.3)),
             ),
@@ -131,8 +134,9 @@ class _ProfilepageState extends State<Profilepage> {
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               return Container(
-                color:
-                    theme == Brightness.light ? textColor2 : primaryDarkColor,
+                color: theme == Brightness.light
+                    ? screenDarkColor.withOpacity(0.1)
+                    : screenColor.withOpacity(0.06),
                 child: ListTile(
                     onTap: () {
                       if (index == 0) {

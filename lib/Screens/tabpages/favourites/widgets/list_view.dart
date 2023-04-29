@@ -41,12 +41,15 @@ class Listview extends StatelessWidget {
                 style: ListTileStyle.list,
                 contentPadding: EdgeInsets.all(size.width * 0.02),
                 tileColor:
-                    theme == Brightness.light ? screenColor : primaryColor,
+                    theme == Brightness.light ? screenDarkColor.withOpacity(0.1) : screenColor.withOpacity(0.06),
                 title: Text(list[index]['title']),
                 leading: SizedBox(
                   height: size.width * 0.15,
                   width: size.width * 0.15,
                   child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(size.width * 0.05),
+                    ),
                     child: Image.network(
                       list[index]['imagepath'],
                       loadingBuilder: (context, child, loadingProgress) =>
@@ -64,9 +67,6 @@ class Listview extends StatelessWidget {
                       ),
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(size.width * 0.05),
-                    ),
                   ),
                 ),
                 trailing: SizedBox(
@@ -77,9 +77,7 @@ class Listview extends StatelessWidget {
                     },
                     icon: Icon(
                       Icons.favorite_rounded,
-                      color: theme == Brightness.light
-                          ? primaryColor
-                          : screenColor,
+                      color: primaryColor
                     ),
                   ),
                 ),

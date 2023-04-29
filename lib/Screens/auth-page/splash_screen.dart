@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_typing_uninitialized_variables, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
 
@@ -39,9 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> _loadLoginScreen() async {
-    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      bool _newLaunch = _preferences.getBool('newScreen1') ?? true;
+      bool _newLaunch = preferences.getBool('newScreen1') ?? true;
       newLaunch = _newLaunch;
     });
     return newLaunch;
@@ -66,6 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = MediaQuery.of(context).platformBrightness;
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
@@ -91,11 +92,11 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: [
                       Text(
                         'Developed by $developername',
-                        style: TextStyle(color: textColor),
+                        style: TextStyle(color: theme ==Brightness.dark ? textDarkColor : textColor),
                       ),
                       Text(
                         versionNumber,
-                        style: TextStyle(color: textColor),
+                        style: TextStyle(color: theme ==Brightness.dark ? textDarkColor : textColor),
                       )
                     ],
                   ),

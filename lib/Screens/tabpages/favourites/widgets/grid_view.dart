@@ -41,21 +41,7 @@ class _GridviewState extends State<Gridview> {
     return SliverGrid(
         delegate: SliverChildBuilderDelegate((context, index) {
           final QueryDocumentSnapshot product = list[index];
-          print(product['isCarted']);
           return GridTile(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
-              ),
-              child: InkWell(
-                onTap: () => Navigator.of(context)
-                    .pushNamed('/productDetail', arguments: product),
-                child: Image.network(
-                  list[index]['imagepath'],
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
             footer: ClipRRect(
               borderRadius: const BorderRadius.only(
                 bottomRight: Radius.circular(10),
@@ -92,6 +78,19 @@ class _GridviewState extends State<Gridview> {
                         'Removed from favourites',
                         'Removed from favourites');
                   },
+                ),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(10),
+              ),
+              child: InkWell(
+                onTap: () => Navigator.of(context)
+                    .pushNamed('/productDetail', arguments: product),
+                child: Image.network(
+                  list[index]['imagepath'],
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

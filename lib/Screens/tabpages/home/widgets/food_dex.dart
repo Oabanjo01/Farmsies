@@ -15,6 +15,7 @@ class Fooddex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: size.height * 0.25,
       child: ListView.separated(
           separatorBuilder: (context, index) => SizedBox(
                 width: size.width * 0.05,
@@ -30,6 +31,9 @@ class Fooddex extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
                   child: Image.network(
                     food[index].imagepath,
                     loadingBuilder: (context, child, loadingProgress) =>
@@ -46,9 +50,6 @@ class Fooddex extends StatelessWidget {
                       ),
                     ),
                     fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
                   ),
                 ),
               ),
@@ -86,7 +87,6 @@ class Fooddex extends StatelessWidget {
               ),
             ]);
           })),
-      height: size.height * 0.25,
     );
   }
 }

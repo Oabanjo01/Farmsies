@@ -20,8 +20,8 @@ class Headboard extends StatefulWidget {
 class _HeadboardState extends State<Headboard> {
   String imageUrl = '';
   getDownloadURL() async {
-    final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-    final url = await _firebaseStorage
+    final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+    final url = await firebaseStorage
         .ref()
         .child('Files/DisplayPictures/${widget.username!.email}/${widget.username!.uid}')
         .getDownloadURL();

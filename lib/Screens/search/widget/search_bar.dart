@@ -1,9 +1,5 @@
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:farmsies/Models/item-model.dart';
-import 'package:farmsies/Screens/search/widget/list_tile.dart';
-import 'package:farmsies/Screens/tabpages/favourites/widgets/list_view.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends SearchDelegate {
@@ -41,20 +37,23 @@ class CustomSearchBar extends SearchDelegate {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return ListView(children: [
-              ...snapshot.data!.docs.where((element) {
-                return element['title']
-                    .toString()
-                    .toLowerCase()
-                    .contains(query.toLowerCase());
-              }).map((data) {
-                final String title = data.get('title');
-                final String description = data.get('description');
-                final String imagePath = data.get('imagepath');
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
+              child: ListView(children: [
+                ...snapshot.data!.docs.where((element) {
+                  return element['title']
+                      .toString()
+                      .toLowerCase()
+                      .contains(query.toLowerCase());
+                }).map((data) {
+                  final String title = data.get('title');
+                  final String description = data.get('description');
+                  final String imagePath = data.get('imagepath');
 
-                return search_list_tile(title, description, size, imagePath, context, data);
-              })
-            ]);
+                  return search_list_tile(title, description, size, imagePath, context, data);
+                })
+              ]),
+            );
           }
         });
   }
@@ -78,14 +77,17 @@ class CustomSearchBar extends SearchDelegate {
                   matchQuery.add(element);
                 } 
               }
-              return ListView.builder(
-                itemCount: matchQuery.length,
-                itemBuilder: (context, index) {
-                  final String title = matchQuery[index]['title'].toString();
-                  final String description = matchQuery[index]['description'];
-                  final String imagePath = matchQuery[index]['imagepath'];
-                  return search_list_tile(title, description, size, imagePath, context, matchQuery[index],);
-              },);
+              return Container(
+              margin: EdgeInsets.only(top: size.height * 0.01),
+                child: ListView.builder(
+                  itemCount: matchQuery.length,
+                  itemBuilder: (context, index) {
+                    final String title = matchQuery[index]['title'].toString();
+                    final String description = matchQuery[index]['description'];
+                    final String imagePath = matchQuery[index]['imagepath'];
+                    return search_list_tile(title, description, size, imagePath, context, matchQuery[index],);
+                },),
+              );
             }
           );
         }

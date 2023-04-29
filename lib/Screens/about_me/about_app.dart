@@ -20,11 +20,11 @@ class AboutApp extends StatelessWidget {
           DescriptionCard(size: size, text: 'About this app'),
           SliverToBoxAdapter(
             child: Container(
-              child: Text('I am Xerxes'),
               alignment: Alignment.center,
               width: size.width * 0.8,
               height: size.height * 0.4,
               margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+              child: const Text('I am Xerxes'),
             ),
           ),
         ],

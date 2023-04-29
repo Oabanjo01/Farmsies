@@ -1,4 +1,4 @@
-// ignore_for_file: body_might_complete_normally_nullable
+// ignore_for_file: body_might_complete_normally_nullable, use_build_context_synchronously
 
 import 'dart:io';
 
@@ -149,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             imageBottomsheet(
                                                 pick: () async {
                                                   Navigator.of(context).pop;
-                                                  await pickFile(context)
+                                                  await pickFile(ctx: context, popBottomSheet: true, pickMultipleImages: false,)
                                                       .then((value) {
                                                     setState(() {
                                                       image = value!;
@@ -191,6 +191,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                 });
                           },
                           child: Container(
+                            height: size.height * 0.15,
+                            width: size.height * 0.15,
+                            decoration: BoxDecoration(
+                                color: image == ''
+                                    ? primaryColor
+                                    : Colors.transparent,
+                                shape: BoxShape.circle),
                             child: image == ''
                                 ? const FittedBox(
                                     fit: BoxFit.scaleDown,
@@ -208,13 +215,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                            height: size.height * 0.15,
-                            width: size.height * 0.15,
-                            decoration: BoxDecoration(
-                                color: image == ''
-                                    ? primaryColor
-                                    : Colors.transparent,
-                                shape: BoxShape.circle),
                           ),
                         ),
                         spacing(size: size, height: 0.05),
@@ -225,165 +225,187 @@ class _SignupScreenState extends State<SignupScreen> {
                               padding:
                                   const EdgeInsets.only(left: 20.0, right: 20.0),
                               child: Column(children: [
-                                TextFormField(
-                                  validator: (String? value) {
-                                    if (value!.isEmpty) {
-                                      return 'Input you e-mail';
-                                    } else if (!RegExp(
-                                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                        .hasMatch(value)) {
-                                      return 'invalid email';
-                                    }
-                                  },
-                                  onSaved: (newValue) {
-                                    emailController.text = newValue!;
-                                  },
-                                  cursorColor: primaryColor.withOpacity(0.7),
-                                  controller: emailController,
-                                  obscureText: false,
-                                  maxLines: 1,
-                                  decoration: textFieldDecoration(
-                                      icon: const Icon(Icons.email),
-                                      labelText: 'E-mail'),
+                                Theme(
+                                  data:  Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor,)),
+                                  child: TextFormField(
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return 'Input you e-mail';
+                                      } else if (!RegExp(
+                                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                          .hasMatch(value)) {
+                                        return 'invalid email';
+                                      }
+                                    },
+                                    onSaved: (newValue) {
+                                      emailController.text = newValue!;
+                                    },
+                                    cursorColor: primaryColor.withOpacity(0.7),
+                                    controller: emailController,
+                                    obscureText: false,
+                                    maxLines: 1,
+                                    decoration: textFieldDecoration(
+                                        icon: const Icon(Icons.email),
+                                        labelText: 'E-mail'),
+                                  ),
                                 ),
                                 spacing(size: size, height: 0.01),
-                                TextFormField(
-                                  validator: (String? value) {
-                                    if (value!.isEmpty) {
-                                      return 'Input you a username';
-                                    } else if (value.contains('@')) {
-                                      // check if usename has a match on firebase already
-                                      return 'invalid username';
-                                    }
-                                  },
-                                  onSaved: (newValue) {
-                                    usernameController.text = newValue!;
-                                  },
-                                  cursorColor: primaryColor.withOpacity(0.7),
-                                  controller: usernameController,
-                                  obscureText: false,
-                                  maxLines: 1,
-                                  decoration: textFieldDecoration(
-                                      icon: const Icon(Icons.person),
-                                      labelText: 'Username'),
+                                Theme(
+                                   data: Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor,)),
+                                  child: TextFormField(
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return 'Input you a username';
+                                      } else if (value.contains('@')) {
+                                        // check if usename has a match on firebase already
+                                        return 'invalid username';
+                                      }
+                                    },
+                                    onSaved: (newValue) {
+                                      usernameController.text = newValue!;
+                                    },
+                                    cursorColor: primaryColor.withOpacity(0.7),
+                                    controller: usernameController,
+                                    obscureText: false,
+                                    maxLines: 1,
+                                    decoration: textFieldDecoration(
+                                        icon: const Icon(Icons.person),
+                                        labelText: 'Username'),
+                                  ),
                                 ),
                                 spacing(size: size, height: 0.01),
-                                TextFormField(
-                                  validator: (String? value) {
-                                    if (value!.isEmpty) {
-                                      return 'Input you a password';
-                                    } else if (value.length < 7) {
-                                      // check if usename has a match on firebase already
-                                      return 'Passowrd cannot be less than 7';
-                                    }
-                                  },
-                                  onSaved: (newValue) {
-                                    passwordContoller.text = newValue!;
-                                  },
-                                  cursorColor: primaryColor.withOpacity(0.7),
-                                  controller: passwordContoller,
-                                  obscureText:
-                                      showPassword == true ? false : true,
-                                  maxLines: 1,
-                                  decoration: InputDecoration(
-                                      // contentPadding: EdgeInsets.only(left: 10, right: 10),
-                                      errorStyle: TextStyle(
-                                          color: errorColor.withOpacity(0.8)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: errorColor.withOpacity(0.8),
-                                              width: 1.5)),
-                                      errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: errorColor.withOpacity(0.8),
-                                              width: 1.5)),
-                                      prefixIcon: const Padding(
-                                          padding: EdgeInsets.only(left: 8.0),
-                                          child: Icon(Icons.password_rounded)),
-                                      suffixIcon: showPassword == true
-                                          ? IconButton(
-                                              onPressed: toggleObscure,
-                                              icon: const Icon(
-                                                  Icons.visibility_off))
-                                          : IconButton(
-                                              onPressed: toggleObscure,
-                                              icon: const Icon(
-                                                  Icons.visibility_rounded)),
-                                      focusColor: primaryColor,
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: primaryColor, width: 1.5)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color:
-                                                  primaryColor.withOpacity(0.5),
-                                              width: 1.5)),
-                                      labelText: 'Password',
-                                      labelStyle: TextStyle(
-                                          color: primaryColor.withOpacity(0.6))),
+                                Theme(
+                                   data: Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor,)),
+                                  child: TextFormField(
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return 'Input you a password';
+                                      } else if (value.length < 7) {
+                                        // check if usename has a match on firebase already
+                                        return 'Passowrd cannot be less than 7';
+                                      }
+                                    },
+                                    onSaved: (newValue) {
+                                      passwordContoller.text = newValue!;
+                                    },
+                                    cursorColor: primaryColor.withOpacity(0.7),
+                                    controller: passwordContoller,
+                                    obscureText:
+                                        showPassword == true ? false : true,
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                        // contentPadding: EdgeInsets.only(left: 10, right: 10),
+                                        errorStyle: TextStyle(
+                                            color: errorColor.withOpacity(0.8)),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: errorColor.withOpacity(0.8),
+                                                width: 1.5)),
+                                        errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: errorColor.withOpacity(0.8),
+                                                width: 1.5)),
+                                        prefixIcon: const Padding(
+                                            padding: EdgeInsets.only(left: 8.0),
+                                            child: Icon(Icons.password_rounded)),
+                                        suffixIcon: showPassword == true
+                                            ? IconButton(
+                                                onPressed: toggleObscure,
+                                                icon: const Icon(
+                                                    Icons.visibility_off))
+                                            : IconButton(
+                                                onPressed: toggleObscure,
+                                                icon: const Icon(
+                                                    Icons.visibility_rounded)),
+                                        focusColor: primaryColor,
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: primaryColor, width: 1.5)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color:
+                                                    primaryColor.withOpacity(0.5),
+                                                width: 1.5)),
+                                        labelText: 'Password',
+                                        labelStyle: TextStyle(
+                                            color: primaryColor.withOpacity(0.6))),
+                                  ),
                                 ),
                                 spacing(size: size, height: 0.01),
-                                TextFormField(
-                                  validator: (String? value) {
-                                    if (value!.isEmpty) {
-                                      return 'Input your password confirmation detail';
-                                    } else if (value != passwordContoller.text) {
-                                      // check if usename has a match on firebase already
-                                      return 'Must be same as your password';
-                                    }
-                                  },
-                                  onSaved: (newValue) {
-                                    confirmPasswordController.text = newValue!;
-                                  },
-                                  cursorColor: primaryColor.withOpacity(0.7),
-                                  controller: confirmPasswordController,
-                                  obscureText:
-                                      showPassword1 == true ? false : true,
-                                  maxLines: 1,
-                                  decoration: InputDecoration(
-                                      // contentPadding: EdgeInsets.only(left: 10, right: 10),
-                                      errorStyle: TextStyle(
-                                          color: errorColor.withOpacity(0.8)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: errorColor.withOpacity(0.8),
-                                              width: 1.5)),
-                                      errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: errorColor.withOpacity(0.8),
-                                              width: 1.5)),
-                                      prefixIcon: const Padding(
-                                          padding: EdgeInsets.only(left: 8.0),
-                                          child: Icon(Icons.password_rounded)),
-                                      suffixIcon: showPassword1 == true
-                                          ? IconButton(
-                                              onPressed: toggleObscure1,
-                                              icon: const Icon(
-                                                  Icons.visibility_off))
-                                          : IconButton(
-                                              onPressed: toggleObscure1,
-                                              icon: const Icon(
-                                                  Icons.visibility_rounded)),
-                                      focusColor: primaryColor,
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color: primaryColor, width: 1.5)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(30),
-                                          borderSide: BorderSide(
-                                              color:
-                                                  primaryColor.withOpacity(0.5),
-                                              width: 1.5)),
-                                      labelText: 'Confirm Password',
-                                      labelStyle: TextStyle(
-                                          color: primaryColor.withOpacity(0.6))),
+                                Theme(
+                                   data: Theme.of(context).copyWith(
+                            colorScheme: ThemeData()
+                                .colorScheme
+                                .copyWith(primary: primaryColor,)),
+                                  child: TextFormField(
+                                    validator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return 'Input your password confirmation detail';
+                                      } else if (value != passwordContoller.text) {
+                                        return 'Must be same as your password';
+                                      }
+                                    },
+                                    onSaved: (newValue) {
+                                      confirmPasswordController.text = newValue!;
+                                    },
+                                    cursorColor: primaryColor.withOpacity(0.7),
+                                    controller: confirmPasswordController,
+                                    obscureText:
+                                        showPassword1 == true ? false : true,
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                        errorStyle: TextStyle(
+                                            color: errorColor.withOpacity(0.8)),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: errorColor.withOpacity(0.8),
+                                                width: 1.5)),
+                                        errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: errorColor.withOpacity(0.8),
+                                                width: 1.5)),
+                                        prefixIcon: const Padding(
+                                            padding: EdgeInsets.only(left: 8.0),
+                                            child: Icon(Icons.password_rounded)),
+                                        suffixIcon: showPassword1 == true
+                                            ? IconButton(
+                                                onPressed: toggleObscure1,
+                                                icon: const Icon(
+                                                    Icons.visibility_off))
+                                            : IconButton(
+                                                onPressed: toggleObscure1,
+                                                icon: const Icon(
+                                                    Icons.visibility_rounded)),
+                                        focusColor: primaryColor,
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color: primaryColor, width: 1.5)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            borderSide: BorderSide(
+                                                color:
+                                                    primaryColor.withOpacity(0.5),
+                                                width: 1.5)),
+                                        labelText: 'Confirm Password',
+                                        labelStyle: TextStyle(
+                                            color: primaryColor.withOpacity(0.6))),
+                                  ),
                                 ),
                               ]),
                             ),
@@ -419,7 +441,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                       setState(() {
                                       });
                                       try {
-                                        final response =
                                             await Provider.of<Authprovider>(
                                                     context,
                                                     listen: false)
@@ -428,10 +449,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                           imagePath: image,
                                           email: emailController.text,
                                           password: passwordContoller.text,
-                                        );
-                                        response != null
-                                            ? Navigator.of(context).pop()
+                                        ).then((value) {
+
+                                        value != null
+                                            ? Navigator.of(context).popAndPushNamed('/loginScreen')
                                             : errorDialogue(context, 'Error');
+                                        });
                                       } catch (e) {
                                         setState(() {
                                         });
