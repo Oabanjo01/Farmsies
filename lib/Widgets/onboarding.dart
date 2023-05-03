@@ -24,8 +24,9 @@ class onboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = MediaQuery.of(context).platformBrightness;
     return IntroductionScreen(
-      globalBackgroundColor: primaryColor,
+      globalBackgroundColor: theme == Brightness.dark ? primaryDarkColor : primaryColor,
       pages: [
         PageViewModel(
             title: 'Welcome to farmsies',

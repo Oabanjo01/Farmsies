@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           body: RefreshIndicator(
             onRefresh: () async {
               listentoProductChanges();
-              final SnackBar showSnackBar = snackBar('Refreshed', 1,
+              final SnackBar showSnackBar = snackBar(context, 'Refreshed', 1,
                   size.width * 0.3, primaryColor.withOpacity(0.1));
               ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
             },

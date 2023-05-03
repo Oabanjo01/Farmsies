@@ -59,7 +59,10 @@ class Authprovider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return _userFromFirebase(credential.user);
-    } on FirebaseAuthException catch (e) {
+    } on SocketException catch (e) {
+      _isLoading = false;
+      return e;
+    }on FirebaseAuthException catch (e) {
       _isLoading = false;
       switch (e.code) {
         case "invalid-email":
@@ -81,7 +84,7 @@ class Authprovider with ChangeNotifier {
           _errorMessage = "Signing in with Email and Password is not enabled.";
           break;
         default:
-          _errorMessage = "An undefined Error happened.";
+          _errorMessage = "An undefined Error happened, might be your internet.";
       }
       return _errorMessage;
     }

@@ -426,7 +426,7 @@ class _AddProductState extends State<AddProduct> {
                                           '/homepage',
                                           (route) => false,
                                         );
-                                        final SnackBar showSnackBar = snackBar(
+                                        final SnackBar showSnackBar = snackBar(context, 
                                             'Your Item has been created', 1);
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(showSnackBar);
@@ -438,7 +438,7 @@ class _AddProductState extends State<AddProduct> {
                                     _isLoading = false;
                                   });
                                   final SnackBar showSnackBar =
-                                      snackBar('There was an error', 1);
+                                      snackBar(context, 'There was an error', 1);
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(showSnackBar);
                                 }

@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
       )
     );
     return Scaffold(
-        backgroundColor: primaryColor,
+        backgroundColor: theme == Brightness.dark ? primaryDarkColor : primaryColor,
         body: Stack(
           children: [
             Center(
@@ -92,11 +92,11 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: [
                       Text(
                         'Developed by $developername',
-                        style: TextStyle(color: theme ==Brightness.dark ? textDarkColor : textColor),
+                        style: TextStyle(color: theme ==Brightness.light ? textColor : textDarkColor),
                       ),
                       Text(
                         versionNumber,
-                        style: TextStyle(color: theme ==Brightness.dark ? textDarkColor : textColor),
+                        style: TextStyle(color: theme ==Brightness.light ? textColor : textDarkColor),
                       )
                     ],
                   ),

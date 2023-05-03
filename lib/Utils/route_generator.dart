@@ -11,6 +11,7 @@ import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:farmsies/wrapper.dart';
 import 'package:flutter/material.dart';
 
+import '../Screens/auth-page/forgot_password.dart';
 import '../Screens/auth-page/login.dart';
 import '../Screens/auth-page/signupscreen.dart';
 import '../Screens/homepage.dart';
@@ -53,7 +54,9 @@ class RouteGenerator {
       case '/aboutApp':
         return MaterialPageRoute(builder: (_) => const AboutApp());
       case '/aboutDeveloper':
-        return MaterialPageRoute(builder: (_) => const AboutDeveloper());
+        return MaterialPageRoute(builder: (_) => const AboutDeveloper()); 
+      case '/forgotPassword':
+        return MaterialPageRoute(builder: (_) => const ForgotPassword());
       default:
         return _errorRoute();
     }

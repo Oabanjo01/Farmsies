@@ -282,7 +282,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                       : itemAmount = itemAmount + 1;
                                 });
                                 if (itemAmount >= data!['amount']) {
-                                  final SnackBar showSnackBar = snackBar(
+                                  final SnackBar showSnackBar = snackBar(context, 
                                       'Only ${data['amount']} available, check back later!',
                                       2);
                                   ScaffoldMessenger.of(context)
@@ -300,7 +300,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                           : itemAmount = itemAmount + 10;
                                     });
                                     if (itemAmount >= data!['amount']) {
-                                      final SnackBar showSnackBar = snackBar(
+                                      final SnackBar showSnackBar = snackBar(context, 
                                           'Only ${data['amount']} available, check back later!',
                                           2);
                                       ScaffoldMessenger.of(context)
@@ -396,7 +396,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                             ),
                                             onPressed: () {
                                               final SnackBar showSnackBar =
-                                                  snackBar(
+                                                  snackBar(context, 
                                                       'This is your item, long press for more actions',
                                                       1);
                                               ScaffoldMessenger.of(context)
@@ -448,7 +448,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                     ScaffoldMessenger.of(
                                                                             context)
                                                                         .showSnackBar(
-                                                                      snackBar(
+                                                                      snackBar(context, 
                                                                           'Your item has been deleted successfully',
                                                                           1),
                                                                     ));
@@ -467,7 +467,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                 data['amount']
                                                         ? ScaffoldMessenger.of(
                                                                 context)
-                                                            .showSnackBar(snackBar(
+                                                            .showSnackBar(snackBar(context, 
                                                                 'You need to have more than 0 items in your cart',
                                                                 1))
                                                         : provider

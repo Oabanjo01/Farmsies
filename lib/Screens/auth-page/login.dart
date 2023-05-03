@@ -143,7 +143,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            spacing(size: size, height: 0.05),
+            Container(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              alignment: Alignment.centerRight,
+              width: double.infinity,
+              child: TextButton(child: Text('Forgot Passowrd', style: TextStyle(color: primaryColor),), onPressed: () {
+                Navigator.pushNamed(context, '/forgotPassword');
+              }),
+            ),
+            spacing(size: size, height: 0.03),
             SizedBox(
               height: size.height * 0.065,
               width: size.width * 0.7,
@@ -181,6 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         email: userController.text,
                                         password: passwordController.text);
                             setState(() {});
+                            // ignore: use_build_context_synchronously
                             Navigator.of(
                               context,
                             ).pushNamedAndRemoveUntil(

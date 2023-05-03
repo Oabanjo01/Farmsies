@@ -1,5 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farmsies/Constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends SearchDelegate {
@@ -37,95 +37,127 @@ class CustomSearchBar extends SearchDelegate {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return Container(
-              margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
-              child: ListView(children: [
-                ...snapshot.data!.docs.where((element) {
-                  return element['title']
-                      .toString()
-                      .toLowerCase()
-                      .contains(query.toLowerCase());
-                }).map((data) {
-                  final String title = data.get('title');
-                  final String description = data.get('description');
-                  final String imagePath = data.get('imagepath');
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                child: ListView(children: [
+                  ...snapshot.data!.docs.where((element) {
+                    return element['title']
+                        .toString()
+                        .toLowerCase()
+                        .contains(query.toLowerCase());
+                  }).map((data) {
+                    final String title = data.get('title');
+                    final String description = data.get('description');
+                    final String imagePath = data.get('imagepath');
 
-                  return search_list_tile(title, description, size, imagePath, context, data);
-                })
-              ]),
+                    return searchlisttile(
+                        title, description, size, imagePath, context, data);
+                  })
+                ]),
+              ),
             );
           }
         });
   }
 
-   @override
+  @override
   Widget buildSuggestions(BuildContext context) {
     List<QueryDocumentSnapshot> matchQuery = [];
     final size = MediaQuery.of(context).size;
-          if (query.isEmpty) {
-            return const Center(child: Text('Type something'));
-          } else {
-            return StreamBuilder<QuerySnapshot>(
-            stream: collection.snapshots().asBroadcastStream(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+    if (query.isEmpty) {
+      return const Center(child: Text('Search for a product'));
+    } else {
+      return StreamBuilder<QuerySnapshot>(
+          stream: collection.snapshots().asBroadcastStream(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            matchQuery.clear();
+            final data = snapshot.data!.docs;
+            for (var element in data) {
+              if (element['title']
+                  .toString()
+                  .toLowerCase()
+                  .contains(query.toLowerCase())) {
+                matchQuery.add(element);
               }
-              final data = snapshot.data!.docs;
-              for (var element in data) {
-                if (element['title'].toString().toLowerCase().contains(query.toLowerCase())) {
-                  matchQuery.add(element);
-                } 
-              }
-              return Container(
-              margin: EdgeInsets.only(top: size.height * 0.01),
+            }
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: size.height * 0.01),
                 child: ListView.builder(
                   itemCount: matchQuery.length,
                   itemBuilder: (context, index) {
                     final String title = matchQuery[index]['title'].toString();
                     final String description = matchQuery[index]['description'];
                     final String imagePath = matchQuery[index]['imagepath'];
-                    return search_list_tile(title, description, size, imagePath, context, matchQuery[index],);
-                },),
-              );
-            }
-          );
-        }
+                    return Column(
+                      children: [
+                        searchlisttile(
+                          title,
+                          description,
+                          size,
+                          imagePath,
+                          context,
+                          matchQuery[index],
+                        ),
+                        Divider(
+                          color: primaryColor.withOpacity(0.5),
+                          endIndent: size.width * 0.04,
+                          indent: size.width * 0.04,
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          });
     }
   }
+}
 
-  ListTile search_list_tile(String title, String description, Size size, String imagePath, BuildContext context, QueryDocumentSnapshot<Object?> productDetail) {
-    return ListTile(
-                title: Text(title),
-                subtitle: Text(description),
-                leading: CircleAvatar(
-                  foregroundColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  radius: size.width * 0.1,
-                  child: FadeInImage(
-                    fadeOutDuration: const Duration(milliseconds: 200),
-                    fadeOutCurve: Curves.easeOutBack,
-                    placeholder: const AssetImage('assets/harvest.png'),
-                    image: NetworkImage(
-                      imagePath,
-                    ),
-                    placeholderFit: BoxFit.scaleDown,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    imageErrorBuilder: ((context, error, stackTrace) =>
-                        Center(
-                          child: Image.asset(
-                            'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
-                            fit: BoxFit.fitHeight,
-                          ),
-                        )),
-                  ),
-                ),
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamed('/productDetail', arguments: productDetail).then((value) => Navigator.pop(context));
-                },
-              );
-  }
-
+ListTile searchlisttile(
+    String title,
+    String description,
+    Size size,
+    String imagePath,
+    BuildContext context,
+    QueryDocumentSnapshot<Object?> productDetail) {
+  return ListTile(
+    title: Text(title),
+    subtitle: Text(description),
+    leading: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(
+              imagePath,
+            )),
+        color: Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      width: size.width * 0.1,
+      height: size.width * 0.1,
+    ),
+    onTap: () {
+      Navigator.of(context)
+          .pushNamed('/productDetail', arguments: productDetail)
+          .then((value) => Navigator.pop(context));
+    },
+  );
+}

@@ -73,14 +73,14 @@ class Itemprovider with ChangeNotifier {
           'isFavourited': true,
           'isCarted': true,
         }).then((value) {
-          final SnackBar showSnackBar = snackBar(carted, 1);
+          final SnackBar showSnackBar = snackBar(context, carted, 1);
           ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
         });
         notifyListeners();
       } else if (docId == id) {
         _isToggled[id] = false;
         await documentReference.delete().then((value) {
-          final SnackBar showSnackBar = snackBar(unCarted, 1);
+          final SnackBar showSnackBar = snackBar(context, unCarted, 1);
           ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
         });
         notifyListeners();
