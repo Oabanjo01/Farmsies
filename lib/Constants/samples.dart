@@ -8,7 +8,7 @@ List<TipsDeck> food = [
         'https://images.unsplash.com/photo-1585540083814-ea6ee8af9e4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8bmlnZXJpYXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=600&q=60',
   ),
   TipsDeck(
-    title: 'Where can i get fesh food?',
+    title: 'Where can i get fresh food?',
     description: 'Farmsies is a great option',
     imagepath:
         'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8bWFya2V0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60',
