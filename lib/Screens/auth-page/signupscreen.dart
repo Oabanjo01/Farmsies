@@ -39,7 +39,6 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  // final TextEditingController usernameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
   bool showPassword = false;
   bool showPassword1 = false;
@@ -61,6 +60,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context).brightness;
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -462,9 +462,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                       }
                                     }
                                   },
-                                  child: const Text('Sign up'),
+                                  child: Text('Sign up', style: TextStyle(fontSize: 17, color: theme == Brightness.dark ? textDarkColor : textColor),),
                                 ),
                         ),
+                        spacing(size: size, height: 0.02),
                         TextButton(
                           style: ButtonStyle(
                               overlayColor: MaterialStateProperty.all(

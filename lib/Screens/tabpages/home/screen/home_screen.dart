@@ -14,7 +14,7 @@ import '../../../../Utils/snack_bar.dart';
 import '../widgets/all_deals.dart';
 import '../../../../Widgets/generalwidget/text_fields.dart';
 import '../widgets/food_categories.dart';
-import '../widgets/food_dex.dart';
+import '../widgets/tips_deck.dart';
 import '../widgets/head_board.dart';
 import '../widgets/homescreen_headers.dart';
 
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final firebaseUser = _firebaseAuth.currentUser!;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return SafeArea(
       child: GestureDetector(
         onTap: () {

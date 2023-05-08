@@ -2,7 +2,7 @@ import 'package:farmsies/Constants/colors.dart';
 import 'package:flutter/material.dart';
 
 SnackBar snackBar(BuildContext context, String text, int time, [width, color]) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
   return SnackBar(
     width: width,
     shape: const StadiumBorder(),

@@ -43,9 +43,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return const SliverFillRemaining(
+      return SliverFillRemaining(
         child: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: primaryColor),
         ),
       );
     } else if (snapshot.hasError) {
@@ -82,7 +82,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     return Scaffold(

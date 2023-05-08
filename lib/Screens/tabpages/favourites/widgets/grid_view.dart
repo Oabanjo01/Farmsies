@@ -35,7 +35,7 @@ class _GridviewState extends State<Gridview> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final provider = Provider.of<Itemprovider>(context);
     final List<QueryDocumentSnapshot> list = widget.snapshot.data!.docs;
     return SliverGrid(
@@ -90,6 +90,9 @@ class _GridviewState extends State<Gridview> {
                     .pushNamed('/productDetail', arguments: product),
                 child: Image.network(
                   list[index]['imagepath'],
+                  errorBuilder: (context, error, stackTrace) =>  Image.asset(
+                              'assets/Error_images/3d-render-red-paper-clipboard-with-cross-mark.jpg',
+                              fit: BoxFit.fitHeight),
                   fit: BoxFit.cover,
                 ),
               ),

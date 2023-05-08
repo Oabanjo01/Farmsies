@@ -11,15 +11,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Constants/colors.dart';
 import 'Provider/toggle_theme.dart';
 import 'Screens/auth-page/splash_screen.dart';
+
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   final darkMode = preferences.getBool(
-    'ThemeDark',
-  ) ?? false;
-  print(darkMode);
-  runApp( Farmsies(themeMode: darkMode,));
+        'ThemeDark',
+      ) ??
+      false;
+  runApp(Farmsies(
+    themeMode: darkMode,
+  ));
 }
 
 class Farmsies extends StatefulWidget {
@@ -32,7 +35,6 @@ class Farmsies extends StatefulWidget {
 }
 
 class _FarmsiesState extends State<Farmsies> {
-
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -60,16 +62,21 @@ class _FarmsiesState extends State<Farmsies> {
               onGenerateRoute: RouteGenerator.generateRoute,
               themeMode: theme.themeMode,
               theme: ThemeData(
+                  useMaterial3: true,
+                  primaryColor: primaryColor,
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(
                       backgroundColor: screenColor, elevation: 0),
-                  scaffoldBackgroundColor: Colors.white,
+                  scaffoldBackgroundColor: screenColor,
                   floatingActionButtonTheme: FloatingActionButtonThemeData(
-                      backgroundColor: primaryColor,
+                    
+                    shape: const CircleBorder(),
+                      backgroundColor: primaryColor.withOpacity(0.8),
                       foregroundColor: screenColor,
                       splashColor: screenColor),
                   iconTheme: IconThemeData(
                     color: primaryColor,
                   ),
+                  brightness: Brightness.light,
                   appBarTheme: AppBarTheme(
                       systemOverlayStyle: SystemUiOverlayStyle.dark,
                       foregroundColor: primaryDarkColor),
@@ -79,25 +86,58 @@ class _FarmsiesState extends State<Farmsies> {
                         brightness: Brightness.light,
                       )),
               darkTheme: ThemeData(
+                  useMaterial3: true,
+                  progressIndicatorTheme: ProgressIndicatorThemeData(
+                    color: primaryColor
+                  ),
+                  brightness: Brightness.dark,
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(
                       backgroundColor: screenDarkColor, elevation: 0),
                   scaffoldBackgroundColor: screenDarkColor,
                   floatingActionButtonTheme: FloatingActionButtonThemeData(
+                    shape: CircleBorder(side: BorderSide(color: primaryColor.withOpacity(0.4), width: 0.0)),
                       backgroundColor: primaryDarkColor,
                       foregroundColor: primaryColor,
                       splashColor: primaryColor),
                   iconTheme: IconThemeData(
                     color: primaryColor,
                   ),
+                  backgroundColor: primaryDarkColor,
                   appBarTheme: AppBarTheme(
-                      systemOverlayStyle: SystemUiOverlayStyle.light,
-                      foregroundColor: primaryColor),
-                  colorScheme: ThemeData().colorScheme.copyWith(
-                      primary: primaryDarkColor,
-                      secondary: primaryDarkColor.withOpacity(0.5),
-                      brightness: Brightness.dark)),
+                    elevation: 0,
+                    systemOverlayStyle: SystemUiOverlayStyle.light,
+                    foregroundColor: primaryColor,
+                    backgroundColor: screenDarkColor,
+                  ),
+                  elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ButtonStyle(
+                      shape: 
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      backgroundColor: MaterialStateProperty.all(
+                              primaryColor,
+                            ),
+                      foregroundColor: MaterialStateProperty.all(
+                              textDarkColor,
+                            ),
+                    )
+                  ),
+                  colorScheme: ColorScheme.fromSwatch(
+                    brightness: Brightness.dark,
+                    backgroundColor: primaryDarkColor,
+                    errorColor: errorColor,
+                    primarySwatch: Colors.amber
+                  )),
             ),
           );
         });
   }
 }
+
+// ThemeData().colorScheme.copyWith(
+//                       primary: primaryDarkColor,
+//                       secondary: primaryDarkColor.withOpacity(0.5),
+//                       brightness: Brightness.dark)

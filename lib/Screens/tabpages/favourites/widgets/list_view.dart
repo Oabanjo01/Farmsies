@@ -21,7 +21,7 @@ class Listview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final List list = snapshot.data!.docs;
     final provider = Provider.of<Itemprovider>(context);
     return SliverList(

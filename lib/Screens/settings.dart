@@ -2,7 +2,6 @@ import 'package:farmsies/Constants/colors.dart';
 import 'package:farmsies/Provider/toggle_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -15,7 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final provider = Provider.of<ToggleProvider>(context);
     return Scaffold(
       body: CustomScrollView(
@@ -23,6 +22,12 @@ class _SettingsPageState extends State<SettingsPage> {
           SliverAppBar(
             title: const Text('Settings'),
             elevation: 0,
+            leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: primaryColor,
+                )),
             backgroundColor: Colors.transparent,
             foregroundColor: primaryColor,
           ),
@@ -45,23 +50,15 @@ class _SettingsPageState extends State<SettingsPage> {
                     IconButton(
                         onPressed: () async {
                           provider.setTheme();
-
-                          SharedPreferences preferences =
-                              await SharedPreferences.getInstance();
-                          final darkMode = preferences.getBool(
-                                'ThemeDark',
-                              ) ??
-                              false;
-                          print(darkMode);
                         },
                         icon: provider.themeMode == ThemeMode.dark
-                            ? const Icon(
-                                Icons.nightlight,
-                                color: Colors.grey,
-                              )
-                            : Icon(
+                            ? Icon(
                                 Icons.sunny,
                                 color: primaryColor,
+                              )
+                            : const Icon(
+                                Icons.nightlight_round,
+                                color: Colors.grey,
                               ))
                   ]),
             ),

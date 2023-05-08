@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context).brightness;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -62,186 +63,196 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Center(
-                child: Text(
-                  'Sign in',
-                  style: TextStyle(fontSize: 30, color: primaryColor),
+        Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: size.height * 0.08),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Center(
+                    child: Text(
+                      'Sign in',
+                      style: TextStyle(fontSize: 30, color: primaryColor),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            spacing(size: size, height: 0.05),
-            SizedBox(
-              child: Form(
-                key: _globalKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor,)),
-                        child: TextFormField(
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Input you E-mail';
-                            } else if (!RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value)) {
-                              return 'invalid email';
-                            }
-                          },
-                          onSaved: (newValue) {
-                            userController.text = newValue!;
-                          },
-                          cursorColor: primaryColor.withOpacity(0.7),
-                          controller: userController,
-                          obscureText: false,
-                          maxLines: 1,
-                          decoration: userFieldDecoration(
-                            icon: const Icon(Icons.mail_rounded),
-                            labelText: 'E-mail',
+                spacing(size: size, height: 0.05),
+                SizedBox(
+                  child: Form(
+                    key: _globalKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                                colorScheme: ThemeData().colorScheme.copyWith(
+                                      primary: primaryColor,
+                                    )),
+                            child: TextFormField(
+                              validator: (String? value) {
+                                if (value!.isEmpty) {
+                                  return 'Input you E-mail';
+                                } else if (!RegExp(
+                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(value)) {
+                                  return 'invalid email';
+                                }
+                              },
+                              onSaved: (newValue) {
+                                userController.text = newValue!;
+                              },
+                              cursorColor: primaryColor.withOpacity(0.7),
+                              controller: userController,
+                              obscureText: false,
+                              maxLines: 1,
+                              decoration: userFieldDecoration(
+                                icon: const Icon(Icons.mail_rounded),
+                                labelText: 'E-mail',
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    spacing(size: size, height: 0.01),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor)),
-                        child: TextFormField(
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Input your password';
-                            } else if (value.length < 6) {
-                              return 'Password too short';
-                            }
-                          },
-                          onSaved: (newValue) {
-                            passwordController.text = newValue!;
-                          },
-                          cursorColor: primaryColor.withOpacity(0.7),
-                          controller: passwordController,
-                          obscureText: _showPassword == true ? false : true,
-                          maxLines: 1,
-                          decoration: passwordfieldDecoration(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              alignment: Alignment.centerRight,
-              width: double.infinity,
-              child: TextButton(child: Text('Forgot Passowrd', style: TextStyle(color: primaryColor),), onPressed: () {
-                Navigator.pushNamed(context, '/forgotPassword');
-              }),
-            ),
-            spacing(size: size, height: 0.03),
-            SizedBox(
-              height: size.height * 0.065,
-              width: size.width * 0.7,
-              child: Provider.of<Authprovider>(context).isLoading == true
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: primaryColor,
-                      ),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(0),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                        spacing(size: size, height: 0.01),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                                colorScheme: ThemeData()
+                                    .colorScheme
+                                    .copyWith(primary: primaryColor)),
+                            child: TextFormField(
+                              validator: (String? value) {
+                                if (value!.isEmpty) {
+                                  return 'Input your password';
+                                } else if (value.length < 6) {
+                                  return 'Password too short';
+                                }
+                              },
+                              onSaved: (newValue) {
+                                passwordController.text = newValue!;
+                              },
+                              cursorColor: primaryColor.withOpacity(0.7),
+                              controller: passwordController,
+                              obscureText: _showPassword == true ? false : true,
+                              maxLines: 1,
+                              decoration: passwordfieldDecoration(),
+                            ),
                           ),
                         ),
-                        backgroundColor: MaterialStateProperty.all(
-                          primaryColor,
-                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  alignment: Alignment.centerRight,
+                  width: double.infinity,
+                  child: TextButton(
+                      child: Text(
+                        'Forgot Passowrd',
+                        style: TextStyle(color: primaryColor),
                       ),
-                      onPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        if (!_globalKey.currentState!.validate()) {
-                          return;
-                        } else {
-                          _globalKey.currentState!.save();
-                          setState(() {});
-                          try {
-                            final userCredential =
-                                await Provider.of<Authprovider>(context,
-                                        listen: false)
-                                    .signInWithEmailAndPassword(
-                                        email: userController.text,
-                                        password: passwordController.text);
-                            setState(() {});
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(
-                              context,
-                            ).pushNamedAndRemoveUntil(
-                                '/homepage', (route) => false,
-                                arguments: userCredential!.userMail);
-                          } catch (e) {
-                            setState(() {});
-                            String error = Provider.of<Authprovider>(context,
-                                    listen: false)
-                                .errorMessage;
-                            if (error ==
-                                'User with this email doesn\'t exist.') {
-                              errorDialogue(context, error);
-                              // Navigator.pop(context);
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/forgotPassword');
+                      }),
+                ),
+                spacing(size: size, height: 0.03),
+                SizedBox(
+                  height: size.height * 0.065,
+                  width: size.width * 0.7,
+                  child: Provider.of<Authprovider>(context).isLoading == true
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(0),
+                            shape:
+                                MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              primaryColor,
+                            ),
+                          ),
+                          onPressed: () async {
+                            FocusScope.of(context).unfocus();
+                            if (!_globalKey.currentState!.validate()) {
+                              return;
                             } else {
-                              errorDialogue(context, error);
-                              // Navigator.pop(context);
+                              _globalKey.currentState!.save();
+                              setState(() {});
+                              try {
+                                final userCredential =
+                                    await Provider.of<Authprovider>(context,
+                                            listen: false)
+                                        .signInWithEmailAndPassword(
+                                            email: userController.text,
+                                            password: passwordController.text);
+                                setState(() {});
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
+                                    '/homepage', (route) => false,
+                                    arguments: userCredential!.userMail);
+                              } catch (e) {
+                                setState(() {});
+                                String error = Provider.of<Authprovider>(context,
+                                        listen: false)
+                                    .errorMessage;
+                                if (error ==
+                                    'User with this email doesn\'t exist.') {
+                                  errorDialogue(context, error);
+                                  // Navigator.pop(context);
+                                } else {
+                                  errorDialogue(context, error);
+                                  // Navigator.pop(context);
+                                }
+                              }
                             }
-                          }
-                        }
-                      },
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 17),
+                          },
+                          child: Text(
+                            'Login',
+                            style: TextStyle(fontSize: 17, color: theme == Brightness.dark ? textDarkColor : textColor),
+                          ),
+                        ),
+                ),
+                spacing(size: size, height: 0.05),
+                Textbutton(text: 'Sign up',),
+                spacing(size: size, height: 0.1),
+                InkWell(
+                  radius: 30,
+                  customBorder: const CircleBorder(),
+                  highlightColor: Colors.transparent,
+                  splashColor: primaryColor.withOpacity(0.1),
+                  onTap: () {},
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: size.width * 0.1,
+                        child: Image.asset('assets/google.png'),
                       ),
-                    ),
-            ),
-            spacing(size: size, height: 0.05),
-            Textbutton(text: 'Sign up'),
-            spacing(size: size, height: 0.1),
-            InkWell(
-              radius: 30,
-              customBorder: const CircleBorder(),
-              highlightColor: Colors.transparent,
-              splashColor: primaryColor.withOpacity(0.1),
-              onTap: () {},
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: size.width * 0.1,
-                    child: Image.asset('assets/google.png'),
+                      spacing(size: size, height: 0.02),
+                      Text(
+                        'Or sign in with Google',
+                        style: TextStyle(color: primaryColor),
+                      ),
+                    ],
                   ),
-                  spacing(size: size, height: 0.02),
-                  Text(
-                    'Or sign in with Google',
-                    style: TextStyle(color: primaryColor),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ])),
     );

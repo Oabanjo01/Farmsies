@@ -37,6 +37,15 @@ class CustomSearchBar extends SearchDelegate {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else {
+            final data = snapshot.data!.docs;
+            if (data
+                    .where((element) => element['title']
+                        .toString()
+                        .toLowerCase()
+                        .contains(query.toLowerCase()))
+                    .toList().isEmpty) {
+                  return const Center(child: Text('This Product does not exist\n....for now', textAlign: TextAlign.center,),);
+                }
             return GestureDetector(
               onTap: () {
                 FocusScopeNode currentFocus = FocusScope.of(context);
@@ -72,13 +81,20 @@ class CustomSearchBar extends SearchDelegate {
     List<QueryDocumentSnapshot> matchQuery = [];
     final size = MediaQuery.of(context).size;
     if (query.isEmpty) {
-      return const Center(child: Text('Search for a product'));
+      return const Center(
+        child: Text(
+          'Search for a product',
+        ),
+      );
     } else {
       return StreamBuilder<QuerySnapshot>(
           stream: collection.snapshots().asBroadcastStream(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(
+                color: primaryColor,
+              ));
             }
             matchQuery.clear();
             final data = snapshot.data!.docs;
@@ -99,31 +115,38 @@ class CustomSearchBar extends SearchDelegate {
               },
               child: Container(
                 margin: EdgeInsets.only(top: size.height * 0.01),
-                child: ListView.builder(
-                  itemCount: matchQuery.length,
-                  itemBuilder: (context, index) {
-                    final String title = matchQuery[index]['title'].toString();
-                    final String description = matchQuery[index]['description'];
-                    final String imagePath = matchQuery[index]['imagepath'];
-                    return Column(
-                      children: [
-                        searchlisttile(
-                          title,
-                          description,
-                          size,
-                          imagePath,
-                          context,
-                          matchQuery[index],
-                        ),
-                        Divider(
-                          color: primaryColor.withOpacity(0.5),
-                          endIndent: size.width * 0.04,
-                          indent: size.width * 0.04,
-                        )
-                      ],
-                    );
-                  },
-                ),
+                child: matchQuery.isEmpty
+                    ? const Center(
+                        child: Text('This Product does not exist'),
+                      )
+                    : ListView.builder(
+                        itemCount: matchQuery.length,
+                        itemBuilder: (context, index) {
+                          final String title =
+                              matchQuery[index]['title'].toString();
+                          final String description =
+                              matchQuery[index]['description'];
+                          final String imagePath =
+                              matchQuery[index]['imagepath'];
+                          return Column(
+                            children: [
+                              searchlisttile(
+                                title,
+                                description,
+                                size,
+                                imagePath,
+                                context,
+                                matchQuery[index],
+                              ),
+                              Divider(
+                                color: primaryColor.withOpacity(0.5),
+                                endIndent: size.width * 0.04,
+                                indent: size.width * 0.04,
+                              )
+                            ],
+                          );
+                        },
+                      ),
               ),
             );
           });

@@ -39,7 +39,7 @@ class _AddProductState extends State<AddProduct> {
   String url = '';
   Future<String> getDownloadURL(email, uid) async {
     final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final imageurl = await firebaseStorage
         .ref()
         .child('Files/ProductPictures/$email/$uid-${titleController.text}')
@@ -85,6 +85,7 @@ class _AddProductState extends State<AddProduct> {
                 SliverAppBar(
                   title: const Text('Create your item'),
                   elevation: 0,
+                  leading: IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.arrow_back, color: primaryColor,)),
                   backgroundColor: Colors.transparent,
                   foregroundColor: primaryColor,
                 ),
@@ -485,7 +486,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   InputDecoration _inputStyle(Size size, String text) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return InputDecoration(
         contentPadding: EdgeInsets.only(
           left: size.width * 0.07,

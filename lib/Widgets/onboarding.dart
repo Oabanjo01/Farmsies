@@ -24,7 +24,7 @@ class onboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return IntroductionScreen(
       globalBackgroundColor: theme == Brightness.dark ? primaryDarkColor : primaryColor,
       pages: [

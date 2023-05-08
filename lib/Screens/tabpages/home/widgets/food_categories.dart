@@ -24,7 +24,7 @@ class Foodcategories extends StatelessWidget {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 1,
             childAspectRatio: 1,
-            mainAxisExtent: size.width * 0.18,
+            mainAxisExtent: size.width * 0.185,
             mainAxisSpacing: size.width * 0.03,
           ),
           itemCount: 6,
@@ -47,9 +47,11 @@ class Foodcategories extends StatelessWidget {
                     ),
                   ),
                   spacing(size: size, height: 0.01),
-                  Text(
-                    foodcategories[index]['food name'],
-                    style: const TextStyle(overflow: TextOverflow.fade),
+                  Flexible(
+                    child: Text(
+                      foodcategories[index]['food name'],
+                      style: const TextStyle(overflow: TextOverflow.fade),
+                    ),
                   )
                 ],
               ),

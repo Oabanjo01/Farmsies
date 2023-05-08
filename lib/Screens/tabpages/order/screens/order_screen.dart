@@ -54,7 +54,7 @@ class _OrderspageState extends State<Orderspage> {
                   margin: EdgeInsets.only(bottom: size.height * 0.015),
                   decoration: BoxDecoration(
                     color: theme == Brightness.light
-                        ? screenDarkColor.withOpacity(0.1)
+                        ? Colors.grey.withOpacity(0.1)
                         : screenColor.withOpacity(0.06),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(20),
@@ -100,7 +100,7 @@ class _OrderspageState extends State<Orderspage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
 
@@ -231,7 +231,7 @@ class _OrderspageState extends State<Orderspage> {
                                 style: ButtonStyle(
                                   elevation: MaterialStateProperty.all(0),
                                   foregroundColor:
-                                      MaterialStateProperty.all(textColor),
+                                      MaterialStateProperty.all(theme == Brightness.light ? textColor : textDarkColor),
                                   backgroundColor:
                                       MaterialStateProperty.all(primaryColor),
                                   shape: MaterialStateProperty.all<

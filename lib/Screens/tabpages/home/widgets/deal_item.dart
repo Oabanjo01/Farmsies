@@ -3,7 +3,6 @@ import 'package:farmsies/Provider/item_provider..dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
 
 import '../../../../Constants/colors.dart';
 
@@ -47,10 +46,10 @@ class _DealItemState extends State<DealItem> {
 
   @override
   Widget build(BuildContext context) {
-    timeDilation = 1;
     final size = MediaQuery.of(context).size;
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
+    final theme = Theme.of(context).brightness;
     return Column(children: [
       Flexible(
         fit: FlexFit.tight,
@@ -62,8 +61,8 @@ class _DealItemState extends State<DealItem> {
                 tag: widget.product.id,
                 child: FadeInImage(
                     fadeOutDuration: const Duration(seconds: 2),
-                    fadeInCurve: Curves.elasticIn,
-                    fadeOutCurve: Curves.elasticInOut,
+                    fadeInCurve: Curves.easeIn,
+                    fadeOutCurve: Curves.easeOut,
                     fadeInDuration: const Duration(seconds: 2),
                     placeholder: const AssetImage('assets/harvest.png'),
                     image: NetworkImage(
@@ -94,7 +93,7 @@ class _DealItemState extends State<DealItem> {
               left: 10,
               child: Chip(
                 label: Text('₦${widget.product['price'].toString()}'),
-                backgroundColor: Colors.transparent,
+                backgroundColor: theme == Brightness.dark  ? screenDarkColor : screenColor,
                 elevation: 0,
               ),
             )
@@ -109,8 +108,8 @@ class _DealItemState extends State<DealItem> {
               children: [
                 IconButton(
                   icon: toggleCartmode
-                      ? const Icon(Icons.shopping_basket)
-                      : const Icon(Icons.shopping_basket_outlined),
+                      ? Icon(Icons.shopping_basket, color: primaryColor)
+                      : Icon(Icons.shopping_basket_outlined, color: primaryColor),
                   onPressed: () async {
                     await value
                         .toggler(
@@ -129,8 +128,8 @@ class _DealItemState extends State<DealItem> {
                 ),
                 IconButton(
                   icon: toggleFavouriteMode
-                      ? const Icon(Icons.favorite_rounded)
-                      : const Icon(Icons.favorite_border_rounded),
+                      ? Icon(Icons.favorite_rounded, color: primaryColor,)
+                      : Icon(Icons.favorite_border_rounded,color: primaryColor,),
                   onPressed: () async {
                     await value
                         .toggler(
@@ -145,15 +144,6 @@ class _DealItemState extends State<DealItem> {
                         .then((value) => setState(() {
                               toggleFavouriteMode = !toggleFavouriteMode;
                             }));
-                    // provider.toggler(
-                    //   widget.product,
-                    //   uid,
-                    //   'Favourites',
-                    //   1,
-                    //   context,
-                    //   'Added to favourites',
-                    //   'Removed from favourites',
-                    // );
                   },
                 )
               ],

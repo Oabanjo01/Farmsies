@@ -54,8 +54,7 @@ class _ProductDetailState extends State<ProductDetail> {
   int itemAmount = 1;
   @override
   Widget build(BuildContext context) {
-    
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     final id = widget.productDetail.id;
     final size = MediaQuery.of(context).size;
     final provider = Provider.of<Itemprovider>(context);
@@ -149,7 +148,10 @@ class _ProductDetailState extends State<ProductDetail> {
                         height: size.height * 0.1,
                         width: size.height * 0.07,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: theme == Brightness.dark ? primaryDarkColor.withOpacity(0.5) : textColor),
+                            shape: BoxShape.circle,
+                            color: theme == Brightness.dark
+                                ? screenDarkColor
+                                : screenColor),
                         child: FittedBox(
                           fit: BoxFit.fitWidth,
                           child: Text(
@@ -158,7 +160,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ? 'Your Shop'
                                 : '${widget.productDetail['itemCreator'].toString()}\'s Shop',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textColor, fontWeight: FontWeight.w800),
+                            style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.w800),
                           ),
                         ),
                       ),
@@ -190,6 +194,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         Icons.favorite_border_rounded));
                               }
                               return IconButton(
+                                color: Theme.of(context).iconTheme.color,
                                 icon: toggleFavouriteMode
                                     ? const Icon(Icons.favorite_rounded)
                                     : const Icon(Icons.favorite_border_rounded),
@@ -261,15 +266,16 @@ class _ProductDetailState extends State<ProductDetail> {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: theme == Brightness.dark ? Colors.black.withOpacity(0.3) : secondaryColor,
-                                borderRadius: const BorderRadius.all(Radius.circular(10))
-                              ),
+                                  color: theme == Brightness.dark
+                                      ? Colors.black.withOpacity(0.3)
+                                      : secondaryColor,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10))),
                               child: Text(
                                 itemAmount <= 0 ? '0' : '$itemAmount',
                                 style: TextStyle(
                                     fontSize: 17,
-                                    color: theme ==
-                                            Brightness.dark
+                                    color: theme == Brightness.dark
                                         ? primaryColor
                                         : Colors.black),
                               ),
@@ -282,7 +288,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                       : itemAmount = itemAmount + 1;
                                 });
                                 if (itemAmount >= data!['amount']) {
-                                  final SnackBar showSnackBar = snackBar(context, 
+                                  final SnackBar showSnackBar = snackBar(
+                                      context,
                                       'Only ${data['amount']} available, check back later!',
                                       2);
                                   ScaffoldMessenger.of(context)
@@ -300,7 +307,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                           : itemAmount = itemAmount + 10;
                                     });
                                     if (itemAmount >= data!['amount']) {
-                                      final SnackBar showSnackBar = snackBar(context, 
+                                      final SnackBar showSnackBar = snackBar(
+                                          context,
                                           'Only ${data['amount']} available, check back later!',
                                           2);
                                       ScaffoldMessenger.of(context)
@@ -390,13 +398,19 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               )),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      theme == Brightness.light
+                                                          ? textColor
+                                                          : textDarkColor),
                                               backgroundColor:
                                                   MaterialStateProperty.all(
                                                       primaryColor),
                                             ),
                                             onPressed: () {
                                               final SnackBar showSnackBar =
-                                                  snackBar(context, 
+                                                  snackBar(
+                                                      context,
                                                       'This is your item, long press for more actions',
                                                       1);
                                               ScaffoldMessenger.of(context)
@@ -429,9 +443,10 @@ class _ProductDetailState extends State<ProductDetail> {
                                                         onClicked2: () async {
                                                           Navigator
                                                               .pushNamedAndRemoveUntil(
-                                                                  context,
-                                                                  '/homepage',
-                                                                  (route) => false,);
+                                                            context,
+                                                            '/homepage',
+                                                            (route) => false,
+                                                          );
                                                           await documentReference
                                                               .delete()
                                                               .then(
@@ -448,7 +463,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                     ScaffoldMessenger.of(
                                                                             context)
                                                                         .showSnackBar(
-                                                                      snackBar(context, 
+                                                                      snackBar(
+                                                                          context,
                                                                           'Your item has been deleted successfully',
                                                                           1),
                                                                     ));
@@ -458,8 +474,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                         textbutton2: 'Yes',
                                                         context: context,
                                                       );
-                                                    } catch (e) {
-                                                    }
+                                                    } catch (e) {}
                                                   },
                                                   onClicked2: () async {
                                                     itemAmount == 0 ||
@@ -467,7 +482,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                 data['amount']
                                                         ? ScaffoldMessenger.of(
                                                                 context)
-                                                            .showSnackBar(snackBar(context, 
+                                                            .showSnackBar(snackBar(
+                                                                context,
                                                                 'You need to have more than 0 items in your cart',
                                                                 1))
                                                         : provider
@@ -490,9 +506,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       'Add your item to your cart',
                                                   context: context,
                                                 );
-                                              } catch (e) {
-
-                                              }
+                                              } catch (e) {}
                                             },
                                             child: const Text(
                                                 'This is your product'),
@@ -511,6 +525,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               )),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(theme == Brightness.light ? textColor : textDarkColor),
                                               backgroundColor:
                                                   MaterialStateProperty.all(
                                                       primaryColor),
@@ -531,8 +547,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                   },
                                             child: itemAmount == 0 ||
                                                     itemAmount > data['amount']
-                                                ? const Text('No item in cart')
-                                                : const Text('Add to cart'),
+                                                ? Text('No item in cart', style: TextStyle(color: theme == Brightness.light ? textColor : textDarkColor))
+                                                : Text('Add to cart', style: TextStyle(color: theme == Brightness.light ? textColor : textDarkColor),),
                                           ),
                                         ),
                                 ],

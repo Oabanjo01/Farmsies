@@ -53,13 +53,19 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return SafeArea(
       child: Scaffold(
         body: CustomScrollView(slivers: [
           SliverAppBar(
             title: const Text('Categories'),
             elevation: 0,
+            leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: primaryColor,
+                )),
             backgroundColor: Colors.transparent,
             foregroundColor: primaryColor,
             bottom: TabBar(
@@ -206,7 +212,7 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   }
 
   SizedBox _tabpages(String text, Size size, TabController controller,) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return SizedBox(
         child: StreamBuilder(
             stream: getFoodItemsByCategory(text),
@@ -248,7 +254,7 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   }
 
   Tab _tabs(String text, TabController controller, int index) {
-    final theme = MediaQuery.of(context).platformBrightness;
+    final theme = Theme.of(context).brightness;
     return Tab(
       child: Text(
         text,

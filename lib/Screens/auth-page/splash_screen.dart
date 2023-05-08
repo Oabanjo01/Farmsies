@@ -25,28 +25,43 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _loadLoginScreen().then((value) {
+    _loadLoginScreen().then((value) async {
       if (value == true) {
         Timer(const Duration(seconds: 3),
             (() => Navigator.of(context).popAndPushNamed('/onboarding')));
       } else {
-        Future.delayed(
-            const Duration(seconds: 3),
-            () {
-              return Navigator.of(context).popAndPushNamed('/wrapper');
-            });}
-      });
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        DateTime _lastoginTime = DateTime.tryParse(preferences
+                .get(
+                  'lastLoginTime',
+                )
+                .toString()) ??
+            DateTime.now();
+            print(_lastoginTime);
+        final difference = DateTime.now().difference(_lastoginTime).inSeconds;
+        if (difference > 5) {
+          // ignore: use_build_context_synchronously
+          Navigator.popAndPushNamed(context, '/loginScreen');
+          print(difference);
+        } else {
+          Future.delayed(const Duration(seconds: 3), () {
+            return Navigator.of(context).popAndPushNamed('/wrapper');
+          });
+          print(difference);
+        }
+      }
+    });
   }
 
   Future<bool> _loadLoginScreen() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString('lastLoginTime', DateTime.now().toString());
     setState(() {
       bool _newLaunch = preferences.getBool('newScreen1') ?? true;
       newLaunch = _newLaunch;
     });
     return newLaunch;
   }
-  
 
   checkSplashScreenran() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,16 +81,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = MediaQuery.of(context).platformBrightness;
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+    final theme = Theme.of(context).brightness;
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent
-      )
-    );
+        systemNavigationBarColor: Colors.transparent));
     return Scaffold(
-        backgroundColor: theme == Brightness.dark ? primaryDarkColor : primaryColor,
+        backgroundColor:
+            theme == Brightness.dark ? primaryDarkColor : primaryColor,
         body: Stack(
           children: [
             Center(
@@ -92,11 +105,17 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: [
                       Text(
                         'Developed by $developername',
-                        style: TextStyle(color: theme ==Brightness.light ? textColor : textDarkColor),
+                        style: TextStyle(
+                            color: theme == Brightness.light
+                                ? textColor
+                                : textDarkColor),
                       ),
                       Text(
                         versionNumber,
-                        style: TextStyle(color: theme ==Brightness.light ? textColor : textDarkColor),
+                        style: TextStyle(
+                            color: theme == Brightness.light
+                                ? textColor
+                                : textDarkColor),
                       )
                     ],
                   ),
