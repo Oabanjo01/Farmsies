@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   sliver: SliverToBoxAdapter(
-                    child: Foodcategories(size: size, food: food),
+                    child: Foodcategories(size: size,),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   sliver: SliverToBoxAdapter(
-                    child: Fooddex(size: size, food: food),
+                    child: Fooddex(size: size),
                   ),
                 ),
                 SliverToBoxAdapter(

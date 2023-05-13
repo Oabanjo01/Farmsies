@@ -445,10 +445,10 @@ class _AddProductState extends State<AddProduct> {
                                 }
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'Create Product',
                               style: TextStyle(
-                                  fontSize: 17, color: primaryDarkColor),
+                                  fontSize: 17, ),
                             ),
                           ),
                   ),
@@ -502,7 +502,7 @@ class _AddProductState extends State<AddProduct> {
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: errorColor, width: 0.3)),
         labelStyle: TextStyle(
-          color: primaryColor,
+          color: primaryColor.withOpacity(0.5),
         ),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

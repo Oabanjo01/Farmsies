@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/samples.dart';
-import '../../../../Models/tips-model.dart';
 import '../../../../Utils/other_methods.dart';
 
 class Foodcategories extends StatelessWidget {
   const Foodcategories({
     Key? key,
     required this.size,
-    required this.food,
   }) : super(key: key);
 
   final Size size;
-  final List<TipsDeck> food;
 
   @override
   Widget build(BuildContext context) {

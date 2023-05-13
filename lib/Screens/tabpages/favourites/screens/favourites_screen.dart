@@ -98,8 +98,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 SliverAppBar(
                   shape: const ContinuousRectangleBorder(),
                   backgroundColor: theme == Brightness.dark
-                      ? primaryDarkColor
-                      : Colors.white,
+                      ? screenDarkColor
+                      : screenColor,
                   expandedHeight: size.height * 0.3,
                   elevation: 0,
                   floating: true,
@@ -123,8 +123,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
                       style: TextStyle(
                         fontSize: 20,
                         color: theme == Brightness.dark
-                            ? screenColor
-                            : primaryDarkColor,
+                            ? textDarkColor
+                            : textColor,
                       ),
                     ),
                   ),
@@ -134,6 +134,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.only(right: size.width * 0.05),
                     child: IconButton(
+                      color: Theme.of(context).iconTheme.color,
                       icon: isListview
                           ? const Icon(Icons.grid_view_rounded)
                           : const Icon(Icons.view_list_rounded),

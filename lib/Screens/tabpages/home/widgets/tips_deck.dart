@@ -10,11 +10,9 @@ class Fooddex extends StatefulWidget {
   const Fooddex({
     Key? key,
     required this.size,
-    required this.food,
   }) : super(key: key);
 
   final Size size;
-  final List food;
 
   @override
   State<Fooddex> createState() => _FooddexState();
