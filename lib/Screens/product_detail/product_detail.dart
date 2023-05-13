@@ -24,6 +24,13 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   bool toggleFavouriteMode = false;
   bool toggleCartmode = false;
+  final List<Map<String, String>> items = [
+    {'title': 'Item 1', 'description': 'description 1'},
+    {
+      'title': 'Item 2 that I am using to test longer words',
+      'description': 'description 2'
+    }
+  ];
 
   void getTogglemode() async {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
@@ -525,8 +532,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               )),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(theme == Brightness.light ? textColor : textDarkColor),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      theme == Brightness.light
+                                                          ? textColor
+                                                          : textDarkColor),
                                               backgroundColor:
                                                   MaterialStateProperty.all(
                                                       primaryColor),
@@ -547,8 +557,20 @@ class _ProductDetailState extends State<ProductDetail> {
                                                   },
                                             child: itemAmount == 0 ||
                                                     itemAmount > data['amount']
-                                                ? Text('No item in cart', style: TextStyle(color: theme == Brightness.light ? textColor : textDarkColor))
-                                                : Text('Add to cart', style: TextStyle(color: theme == Brightness.light ? textColor : textDarkColor),),
+                                                ? Text('No item in cart',
+                                                    style: TextStyle(
+                                                        color: theme ==
+                                                                Brightness.light
+                                                            ? textColor
+                                                            : textDarkColor))
+                                                : Text(
+                                                    'Add to cart',
+                                                    style: TextStyle(
+                                                        color: theme ==
+                                                                Brightness.light
+                                                            ? textColor
+                                                            : textDarkColor),
+                                                  ),
                                           ),
                                         ),
                                 ],
@@ -609,6 +631,85 @@ class _ProductDetailState extends State<ProductDetail> {
                         }),
                   ),
                   spacing(size: size, height: 0.05),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.075 / 2),
+                    child: ExpansionTile(
+                      childrenPadding: EdgeInsets.only(top: size.height * 0.01),
+                      title: const Text(
+                        'Comments and Posts',
+                      ),
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () {
+                            FocusScopeNode currentFocus =
+                                FocusScope.of(context);
+                            if (!currentFocus.hasPrimaryFocus) {
+                              currentFocus.unfocus();
+                            }
+                          },
+                          child: SizedBox(
+                            height: size.height * 0.4,
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(height: size.height * 0.01),
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return Align(
+                                      alignment: Alignment.topLeft,
+                                      child: FittedBox(
+                                        child: Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: size.width * 0.55,
+                                            ),
+                                            decoration: ShapeDecoration(
+                                                color: primaryColor,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20),
+                                                    topRight: Radius.circular(
+                                                      20,
+                                                    ),
+                                                  ),
+                                                )),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: size.width * 0.06,
+                                                vertical: size.width * 0.02),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              items[index]['title'].toString(),
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            )),
+                                      ),
+                                    );
+                                  },
+                                  itemCount: 2,
+                                ),
+                                const TextField(
+                                  decoration: InputDecoration(
+                                      labelText: 'Write a message'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  spacing(size: size, height: 0.1),
                 ],
               );
             }
