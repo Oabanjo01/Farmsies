@@ -2,7 +2,9 @@
 
 import 'package:farmsies/Utils/other_methods.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../../Constants/colors.dart';
 import '../../Constants/images.dart';
+import '../../Utils/snack_bar.dart';
 import '../../Widgets/generalwidget/text_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -38,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context).brightness;
+    // final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
+    // final User user = firebaseAuth.currentUser!;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -86,7 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
                           child: Theme(
                             data: Theme.of(context).copyWith(
                                 colorScheme: ThemeData().colorScheme.copyWith(
@@ -118,7 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         spacing(size: size, height: 0.01),
                         Padding(
-                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
                           child: Theme(
                             data: Theme.of(context).copyWith(
                                 colorScheme: ThemeData()
@@ -173,8 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       : ElevatedButton(
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(0),
-                            shape:
-                                MaterialStateProperty.all<RoundedRectangleBorder>(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -189,45 +196,65 @@ class _LoginScreenState extends State<LoginScreen> {
                               return;
                             } else {
                               _globalKey.currentState!.save();
-                              setState(() {});
+                              // setState(() {});
                               try {
-                                final userCredential =
-                                    await Provider.of<Authprovider>(context,
-                                            listen: false)
-                                        .signInWithEmailAndPassword(
-                                            email: userController.text,
-                                            password: passwordController.text);
-                                setState(() {});
-                                // ignore: use_build_context_synchronously
-                                Navigator.of(
-                                  context,
-                                ).pushNamedAndRemoveUntil(
-                                    '/homepage', (route) => false,
-                                    arguments: userCredential!.userMail);
+                                await Provider.of<Authprovider>(context,
+                                        listen: false)
+                                    .signInWithEmailAndPassword(
+                                        context: context,
+                                        email: userController.text,
+                                        password: passwordController.text)
+                                    .then((User? credential) {
+                                  if (!credential!.emailVerified) {
+                                    debugPrint('Email not verified');
+                                    Navigator.of(context)
+                                        .pushNamed('/emailVerification');
+                                    final SnackBar showSnackBar = snackBar(
+                                        context,
+                                        'Check your mail for the verification mail please, or create a new one.',
+                                        5);
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(showSnackBar);
+                                  } else {
+                                    debugPrint('Email verified');
+                                    Navigator.of(
+                                      context,
+                                    ).pushNamedAndRemoveUntil(
+                                      '/homepage',
+                                      (route) => false,
+                                    );
+                                  }
+                                });
+                                debugPrint('Did he sign in?');
+                                if (mounted) {
+                                  setState(() {});
+                                }
+                                // setState(() {});
                               } catch (e) {
-                                setState(() {});
-                                String error = Provider.of<Authprovider>(context,
+                                String error = Provider.of<Authprovider>(
+                                        context,
                                         listen: false)
                                     .errorMessage;
-                                if (error ==
-                                    'User with this email doesn\'t exist.') {
-                                  errorDialogue(context, error);
-                                  // Navigator.pop(context);
-                                } else {
-                                  errorDialogue(context, error);
-                                  // Navigator.pop(context);
-                                }
+                                errorDialogue(context, error);
+                                setState(() {});
+                                // !Provider.of<Authprovider>(context, listen: false).isLoading;
                               }
                             }
                           },
                           child: Text(
                             'Login',
-                            style: TextStyle(fontSize: 17, color: theme == Brightness.dark ? textDarkColor : textColor),
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: theme == Brightness.dark
+                                    ? textDarkColor
+                                    : textColor),
                           ),
                         ),
                 ),
                 spacing(size: size, height: 0.05),
-                Textbutton(text: 'Sign up',),
+                Textbutton(
+                  text: 'Sign up',
+                ),
                 spacing(size: size, height: 0.1),
                 InkWell(
                   radius: 30,

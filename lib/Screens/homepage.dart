@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import '../Constants/colors.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, this.userDetails}) : super(key: key);
-
-    var userDetails;
+  HomePage({Key? key,}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();

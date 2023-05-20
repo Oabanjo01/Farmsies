@@ -19,9 +19,7 @@ import '../widgets/head_board.dart';
 import '../widgets/homescreen_headers.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, this.userDetails}) : super(key: key);
-
-  final String? userDetails;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

@@ -9,7 +9,7 @@ SnackBar snackBar(BuildContext context, String text, int time, [width, color]) {
     behavior: SnackBarBehavior.floating,
     elevation: 0.5,
     backgroundColor: color ?? primaryColor.withOpacity(0.2),
-    content: Text(text, textAlign: TextAlign.center, style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textDarkColor)),
+    content: Text(text, textAlign: TextAlign.center, style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textColor)),
     duration: Duration(seconds: time),
   );
 }

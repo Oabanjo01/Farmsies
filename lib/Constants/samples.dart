@@ -1,6 +1,3 @@
-import '../Models/tips-model.dart';
-
-
 List foodcategories = [
   {
     'food name': 'Vegetables',

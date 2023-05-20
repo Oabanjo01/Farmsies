@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../Models/user-model.dart';
+import '../Utils/snack_bar.dart';
 
 class Authprovider with ChangeNotifier {
   final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
@@ -20,14 +23,14 @@ class Authprovider with ChangeNotifier {
   // GoogleSignInAccount get user => _user!;
 
   UserModel? _userFromFirebase(auth.User? user) {
-    if (user == null) {
-      return null;
+    if (user != null && user.emailVerified) {
+      return UserModel(
+        userId: user.uid,
+        userMail: user.email,
+        userDisplayname: user.displayName,
+      );
     }
-    return UserModel(
-      userId: user.uid,
-      userMail: user.email,
-      userDisplayname: user.displayName,
-    );
+    return null;
   }
 
   Stream<UserModel?>? get user {
@@ -46,27 +49,36 @@ class Authprovider with ChangeNotifier {
     return _isLoading;
   }
 
-  Future<dynamic> signInWithEmailAndPassword({
+  Future<User?> signInWithEmailAndPassword({
+    required BuildContext context,
     required String email,
     required String password,
   }) async {
-    try {
       _isLoading = true;
-      final credential = await firebaseAuth.signInWithEmailAndPassword(
+    try {
+      final credential = await firebaseAuth
+          .signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+          // .then((credential) {
+        notifyListeners();
       _isLoading = false;
-      notifyListeners();
-      return _userFromFirebase(credential.user);
+        return credential.user;
+      // });
     } on SocketException catch (e) {
       _isLoading = false;
-      return e;
-    }on FirebaseAuthException catch (e) {
+      _errorMessage = e.message.toString();
+    } on FirebaseAuthException catch (e) {
       _isLoading = false;
+      debugPrint('Error happened - ${e.code}');
+      debugPrint(isLoading.toString());
       switch (e.code) {
         case "invalid-email":
           _errorMessage = "Your email address appears to be malformed.";
+          break;
+          case "too-many-requests":
+          _errorMessage = "Login failed, please try again😊";
           break;
         case "wrong-password":
           _errorMessage = "Your password is wrong.";
@@ -84,14 +96,15 @@ class Authprovider with ChangeNotifier {
           _errorMessage = "Signing in with Email and Password is not enabled.";
           break;
         default:
-          _errorMessage = "An undefined Error happened, might be your internet.";
+          _errorMessage =
+              "An undefined Error happened, might be your internet.";
       }
-      return _errorMessage;
     }
   }
 
   Future<UserModel?> createUserWithEmailAndPassword(
       {required String email,
+      required BuildContext context,
       required String password,
       String? imagePath,
       required username}) async {
@@ -101,28 +114,36 @@ class Authprovider with ChangeNotifier {
         SettableMetadata(customMetadata: {'Date': DateTime.now().toString()});
     try {
       _isLoading = true;
-      final credential = await firebaseAuth.createUserWithEmailAndPassword(
+      await firebaseAuth
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
-      User? user = credential.user;
-      user!.updateDisplayName(username);
-      File file = File(imagePath!);
-      await _firebaseStorage
-          .ref()
-          .child('Files/DisplayPictures/$email/${user.uid}')
-          .putFile(file, metaData);
-      final Map<String, dynamic> newuser = {
-        'email': email,
-        'username': username,
-        'displayPicture': imagePath,
-        'userID': user.uid,
-        'date': DateTime.now().toIso8601String().split('T').first
-      };
-      await users.doc(user.uid).collection('User').doc(email).set(newuser);
+      )
+          .then((credential) async {
+        final SnackBar showSnackBar = snackBar(
+            context, 'Check your mail for verification mail please', 5);
+        ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+        User? user = credential.user;
+        user!.sendEmailVerification().then((value) async {
+          user.updateDisplayName(username);
+          File file = File(imagePath!);
+          await _firebaseStorage
+              .ref()
+              .child('Files/DisplayPictures/$email/${user.uid}')
+              .putFile(file, metaData);
+          final Map<String, dynamic> newuser = {
+            'email': email,
+            'username': username,
+            'displayPicture': imagePath,
+            'userID': user.uid,
+            'date': DateTime.now().toIso8601String().split('T').first
+          };
+          await users.doc(user.uid).collection('User').doc(email).set(newuser);
+          return _userFromFirebase(credential.user);
+        });
+      });
       notifyListeners();
       _isLoading = false;
-      return _userFromFirebase(credential.user);
     } catch (e) {
       _isLoading = false;
       rethrow;

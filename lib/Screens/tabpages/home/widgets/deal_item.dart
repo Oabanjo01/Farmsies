@@ -93,7 +93,8 @@ class _DealItemState extends State<DealItem> {
               left: 10,
               child: Chip(
                 label: Text('₦${widget.product['price'].toString()}'),
-                backgroundColor: theme == Brightness.dark  ? screenDarkColor : screenColor,
+                backgroundColor:
+                    theme == Brightness.dark ? screenDarkColor : screenColor,
                 elevation: 0,
               ),
             )
@@ -109,7 +110,8 @@ class _DealItemState extends State<DealItem> {
                 IconButton(
                   icon: toggleCartmode
                       ? Icon(Icons.shopping_basket, color: primaryColor)
-                      : Icon(Icons.shopping_basket_outlined, color: primaryColor),
+                      : Icon(Icons.shopping_basket_outlined,
+                          color: primaryColor),
                   onPressed: () async {
                     await value
                         .toggler(
@@ -128,8 +130,14 @@ class _DealItemState extends State<DealItem> {
                 ),
                 IconButton(
                   icon: toggleFavouriteMode
-                      ? Icon(Icons.favorite_rounded, color: primaryColor,)
-                      : Icon(Icons.favorite_border_rounded,color: primaryColor,),
+                      ? Icon(
+                          Icons.favorite_rounded,
+                          color: primaryColor,
+                        )
+                      : Icon(
+                          Icons.favorite_border_rounded,
+                          color: primaryColor,
+                        ),
                   onPressed: () async {
                     await value
                         .toggler(

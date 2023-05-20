@@ -80,11 +80,17 @@ class _FarmsiesState extends State<Farmsies> {
                   appBarTheme: AppBarTheme(
                       systemOverlayStyle: SystemUiOverlayStyle.dark,
                       foregroundColor: primaryDarkColor),
-                  colorScheme: ThemeData().colorScheme.copyWith(
-                        primary: primaryColor,
-                        secondary: secondaryColor.withOpacity(0.5),
-                        brightness: Brightness.light,
-                      )),
+                  // colorScheme: ThemeData().colorScheme.copyWith(
+                  //       primary: primaryColor,
+                  //       secondary: secondaryColor.withOpacity(0.5),
+                  //       brightness: Brightness.light,
+                  //     )),
+                  colorScheme: ColorScheme.fromSwatch(
+                    brightness: Brightness.light,
+                    backgroundColor: screenColor,
+                    errorColor: errorColor,
+                    primarySwatch: Colors.amber
+                  ),),
               darkTheme: ThemeData(
                   useMaterial3: true,
                   progressIndicatorTheme: ProgressIndicatorThemeData(

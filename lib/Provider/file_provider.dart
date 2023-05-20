@@ -19,15 +19,6 @@ class FileProvider with ChangeNotifier {
 
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
-  // Future<String> addImagetoStorage(String filePath, String fileName) async {
-  //   File filepath = File(filePath);
-  //   try {
-  //     await _firebaseStorage.ref('tee').putFile(filepath);
-  //   } catch (e) {
-      
-  //   }
-  // }
-
   Future<String?> pickFile(BuildContext ctx) async {
     try {
       FilePickerResult? pickerResult = await FilePicker.platform

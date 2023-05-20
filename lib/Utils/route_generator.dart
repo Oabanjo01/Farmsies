@@ -1,4 +1,3 @@
-
 import '../Screens/about_me/about_app.dart';
 import '../Screens/about_me/about_developer.dart';
 import 'package:farmsies/Screens/all_food_categories.dart';
@@ -11,6 +10,7 @@ import 'package:farmsies/Widgets/onboarding.dart';
 import 'package:farmsies/wrapper.dart';
 import 'package:flutter/material.dart';
 
+import '../Screens/auth-page/email_verification.dart';
 import '../Screens/auth-page/forgot_password.dart';
 import '../Screens/auth-page/login.dart';
 import '../Screens/auth-page/signupscreen.dart';
@@ -30,16 +30,21 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case '/homepage':
         return MaterialPageRoute(
-          builder: (_) => HomePage(userDetails: args),
+          builder: (_) => HomePage(),
         );
       case '/settings':
         return MaterialPageRoute(builder: (_) => const SettingsPage());
       case '/addProduct':
         return MaterialPageRoute(builder: (_) => const AddProduct());
+      case '/emailVerification':
+        return MaterialPageRoute(builder: (_) => const EmailVerification());
       case '/wrapper':
         return MaterialPageRoute(builder: (_) => const Wrapper());
       case '/foodCategory':
-        return MaterialPageRoute(builder: (_) => AllFoodCategories(initialTabPage: args,));
+        return MaterialPageRoute(
+            builder: (_) => AllFoodCategories(
+                  initialTabPage: args,
+                ));
       case '/productDetail':
         return MaterialPageRoute(
             builder: (_) => ProductDetail(
@@ -54,7 +59,7 @@ class RouteGenerator {
       case '/aboutApp':
         return MaterialPageRoute(builder: (_) => const AboutApp());
       case '/aboutDeveloper':
-        return MaterialPageRoute(builder: (_) => const AboutDeveloper()); 
+        return MaterialPageRoute(builder: (_) => const AboutDeveloper());
       case '/forgotPassword':
         return MaterialPageRoute(builder: (_) => const ForgotPassword());
       default:

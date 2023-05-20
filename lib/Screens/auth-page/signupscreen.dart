@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import '../../Constants/colors.dart';
 import '../../Constants/images.dart';
 import '../../Utils/other_methods.dart';
 import '../../Utils/file_picker.dart';
+import '../../Utils/snack_bar.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -61,14 +64,16 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context).brightness;
+    final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
+    final User? user = firebaseAuth.currentUser;
     return SafeArea(
       child: GestureDetector(
         onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
         child: Scaffold(
           body: ListView(
               padding: EdgeInsets.only(top: size.height * 0.1),
@@ -98,7 +103,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Center(
                             child: Text(
                               'Sign up',
-                              style: TextStyle(fontSize: 30, color: primaryColor),
+                              style:
+                                  TextStyle(fontSize: 30, color: primaryColor),
                             ),
                           ),
                         ),
@@ -149,8 +155,15 @@ class _SignupScreenState extends State<SignupScreen> {
                                             imageBottomsheet(
                                                 pick: () async {
                                                   Navigator.of(context).pop;
-                                                  await pickFile(ctx: context, popBottomSheet: true, pickMultipleImages: false,)
-                                                      .then((value) {
+
+                                                  // if (!user!.emailVerified) {
+
+                                                  // }
+                                                  await pickFile(
+                                                    ctx: context,
+                                                    popBottomSheet: true,
+                                                    pickMultipleImages: false,
+                                                  ).then((value) {
                                                     setState(() {
                                                       image = value!;
                                                     });
@@ -159,7 +172,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                         context: context,
                                                         builder: (builder) {
                                                           return AlertDialog(
-                                                            content: Text(e),
+                                                            content: Text(
+                                                                '$e-Banjo'),
                                                             actions: [
                                                               TextButton(
                                                                 onPressed: () {
@@ -167,8 +181,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                                                           context)
                                                                       .pop();
                                                                 },
-                                                                child: const Text(
-                                                                    'Ok!'),
+                                                                child:
+                                                                    const Text(
+                                                                        'Ok!'),
                                                               ),
                                                             ],
                                                           );
@@ -222,14 +237,15 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Form(
                             key: _formKey,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20.0),
+                              padding: const EdgeInsets.only(
+                                  left: 20.0, right: 20.0),
                               child: Column(children: [
                                 Theme(
-                                  data:  Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor,)),
+                                  data: Theme.of(context).copyWith(
+                                      colorScheme:
+                                          ThemeData().colorScheme.copyWith(
+                                                primary: primaryColor,
+                                              )),
                                   child: TextFormField(
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
@@ -254,10 +270,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                                 spacing(size: size, height: 0.01),
                                 Theme(
-                                   data: Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor,)),
+                                  data: Theme.of(context).copyWith(
+                                      colorScheme:
+                                          ThemeData().colorScheme.copyWith(
+                                                primary: primaryColor,
+                                              )),
                                   child: TextFormField(
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
@@ -281,10 +298,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                                 spacing(size: size, height: 0.01),
                                 Theme(
-                                   data: Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor,)),
+                                  data: Theme.of(context).copyWith(
+                                      colorScheme:
+                                          ThemeData().colorScheme.copyWith(
+                                                primary: primaryColor,
+                                              )),
                                   child: TextFormField(
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
@@ -307,18 +325,23 @@ class _SignupScreenState extends State<SignupScreen> {
                                         errorStyle: TextStyle(
                                             color: errorColor.withOpacity(0.8)),
                                         focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             borderSide: BorderSide(
-                                                color: errorColor.withOpacity(0.8),
+                                                color:
+                                                    errorColor.withOpacity(0.8),
                                                 width: 1.5)),
                                         errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             borderSide: BorderSide(
-                                                color: errorColor.withOpacity(0.8),
+                                                color:
+                                                    errorColor.withOpacity(0.8),
                                                 width: 1.5)),
                                         prefixIcon: const Padding(
                                             padding: EdgeInsets.only(left: 8.0),
-                                            child: Icon(Icons.password_rounded)),
+                                            child:
+                                                Icon(Icons.password_rounded)),
                                         suffixIcon: showPassword == true
                                             ? IconButton(
                                                 onPressed: toggleObscure,
@@ -329,37 +352,32 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 icon: const Icon(
                                                     Icons.visibility_rounded)),
                                         focusColor: primaryColor,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
-                                            borderSide: BorderSide(
-                                                color: primaryColor, width: 1.5)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
-                                            borderSide: BorderSide(
-                                                color:
-                                                    primaryColor.withOpacity(0.5),
-                                                width: 1.5)),
+                                        focusedBorder:
+                                            OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: primaryColor, width: 1.5)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: primaryColor.withOpacity(0.5), width: 1.5)),
                                         labelText: 'Password',
-                                        labelStyle: TextStyle(
-                                            color: primaryColor.withOpacity(0.6))),
+                                        labelStyle: TextStyle(color: primaryColor.withOpacity(0.6))),
                                   ),
                                 ),
                                 spacing(size: size, height: 0.01),
                                 Theme(
-                                   data: Theme.of(context).copyWith(
-                            colorScheme: ThemeData()
-                                .colorScheme
-                                .copyWith(primary: primaryColor,)),
+                                  data: Theme.of(context).copyWith(
+                                      colorScheme:
+                                          ThemeData().colorScheme.copyWith(
+                                                primary: primaryColor,
+                                              )),
                                   child: TextFormField(
                                     validator: (String? value) {
                                       if (value!.isEmpty) {
                                         return 'Input your password confirmation detail';
-                                      } else if (value != passwordContoller.text) {
+                                      } else if (value !=
+                                          passwordContoller.text) {
                                         return 'Must be same as your password';
                                       }
                                     },
                                     onSaved: (newValue) {
-                                      confirmPasswordController.text = newValue!;
+                                      confirmPasswordController.text =
+                                          newValue!;
                                     },
                                     cursorColor: primaryColor.withOpacity(0.7),
                                     controller: confirmPasswordController,
@@ -370,41 +388,34 @@ class _SignupScreenState extends State<SignupScreen> {
                                         errorStyle: TextStyle(
                                             color: errorColor.withOpacity(0.8)),
                                         focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             borderSide: BorderSide(
-                                                color: errorColor.withOpacity(0.8),
+                                                color:
+                                                    errorColor.withOpacity(0.8),
                                                 width: 1.5)),
                                         errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             borderSide: BorderSide(
-                                                color: errorColor.withOpacity(0.8),
+                                                color:
+                                                    errorColor.withOpacity(0.8),
                                                 width: 1.5)),
                                         prefixIcon: const Padding(
                                             padding: EdgeInsets.only(left: 8.0),
-                                            child: Icon(Icons.password_rounded)),
+                                            child:
+                                                Icon(Icons.password_rounded)),
                                         suffixIcon: showPassword1 == true
                                             ? IconButton(
                                                 onPressed: toggleObscure1,
                                                 icon: const Icon(
                                                     Icons.visibility_off))
-                                            : IconButton(
-                                                onPressed: toggleObscure1,
-                                                icon: const Icon(
-                                                    Icons.visibility_rounded)),
+                                            : IconButton(onPressed: toggleObscure1, icon: const Icon(Icons.visibility_rounded)),
                                         focusColor: primaryColor,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
-                                            borderSide: BorderSide(
-                                                color: primaryColor, width: 1.5)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(30),
-                                            borderSide: BorderSide(
-                                                color:
-                                                    primaryColor.withOpacity(0.5),
-                                                width: 1.5)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: primaryColor, width: 1.5)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: primaryColor.withOpacity(0.5), width: 1.5)),
                                         labelText: 'Confirm Password',
-                                        labelStyle: TextStyle(
-                                            color: primaryColor.withOpacity(0.6))),
+                                        labelStyle: TextStyle(color: primaryColor.withOpacity(0.6))),
                                   ),
                                 ),
                               ]),
@@ -420,7 +431,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ).isLoading ==
                                   true
                               ? Center(
-                                  child: CircularProgressIndicator(color: primaryColor,),
+                                  child: CircularProgressIndicator(
+                                    color: primaryColor,
+                                  ),
                                 )
                               : ElevatedButton(
                                   style: ButtonStyle(
@@ -430,39 +443,53 @@ class _SignupScreenState extends State<SignupScreen> {
                                           RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(20),
                                       )),
-                                      backgroundColor: MaterialStateProperty.all(
-                                          primaryColor)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              primaryColor)),
                                   onPressed: () async {
                                     FocusScope.of(context).unfocus();
                                     if (!_formKey.currentState!.validate()) {
                                       return;
                                     } else {
                                       _formKey.currentState!.save();
-                                      setState(() {
-                                      });
+                                      setState(() {});
                                       try {
-                                            await Provider.of<Authprovider>(
-                                                    context,
-                                                    listen: false)
-                                                .createUserWithEmailAndPassword(
+                                        await Provider.of<Authprovider>(context,
+                                                listen: false)
+                                            .createUserWithEmailAndPassword(
+                                          context: context,
                                           username: usernameController.text,
                                           imagePath: image,
                                           email: emailController.text,
                                           password: passwordContoller.text,
-                                        ).then((value) {
-
-                                        value != null
-                                            ? Navigator.of(context).popAndPushNamed('/loginScreen')
-                                            : errorDialogue(context, 'Error');
+                                        )
+                                            .then((value) {
+                                          // if (user!.emailVerified) {
+                                          // Navigator.of(context)
+                                          //     .popAndPushNamed(
+                                          //         '/loginScreen');
+                                          // }
+                                          final SnackBar showSnackBar = snackBar(
+                                              context,
+                                              'Check your mail for verification mail please',
+                                              5);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(showSnackBar);
                                         });
                                       } catch (e) {
-                                        setState(() {
-                                        });
+                                        setState(() {});
                                         errorDialogue(context, e.toString());
                                       }
                                     }
                                   },
-                                  child: Text('Sign up', style: TextStyle(fontSize: 17, color: theme == Brightness.dark ? textDarkColor : textColor),),
+                                  child: Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: theme == Brightness.dark
+                                            ? textDarkColor
+                                            : textColor),
+                                  ),
                                 ),
                         ),
                         spacing(size: size, height: 0.02),
