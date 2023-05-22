@@ -28,7 +28,7 @@ class _FooddexState extends State<Fooddex> {
           context,
           'An error occured',
           5);
-      ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+      ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
     }
   }
 

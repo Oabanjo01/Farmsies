@@ -122,7 +122,7 @@ class _OrderspageState extends State<Orderspage> {
                 onRefresh: () async {
                   final SnackBar showSnackBar = snackBar(context, 'Refreshed', 1,
                       size.width * 0.3, primaryColor.withOpacity(0.1));
-                  ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+                  ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
                 },
                 color: primaryColor.withOpacity(0.1),
                 backgroundColor:

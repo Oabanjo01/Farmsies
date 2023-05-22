@@ -102,7 +102,7 @@ class Authprovider with ChangeNotifier {
     }
   }
 
-  Future<UserModel?> createUserWithEmailAndPassword(
+  Future<dynamic> createUserWithEmailAndPassword(
       {required String email,
       required BuildContext context,
       required String password,
@@ -122,7 +122,7 @@ class Authprovider with ChangeNotifier {
           .then((credential) async {
         final SnackBar showSnackBar = snackBar(
             context, 'Check your mail for verification mail please', 5);
-        ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+        ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
         User? user = credential.user;
         user!.sendEmailVerification().then((value) async {
           user.updateDisplayName(username);

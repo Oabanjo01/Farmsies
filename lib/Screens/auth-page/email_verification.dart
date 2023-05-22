@@ -59,8 +59,8 @@ class _EmailVerificationState extends State<EmailVerification> {
                                     context,
                                     'A new mail has been sent, check your mail for verification mail please. You will be able to send a new one in less than a minute.',
                                     5);
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(showSnackBar);
+                                ScaffoldMessenger.of(context)..removeCurrentSnackBar()
+                                    ..showSnackBar(showSnackBar);
                               });
                               Future.delayed(
                                 const Duration(seconds: 20),

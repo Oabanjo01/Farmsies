@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Screens/tabpages/favourites/utils/methods.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:progress_indicators/progress_indicators.dart';
 
 import '../../../../Constants/colors.dart';
 import '../widgets/grid_view.dart';
@@ -42,19 +43,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
   ) {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return SliverFillRemaining(
-        child: Center(
-          child: CircularProgressIndicator(color: primaryColor),
-        ),
-      );
-    } else if (snapshot.hasError) {
-      return const SliverToBoxAdapter(
-          child: Center(
-        child: Text('An error occured'),
-      ));
-    } else {
-      if (snapshot.data!.docs.isEmpty) {
+    if (snapshot.hasData) {
+      final List list = snapshot.data!.docs;
+      if (list.isEmpty) {
         return SliverFillRemaining(
           child: SizedBox(
             child: Center(
@@ -68,14 +59,54 @@ class _FavouritesPageState extends State<FavouritesPage> {
             ),
           ),
         );
-      } else {
-        return SliverPadding(
-          padding: const EdgeInsets.all(10),
-          sliver: isListview
-              ? Listview(size: size, snapshot: snapshot, uid: uid, context2: context)
-              : Gridview(snapshot: snapshot, size: size, uid: uid,  context2: context),
-        );
       }
+      return SliverPadding(
+        padding: const EdgeInsets.all(10),
+        sliver: isListview
+            ? Listview(
+                size: size, snapshot: snapshot, uid: uid, context2: context)
+            : Gridview(
+                snapshot: snapshot, size: size, uid: uid, context2: context),
+      );
+    } else if (snapshot.hasError) {
+      return const SliverToBoxAdapter(
+          child: Center(
+        child: Text('An error occured'),
+      ));
+    } else if (snapshot.connectionState == ConnectionState.waiting) {
+      return SliverFillRemaining(
+        child: Center(
+          child: CircularProgressIndicator(color: primaryColor),
+        ),
+      );
+    } else if (!snapshot.hasData) {
+      return SliverFillRemaining(
+        child: SizedBox(
+          child: Center(
+            child: Text(
+              'No favourites here yet, check our catalogue',
+              style: TextStyle(
+                color:
+                    theme == Brightness.dark ? screenColor : primaryDarkColor,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return SliverFillRemaining(
+        child: SizedBox(
+          child: Center(
+            child: Text(
+              'Error',
+              style: TextStyle(
+                color:
+                    theme == Brightness.dark ? screenColor : primaryDarkColor,
+              ),
+            ),
+          ),
+        ),
+      );
     }
   }
 
@@ -86,20 +117,20 @@ class _FavouritesPageState extends State<FavouritesPage> {
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String uid = firebaseAuth.currentUser!.uid;
     return Scaffold(
-      body: FutureBuilder<QuerySnapshot>(
-          future: FirebaseFirestore.instance
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
               .collection('Users')
               .doc(uid)
-              .collection('Favourites').where('isFavourited', isEqualTo: true)
-              .get(),
+              .collection('Favourites')
+              .where('isFavourited', isEqualTo: true)
+              .snapshots(),
           builder: (context, snapshot) {
             return CustomScrollView(
               slivers: [
                 SliverAppBar(
                   shape: const ContinuousRectangleBorder(),
-                  backgroundColor: theme == Brightness.dark
-                      ? screenDarkColor
-                      : screenColor,
+                  backgroundColor:
+                      theme == Brightness.dark ? screenDarkColor : screenColor,
                   expandedHeight: size.height * 0.3,
                   elevation: 0,
                   floating: true,

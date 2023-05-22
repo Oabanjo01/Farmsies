@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               listentoProductChanges();
               final SnackBar showSnackBar = snackBar(context, 'Refreshed', 1,
                   size.width * 0.3, primaryColor.withOpacity(0.1));
-              ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+              ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
             },
             color: primaryColor.withOpacity(0.1),
             backgroundColor:
@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           messageBody:
                               'Hello Olabanjo,\n I would like to make enquiries',
                           subject: 'I need more info')),
-                      child: const Text('Contact us'),
+                      child: Text('Contact us', style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textColor),),
                     ),
                   ),
                 ),

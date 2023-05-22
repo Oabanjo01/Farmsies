@@ -182,7 +182,7 @@ class _UserAccountState extends State<UserAccount> {
           getUserDetail();
           final SnackBar showSnackBar = snackBar(context, 'Refreshed', 1,
               size.width * 0.3, primaryColor.withOpacity(0.1));
-          ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+          ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
         },
         color: primaryColor.withOpacity(0.1),
         backgroundColor:
@@ -299,7 +299,7 @@ class _UserAccountState extends State<UserAccount> {
                                                             5);
                                                     ScaffoldMessenger.of(
                                                             context)
-                                                        .showSnackBar(
+                                                        ..removeCurrentSnackBar()..showSnackBar(
                                                             showSnackBar);
                                                   });
                                                 });
@@ -440,7 +440,7 @@ class _UserAccountState extends State<UserAccount> {
                                                                         1);
                                                                 ScaffoldMessenger.of(
                                                                         context)
-                                                                    .showSnackBar(
+                                                                    ..removeCurrentSnackBar()..showSnackBar(
                                                                         showSnackBar);
                                                                 setState(() {
                                                                   _isUpdating =
@@ -699,7 +699,7 @@ class _UserAccountState extends State<UserAccount> {
                                         'An address for your business has been has been updated!',
                                         1);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                        ..removeCurrentSnackBar()..showSnackBar(showSnackBar);
                                     setState(() {
                                       modify1 = !modify1;
                                     });
@@ -715,7 +715,7 @@ class _UserAccountState extends State<UserAccount> {
                                         'An address for your business has been has been created!',
                                         1);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                        ..removeCurrentSnackBar()..showSnackBar(showSnackBar);
                                     setState(() {
                                       modify1 = !modify1;
                                       _isUpdating = false;
@@ -781,7 +781,7 @@ class _UserAccountState extends State<UserAccount> {
                                         'You have given your business a description, hurrayy!',
                                         1);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                        ..removeCurrentSnackBar()..showSnackBar(showSnackBar);
                                     setState(() {
                                       modify2 = !modify2;
                                     });
@@ -797,7 +797,7 @@ class _UserAccountState extends State<UserAccount> {
                                         'Your description has been updated',
                                         1);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                        ..removeCurrentSnackBar()..showSnackBar(showSnackBar);
                                     setState(() {
                                       _isUpdating = false;
                                       modify2 = !modify2;

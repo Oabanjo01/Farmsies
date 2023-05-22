@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Color primaryColor = Colors.amber.shade400;
+Color primaryColor = Colors.green;
 Color primaryDarkColor = Colors.black;
 Color screenColor = Colors.white;
 Color screenDarkColor = Colors.black87;

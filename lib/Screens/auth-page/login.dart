@@ -2,7 +2,6 @@
 
 import 'package:farmsies/Utils/other_methods.dart';
 import 'package:farmsies/Provider/auth_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -214,7 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         'Check your mail for the verification mail please, or create a new one.',
                                         5);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                    ..removeCurrentSnackBar()
+                                        ..showSnackBar(showSnackBar);
                                   } else {
                                     debugPrint('Email verified');
                                     Navigator.of(

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import '../../Constants/colors.dart';
@@ -70,7 +69,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                 .hasMatch(value)) {
                               return 'Invalid email';
-                            }
+                            } 
                           },
                           onSaved: (newValue) {
                             emailController.text = newValue!;
@@ -123,16 +122,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   size.width * 0.8,
                                   primaryColor.withOpacity(0.3));
                               ScaffoldMessenger.of(context)
-                                  .showSnackBar(showSnackBar);
+                              ..removeCurrentSnackBar()
+                                  ..showSnackBar(showSnackBar);
                             });
                           } on SocketException catch (e) {
                             final SnackBar showSnackBar = snackBar(context, 
-                                'No internet connection',
+                                'No internet connection - $e',
                                 1,
                                 size.width * 0.8,
                                 primaryColor.withOpacity(0.3));
                             ScaffoldMessenger.of(context)
-                                .showSnackBar(showSnackBar);
+                            ..removeCurrentSnackBar()
+                                ..showSnackBar(showSnackBar);
                           } catch (e) {
                             final SnackBar showSnackBar = snackBar(context, 
                                 'Something went wrong, check your internet',
@@ -140,7 +141,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 size.width * 0.8,
                                 primaryColor.withOpacity(0.3));
                             ScaffoldMessenger.of(context)
-                                .showSnackBar(showSnackBar);
+                            ..removeCurrentSnackBar()
+                                ..showSnackBar(showSnackBar);
                           }
                         }
                       },

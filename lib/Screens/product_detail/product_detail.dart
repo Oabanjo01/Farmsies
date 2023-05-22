@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Utils/other_methods.dart';
 import 'package:farmsies/Widgets/generalwidget/confirmation_dialog.dart';
@@ -22,7 +24,11 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  bool _isVisible = false;
+
   TextEditingController commentController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   final GlobalKey<FormState> _globalKey = GlobalKey();
   bool toggleFavouriteMode = false;
   bool toggleCartmode = false;
@@ -44,25 +50,28 @@ class _ProductDetailState extends State<ProductDetail> {
       uid,
       'Favourites',
     );
-    toggleCartmode =
-        await Provider.of<Itemprovider>(context, listen: false).isToggledStatus(
-      widget.productDetail,
-      widget.productDetail.id,
-      uid,
-      'Orders',
-    );
-    setState(() {});
+    if (mounted) {
+      toggleCartmode = await Provider.of<Itemprovider>(context, listen: false)
+          .isToggledStatus(
+        widget.productDetail,
+        widget.productDetail.id,
+        uid,
+        'Orders',
+      );
+      setState(() {});
+    }
   }
 
   @override
   void initState() {
-    getTogglemode();
     super.initState();
+    getTogglemode();
   }
 
   @override
   void dispose() {
     commentController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -109,22 +118,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 .doc(id)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return SizedBox(
-                  child: Center(
-                    child: JumpingText(
-                      'Error',
-                      style: TextStyle(color: primaryColor),
-                    ),
-                  ),
-                );
-              } else if (!snapshot.hasData) {
-                return const SizedBox(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else {
+              if (snapshot.hasData) {
                 final data = snapshot.data!.data();
                 return ListView(
                   padding: const EdgeInsets.only(top: 0),
@@ -195,9 +189,11 @@ class _ProductDetailState extends State<ProductDetail> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
-                            product['title'],
+                            product['title'].toString().capitalize(),
                             style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           StreamBuilder<DocumentSnapshot>(
                               stream: FirebaseFirestore.instance
@@ -215,9 +211,12 @@ class _ProductDetailState extends State<ProductDetail> {
                                 return IconButton(
                                   color: Theme.of(context).iconTheme.color,
                                   icon: toggleFavouriteMode
-                                      ? const Icon(Icons.favorite_rounded)
-                                      : const Icon(
-                                          Icons.favorite_border_rounded),
+                                      ? Icon(Icons.favorite_rounded,
+                                          color: errorColor)
+                                      : Icon(
+                                          Icons.favorite_border_rounded,
+                                          color: errorColor,
+                                        ),
                                   onPressed: () async {
                                     await provider
                                         .toggler(
@@ -241,36 +240,69 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                     ),
                     spacing(size: size, height: 0.01),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          itemAmount <= 0
-                              ? '₦0'
-                              : '₦${product['price'] * itemAmount}',
-                          style: TextStyle(fontSize: 17, color: primaryColor),
+                    Divider(
+                        color: primaryColor,
+                        endIndent: size.width * 0.3,
+                        indent: size.width * 0.3),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        itemAmount <= 0
+                            ? '₦0'
+                            : '₦${product['price'] * itemAmount}',
+                        style: const TextStyle(
+                          fontSize: 17,
                         ),
+                      ),
+                    ),
+                    Divider(
+                        color: primaryColor,
+                        endIndent: size.width * 0.3,
+                        indent: size.width * 0.3),
+                    spacing(size: size, height: 0.01),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                         Padding(
                           padding: EdgeInsets.only(right: size.width * 0.025),
                           child: SizedBox(
                             child: Row(children: [
-                              GestureDetector(
-                                onTap: (() => setState(() {
-                                      itemAmount <= 0
-                                          ? itemAmount = 0
-                                          : itemAmount = itemAmount - 10;
-                                    })),
-                                child: SizedBox(
-                                  child: Text(
-                                    '-10',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      color: primaryColor,
-                                    ),
+                              TextButton(
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                        OutlinedBorder>(const CircleBorder()),
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(
+                                      width: 0,
+                                      color: theme == Brightness.dark
+                                          ? screenColor
+                                          : screenDarkColor,
+                                    ))),
+                                onPressed: () => setState(() {
+                                  itemAmount <= 0
+                                      ? itemAmount = 0
+                                      : itemAmount = itemAmount - 10;
+                                }),
+                                child: Text(
+                                  '-10',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: primaryColor,
                                   ),
                                 ),
                               ),
-                              IconButton(
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                        OutlinedBorder>(const CircleBorder()),
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(
+                                      width: 0,
+                                      color: theme == Brightness.dark
+                                          ? screenColor
+                                          : screenDarkColor,
+                                    ))),
                                 onPressed: () {
                                   setState(() {
                                     itemAmount <= 0
@@ -278,7 +310,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                         : itemAmount = itemAmount - 1;
                                   });
                                 },
-                                icon: Icon(
+                                child: Icon(
                                   Icons.remove,
                                   color: primaryColor,
                                 ),
@@ -300,7 +332,17 @@ class _ProductDetailState extends State<ProductDetail> {
                                           : Colors.black),
                                 ),
                               ),
-                              IconButton(
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                        OutlinedBorder>(const CircleBorder()),
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(
+                                      width: 0,
+                                      color: theme == Brightness.dark
+                                          ? screenColor
+                                          : screenDarkColor,
+                                    ))),
                                 onPressed: () {
                                   setState(() {
                                     itemAmount >= data!['amount']
@@ -313,29 +355,42 @@ class _ProductDetailState extends State<ProductDetail> {
                                         'Only ${data['amount']} available, check back later!',
                                         2);
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(showSnackBar);
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(showSnackBar);
                                   }
                                 },
-                                icon: Icon(Icons.add, color: primaryColor),
+                                child: Icon(Icons.add, color: primaryColor),
                               ),
-                              GestureDetector(
-                                onTap: (() => setState(() {
-                                      // conditions to limit ordering more that the orders expected
-                                      setState(() {
-                                        itemAmount >= data!['amount']
-                                            ? itemAmount = data['amount']
-                                            : itemAmount = itemAmount + 10;
-                                      });
-                                      if (itemAmount >= data!['amount']) {
-                                        final SnackBar showSnackBar = snackBar(
-                                            context,
-                                            'Only ${data['amount']} available, check back later!',
-                                            2);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(showSnackBar);
-                                      }
-                                    })),
-                                child: SizedBox(
+                              SizedBox(
+                                child: TextButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                          OutlinedBorder>(const CircleBorder()),
+                                      side:
+                                          MaterialStateProperty.all<BorderSide>(
+                                              BorderSide(
+                                        width: 0,
+                                        color: theme == Brightness.dark
+                                            ? screenColor
+                                            : screenDarkColor,
+                                      ))),
+                                  onPressed: () => setState(() {
+                                    // conditions to limit ordering more that the orders expected
+                                    setState(() {
+                                      itemAmount >= data!['amount']
+                                          ? itemAmount = data['amount']
+                                          : itemAmount = itemAmount + 10;
+                                    });
+                                    if (itemAmount >= data!['amount']) {
+                                      final SnackBar showSnackBar = snackBar(
+                                          context,
+                                          'Only ${data['amount']} available, check back later!',
+                                          2);
+                                      ScaffoldMessenger.of(context)
+                                        ..removeCurrentSnackBar()
+                                        ..showSnackBar(showSnackBar);
+                                    }
+                                  }),
                                   child: Text(
                                     '+10',
                                     style: TextStyle(
@@ -352,7 +407,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     spacing(size: size, height: 0.01),
                     titles(size, 'Product Detail'),
                     spacing(size: size, height: 0.02),
-                    detail(size, product['description']),
+                    detail(size, product['description'].toString()),
                     spacing(size: size, height: 0.01),
                     divider(size),
                     spacing(size: size, height: 0.02),
@@ -378,7 +433,290 @@ class _ProductDetailState extends State<ProductDetail> {
                               .snapshots(),
                           builder: (context, snapshot) {
                             final data1 = snapshot.data;
-                            if (snapshot.connectionState ==
+
+                            if (!snapshot.hasData || !data1!.exists) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const SizedBox(
+                                    child: Icon(Icons.shopping_cart_outlined),
+                                  ),
+                                  firebaseAuth.currentUser!.email ==
+                                          widget.productDetail['email']
+                                      ? Container(
+                                          margin: EdgeInsets.only(
+                                              left: size.width * 0.05),
+                                          width: size.width * 0.5,
+                                          height: size.height * 0.06,
+                                          child: provider.toggled == true
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                )
+                                              : ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    shape: MaterialStateProperty
+                                                        .all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    )),
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all(theme ==
+                                                                    Brightness
+                                                                        .light
+                                                                ? textColor
+                                                                : textDarkColor),
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all(primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    final SnackBar
+                                                        showSnackBar = snackBar(
+                                                            context,
+                                                            'This is your item, long press for more actions',
+                                                            1);
+                                                    ScaffoldMessenger.of(
+                                                        context)
+                                                      ..removeCurrentSnackBar()
+                                                      ..showSnackBar(
+                                                          showSnackBar);
+                                                  },
+                                                  onLongPress: () async {
+                                                    try {
+                                                      confirm(
+                                                        title:
+                                                            'This is your product',
+                                                        content:
+                                                            'What would you like to do to this product?',
+                                                        onClicked1: () async {
+                                                          DocumentReference
+                                                              documentReference =
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Products')
+                                                                  .doc(id);
+                                                          Navigator.pop(
+                                                              context);
+                                                          try {
+                                                            await confirm(
+                                                              title:
+                                                                  'Delete your Product?',
+                                                              content:
+                                                                  'Are you sure you want to delete your product',
+                                                              onClicked1: () =>
+                                                                  Navigator.pop(
+                                                                      context),
+                                                              onClicked2:
+                                                                  () async {
+                                                                Navigator
+                                                                    .pushNamedAndRemoveUntil(
+                                                                  context,
+                                                                  '/homepage',
+                                                                  (route) =>
+                                                                      false,
+                                                                );
+                                                                await documentReference
+                                                                    .delete()
+                                                                    .then(
+                                                                        (value) async {
+                                                                  final productImageReference = FirebaseStorage
+                                                                      .instance
+                                                                      .refFromURL(
+                                                                          widget
+                                                                              .productDetail['imagepath']);
+                                                                  await productImageReference
+                                                                      .delete()
+                                                                      .then((value) => ScaffoldMessenger.of(
+                                                                          context)
+                                                                        ..removeCurrentSnackBar()
+                                                                        ..showSnackBar(
+                                                                          snackBar(
+                                                                              context,
+                                                                              'Your item has been deleted successfully',
+                                                                              1),
+                                                                        ));
+                                                                });
+                                                              },
+                                                              textbutton1: 'No',
+                                                              textbutton2:
+                                                                  'Yes',
+                                                              context: context,
+                                                            );
+                                                          } catch (e) {}
+                                                        },
+                                                        onClicked2: () async {
+                                                          itemAmount == 0 ||
+                                                                  itemAmount >
+                                                                      data[
+                                                                          'amount']
+                                                              ? ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      snackBar(
+                                                                          context,
+                                                                          'You need to have more than 0 items in your cart',
+                                                                          1))
+                                                              : provider
+                                                                  .toggler(
+                                                                    widget
+                                                                        .productDetail,
+                                                                    uid,
+                                                                    'Orders',
+                                                                    itemAmount,
+                                                                    context,
+                                                                    'Added to your item to cart',
+                                                                    'Removed from your item from cart',
+                                                                  )
+                                                                  .then((value) =>
+                                                                      Navigator.pop(
+                                                                          context));
+                                                        },
+                                                        textbutton1: 'Delete',
+                                                        textbutton2:
+                                                            'Add your item to your cart',
+                                                        context: context,
+                                                      );
+                                                    } catch (e) {}
+                                                  },
+                                                  child: const Text(
+                                                      'This is your product'),
+                                                ),
+                                        )
+                                      : Container(
+                                          margin: EdgeInsets.only(
+                                              left: size.width * 0.05),
+                                          width: size.width * 0.5,
+                                          height: size.height * 0.06,
+                                          child: provider.toggled == true
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                )
+                                              : ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    shape: MaterialStateProperty
+                                                        .all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    )),
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all(theme ==
+                                                                    Brightness
+                                                                        .light
+                                                                ? textColor
+                                                                : textDarkColor),
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all(primaryColor),
+                                                  ),
+                                                  onPressed: itemAmount == 0 ||
+                                                          itemAmount >
+                                                              data['amount']
+                                                      ? null
+                                                      : () async {
+                                                          provider.toggler(
+                                                            widget
+                                                                .productDetail,
+                                                            uid,
+                                                            'Orders',
+                                                            itemAmount,
+                                                            context,
+                                                            'Added to your cart',
+                                                            'Removed from your cart',
+                                                          );
+                                                        },
+                                                  child: itemAmount == 0 ||
+                                                          itemAmount >
+                                                              data['amount']
+                                                      ? Text('No item in cart',
+                                                          style: TextStyle(
+                                                              color: theme ==
+                                                                      Brightness
+                                                                          .light
+                                                                  ? textColor
+                                                                  : textDarkColor))
+                                                      : Text(
+                                                          'Add to cart',
+                                                          style: TextStyle(
+                                                              color: theme ==
+                                                                      Brightness
+                                                                          .light
+                                                                  ? textColor
+                                                                  : textDarkColor),
+                                                        ),
+                                                ),
+                                        ),
+                                ],
+                              );
+                            } else if (snapshot.hasData) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Container(
+                                    child: data1['isCarted']
+                                        ? const Icon(Icons.shopping_cart)
+                                        : const Icon(
+                                            Icons.shopping_cart_outlined),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: size.width * 0.05),
+                                    width: size.width * 0.5,
+                                    height: size.height * 0.06,
+                                    child: provider.toggled == true
+                                        ? const Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : ElevatedButton(
+                                            style: ButtonStyle(
+                                                shape: MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                )),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        primaryColor),
+                                                foregroundColor:
+                                                    MaterialStateProperty.all(
+                                                        theme ==
+                                                                Brightness.light
+                                                            ? textColor
+                                                            : textDarkColor)),
+                                            onPressed: itemAmount == 0 ||
+                                                    itemAmount > data['amount']
+                                                ? null
+                                                : () async {
+                                                    provider.toggler(
+                                                      widget.productDetail,
+                                                      uid,
+                                                      'Orders',
+                                                      itemAmount,
+                                                      context,
+                                                      'Added to your cart',
+                                                      'Removed from your cart',
+                                                    );
+                                                  },
+                                            child: data1.exists
+                                                ? const Text('Remove from cart')
+                                                : const Text('Add to cart'),
+                                          ),
+                                  ),
+                                ],
+                              );
+                            } else if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(
                                   child: JumpingText(
@@ -392,260 +730,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                   style: TextStyle(color: primaryColor),
                                 ),
                               );
-                            }
-                            if (snapshot.connectionState ==
-                                ConnectionState.active) {
-                              if (!snapshot.hasData || !data1!.exists) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    const SizedBox(
-                                      child: Icon(Icons.shopping_cart_outlined),
-                                    ),
-                                    firebaseAuth.currentUser!.email ==
-                                            widget.productDetail['email']
-                                        ? Container(
-                                            margin: EdgeInsets.only(
-                                                left: size.width * 0.05),
-                                            width: size.width * 0.5,
-                                            height: size.height * 0.06,
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                shape: MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                )),
-                                                foregroundColor:
-                                                    MaterialStateProperty.all(
-                                                        theme ==
-                                                                Brightness.light
-                                                            ? textColor
-                                                            : textDarkColor),
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
-                                                        primaryColor),
-                                              ),
-                                              onPressed: () {
-                                                final SnackBar showSnackBar =
-                                                    snackBar(
-                                                        context,
-                                                        'This is your item, long press for more actions',
-                                                        1);
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(showSnackBar);
-                                              },
-                                              onLongPress: () async {
-                                                try {
-                                                  confirm(
-                                                    title:
-                                                        'This is your product',
-                                                    content:
-                                                        'What would you like to do to this product?',
-                                                    onClicked1: () async {
-                                                      DocumentReference
-                                                          documentReference =
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'Products')
-                                                              .doc(id);
-                                                      Navigator.pop(context);
-                                                      try {
-                                                        await confirm(
-                                                          title:
-                                                              'Delete your Product?',
-                                                          content:
-                                                              'Are you sure you want to delete your product',
-                                                          onClicked1: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          onClicked2: () async {
-                                                            Navigator
-                                                                .pushNamedAndRemoveUntil(
-                                                              context,
-                                                              '/homepage',
-                                                              (route) => false,
-                                                            );
-                                                            await documentReference
-                                                                .delete()
-                                                                .then(
-                                                                    (value) async {
-                                                              final productImageReference =
-                                                                  FirebaseStorage
-                                                                      .instance
-                                                                      .refFromURL(
-                                                                          widget
-                                                                              .productDetail['imagepath']);
-                                                              await productImageReference
-                                                                  .delete()
-                                                                  .then((value) =>
-                                                                      ScaffoldMessenger.of(
-                                                                              context)
-                                                                          .showSnackBar(
-                                                                        snackBar(
-                                                                            context,
-                                                                            'Your item has been deleted successfully',
-                                                                            1),
-                                                                      ));
-                                                            });
-                                                          },
-                                                          textbutton1: 'No',
-                                                          textbutton2: 'Yes',
-                                                          context: context,
-                                                        );
-                                                      } catch (e) {}
-                                                    },
-                                                    onClicked2: () async {
-                                                      itemAmount == 0 ||
-                                                              itemAmount >
-                                                                  data['amount']
-                                                          ? ScaffoldMessenger
-                                                                  .of(context)
-                                                              .showSnackBar(
-                                                                  snackBar(
-                                                                      context,
-                                                                      'You need to have more than 0 items in your cart',
-                                                                      1))
-                                                          : provider
-                                                              .toggler(
-                                                                widget
-                                                                    .productDetail,
-                                                                uid,
-                                                                'Orders',
-                                                                itemAmount,
-                                                                context,
-                                                                'Added to your item to cart',
-                                                                'Removed from your item from cart',
-                                                              )
-                                                              .then((value) =>
-                                                                  Navigator.pop(
-                                                                      context));
-                                                    },
-                                                    textbutton1: 'Delete',
-                                                    textbutton2:
-                                                        'Add your item to your cart',
-                                                    context: context,
-                                                  );
-                                                } catch (e) {}
-                                              },
-                                              child: const Text(
-                                                  'This is your product'),
-                                            ),
-                                          )
-                                        : Container(
-                                            margin: EdgeInsets.only(
-                                                left: size.width * 0.05),
-                                            width: size.width * 0.5,
-                                            height: size.height * 0.06,
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                shape: MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                )),
-                                                foregroundColor:
-                                                    MaterialStateProperty.all(
-                                                        theme ==
-                                                                Brightness.light
-                                                            ? textColor
-                                                            : textDarkColor),
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
-                                                        primaryColor),
-                                              ),
-                                              onPressed: itemAmount == 0 ||
-                                                      itemAmount >
-                                                          data['amount']
-                                                  ? null
-                                                  : () async {
-                                                      provider.toggler(
-                                                        widget.productDetail,
-                                                        uid,
-                                                        'Orders',
-                                                        itemAmount,
-                                                        context,
-                                                        'Added to your cart',
-                                                        'Removed from your cart',
-                                                      );
-                                                    },
-                                              child: itemAmount == 0 ||
-                                                      itemAmount >
-                                                          data['amount']
-                                                  ? Text('No item in cart',
-                                                      style: TextStyle(
-                                                          color: theme ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? textColor
-                                                              : textDarkColor))
-                                                  : Text(
-                                                      'Add to cart',
-                                                      style: TextStyle(
-                                                          color: theme ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? textColor
-                                                              : textDarkColor),
-                                                    ),
-                                            ),
-                                          ),
-                                  ],
-                                );
-                              } else {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Container(
-                                      child: data1['isCarted']
-                                          ? const Icon(Icons.shopping_cart)
-                                          : const Icon(
-                                              Icons.shopping_cart_outlined),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          left: size.width * 0.05),
-                                      width: size.width * 0.5,
-                                      height: size.height * 0.06,
-                                      child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          )),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  primaryColor),
-                                        ),
-                                        onPressed: itemAmount == 0 ||
-                                                itemAmount > data['amount']
-                                            ? null
-                                            : () async {
-                                                provider.toggler(
-                                                  widget.productDetail,
-                                                  uid,
-                                                  'Orders',
-                                                  itemAmount,
-                                                  context,
-                                                  'Added to your cart',
-                                                  'Removed from your cart',
-                                                );
-                                              },
-                                        child: data1.exists
-                                            ? const Text('Remove from cart')
-                                            : const Text('Add to cart'),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
                             } else {
                               return JumpingText('Error');
                             }
@@ -656,6 +740,15 @@ class _ProductDetailState extends State<ProductDetail> {
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * 0.075 / 2),
                       child: ExpansionTile(
+                        onExpansionChanged: (value) {
+                          if (value == true) {
+                            final SnackBar showSnackBar = snackBar(context,
+                                'Longpress chatboxes for more actions', 2);
+                            ScaffoldMessenger.of(context)
+                              ..removeCurrentSnackBar()
+                              ..showSnackBar(showSnackBar);
+                          } return;
+                        },
                         childrenPadding:
                             EdgeInsets.only(top: size.height * 0.01),
                         title: const Text(
@@ -663,6 +756,8 @@ class _ProductDetailState extends State<ProductDetail> {
                         ),
                         children: <Widget>[
                           InkWell(
+                            splashFactory: NoSplash.splashFactory,
+                            highlightColor: Colors.transparent,
                             onTap: () {
                               FocusScopeNode currentFocus =
                                   FocusScope.of(context);
@@ -671,7 +766,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               }
                             },
                             child: SizedBox(
-                              height: size.height * 0.4,
+                              height: size.height * 0.5,
                               width: double.infinity,
                               child: Column(
                                 children: [
@@ -686,20 +781,136 @@ class _ProductDetailState extends State<ProductDetail> {
                                       builder: (context, snapshot) {
                                         final List data2 =
                                             snapshot.data?.docs ?? [];
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Expanded(
-                                            child: SizedBox(
-                                              height: size.height * 0.3,
-                                              child: Center(
-                                                child: JumpingText(
-                                                    'Fetching comments...'),
+                                        if (snapshot.hasData) {
+                                          if (data2.isEmpty) {
+                                            return Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: primaryColor
+                                                            .withOpacity(0.4),
+                                                        width: 1)),
+                                                height: size.height * 0.3,
+                                                child: const Center(
+                                                  child: Text(
+                                                      'No comment has been made on this post'),
+                                                ),
                                               ),
-                                            ),
-                                          );
+                                            );
+                                          }
+                                          return Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: primaryColor
+                                                          .withOpacity(0.4),
+                                                      width: 1)),
+                                              height: size.height * 0.35,
+                                              padding: const EdgeInsets.all(10),
+                                              child: ListView.separated(
+                                                  controller: _scrollController,
+                                                  physics:
+                                                      const BouncingScrollPhysics(),
+                                                  itemCount: data2.length,
+                                                  padding: EdgeInsets.zero,
+                                                  separatorBuilder: (context,
+                                                          index) =>
+                                                      SizedBox(
+                                                          height: size.height *
+                                                              0.01),
+                                                  shrinkWrap: true,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Align(
+                                                      alignment: data2[index]
+                                                                  ['email'] ==
+                                                              email
+                                                          ? Alignment.topRight
+                                                          : Alignment.topLeft,
+                                                      child: FittedBox(
+                                                        child: Column(
+                                                          crossAxisAlignment: data2[
+                                                                          index]
+                                                                      [
+                                                                      'email'] ==
+                                                                  email
+                                                              ? CrossAxisAlignment
+                                                                  .end
+                                                              : CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              alignment: Alignment
+                                                                  .bottomLeft,
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  data2[index][
+                                                                              'email'] ==
+                                                                          email
+                                                                      ? Container(
+                                                                          alignment:
+                                                                              Alignment.topRight,
+                                                                          child: userComment(
+                                                                              data2,
+                                                                              index,
+                                                                              email,
+                                                                              size,
+                                                                              theme),
+                                                                        )
+                                                                      : userAvatar(
+                                                                          data2,
+                                                                          index,
+                                                                          email,
+                                                                          theme),
+                                                                  const SizedBox(
+                                                                      width: 8),
+                                                                  data2[index][
+                                                                              'email'] ==
+                                                                          email
+                                                                      ? Container(
+                                                                          child: userAvatar(
+                                                                              data2,
+                                                                              index,
+                                                                              email,
+                                                                              theme),
+                                                                        )
+                                                                      : userComment(
+                                                                          data2,
+                                                                          index,
+                                                                          email,
+                                                                          size,
+                                                                          theme),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }));
                                         } else if (snapshot.hasError) {
                                           return Expanded(
-                                            child: SizedBox(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: primaryColor
+                                                          .withOpacity(0.4),
+                                                      width: 1)),
                                               height: size.height * 0.3,
                                               child: const Center(
                                                 child: Text(
@@ -708,199 +919,30 @@ class _ProductDetailState extends State<ProductDetail> {
                                             ),
                                           );
                                         } else {
-                                          if (data2.isEmpty) {
-                                            return const Expanded(
+                                          return Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: primaryColor
+                                                          .withOpacity(0.4),
+                                                      width: 1)),
+                                              height: size.height * 0.3,
                                               child: Center(
-                                                child: Text('No comments yet'),
+                                                child: JumpingText(
+                                                  'Fetching comments...',
+                                                ),
                                               ),
-                                            );
-                                          }
-                                          return SizedBox(
-                                            height: size.height * 0.3,
-                                            child: ListView.separated(
-                                              itemCount: data2.length,
-                                              padding: EdgeInsets.zero,
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                      height:
-                                                          size.height * 0.01),
-                                              shrinkWrap: true,
-                                              itemBuilder: (context, index) {
-                                                return Align(
-                                                  alignment: data2[index]
-                                                              ['email'] ==
-                                                          email
-                                                      ? Alignment.topRight
-                                                      : Alignment.topLeft,
-                                                  child: FittedBox(
-                                                    child: Column(
-                                                      crossAxisAlignment: data2[
-                                                                      index]
-                                                                  ['email'] ==
-                                                              email
-                                                          ? CrossAxisAlignment
-                                                              .end
-                                                          : CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          alignment: data2[
-                                                                          index]
-                                                                      [
-                                                                      'email'] ==
-                                                                  email
-                                                              ? Alignment
-                                                                  .centerRight
-                                                              : Alignment
-                                                                  .centerLeft,
-                                                          width:
-                                                              size.width * 0.4,
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    right: size
-                                                                            .width *
-                                                                        0.05),
-                                                            child: Text(
-                                                                '${data2[index]['postedBy']}',
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            12)),
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          alignment: Alignment
-                                                              .bottomLeft,
-                                                          child: Row(
-                                                            children: [
-                                                              CircleAvatar(
-                                                                foregroundColor:
-                                                                    primaryColor,
-                                                                child: Text(
-                                                                  data2[index][
-                                                                          'postedBy']
-                                                                      .toString()
-                                                                      .substring(
-                                                                          0, 1),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 5),
-                                                              Container(
-                                                                  margin: EdgeInsets.symmetric(
-                                                                      vertical: data2[index]['email'] ==
-                                                                              email
-                                                                          ? 2
-                                                                          : 0),
-                                                                  constraints:
-                                                                      BoxConstraints(
-                                                                    maxWidth:
-                                                                        size.width *
-                                                                            0.55,
-                                                                  ),
-                                                                  decoration:
-                                                                      ShapeDecoration(
-                                                                          color: primaryColor.withOpacity(
-                                                                              0.5),
-                                                                          shape:
-                                                                              RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.only(
-                                                                              bottomLeft: const Radius.circular(20),
-                                                                              bottomRight: const Radius.circular(20),
-                                                                              topLeft: Radius.circular(
-                                                                                data2[index]['email'] == email ? 20 : 0,
-                                                                              ),
-                                                                              topRight: Radius.circular(
-                                                                                data2[index]['email'] == email ? 0 : 20,
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          size.width *
-                                                                              0.06,
-                                                                      vertical: data2[index]['email'] ==
-                                                                              email
-                                                                          ? size.width *
-                                                                              0.028
-                                                                          : size.width *
-                                                                              0.02),
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  child: Text(
-                                                                    data2[index]
-                                                                            [
-                                                                            'comment']
-                                                                        .toString(),
-                                                                    softWrap:
-                                                                        true,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                    ),
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          alignment: data2[
-                                                                          index]
-                                                                      [
-                                                                      'email'] ==
-                                                                  email
-                                                              ? Alignment
-                                                                  .centerRight
-                                                              : Alignment
-                                                                  .centerLeft,
-                                                          width:
-                                                              size.width * 0.4,
-                                                          child: Padding(
-                                                            padding: data2[index]
-                                                                        [
-                                                                        'email'] ==
-                                                                    email
-                                                                ? EdgeInsets.only(
-                                                                    right: size
-                                                                            .width *
-                                                                        0.05)
-                                                                : EdgeInsets.only(
-                                                                    left: size
-                                                                            .width *
-                                                                        0.05),
-                                                            child: Text(
-                                                                '${data2[index]['time']}-${data2[index]['date']}',
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                softWrap: true,
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            12)),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
                                             ),
                                           );
                                         }
                                       }),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        bottom: size.height * 0.01),
+                                        bottom: size.height * 0.01,
+                                        left: 10,
+                                        right: 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -960,7 +1002,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                       ? now.hour - 12
                                                       : now.hour;
                                                   String time =
-                                                      '${hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} $period';
+                                                      '${hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}$period';
                                                   await FirebaseFirestore
                                                       .instance
                                                       .collection('Products')
@@ -974,9 +1016,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                                     'time': time,
                                                     'comment':
                                                         commentController.text
-                                                  }).then((value) =>
-                                                          commentController
-                                                              .clear());
+                                                  }).then((value) {
+                                                    commentController.clear();
+                                                    _scrollController.jumpTo(
+                                                        _scrollController
+                                                            .position
+                                                            .maxScrollExtent);
+                                                  });
                                                 }
                                               },
                                             ),
@@ -996,7 +1042,184 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 );
               }
+              if (snapshot.hasError) {
+                return SizedBox(
+                  child: Center(
+                    child: JumpingText(
+                      'Error',
+                      style: TextStyle(color: primaryColor),
+                    ),
+                  ),
+                );
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return SizedBox(
+                  child: Center(
+                    child: JumpingText(
+                      'Loading',
+                      style: TextStyle(color: primaryColor),
+                    ),
+                  ),
+                );
+              } else if (!snapshot.hasData) {
+                return SizedBox(
+                  child: Center(
+                    child: JumpingText(
+                      'No data available',
+                      style: TextStyle(color: primaryColor),
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
             }),
+      ),
+    );
+  }
+
+  Column userComment(List<dynamic> data2, int index, String? email, Size size,
+      Brightness theme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: data2[index]['email'] == email
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          alignment: data2[index]['email'] == email
+              ? Alignment.topRight
+              : Alignment.topLeft,
+          child: Text('${data2[index]['postedBy']}',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: true,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500,)),
+        ),
+        InkWell(
+          onLongPress: () {
+            setState(() {
+              _isVisible = !_isVisible;
+            });
+          },
+          child: Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: data2[index]['email'] == email ? 2 : 1),
+              decoration: ShapeDecoration(
+                  color: primaryColor.withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: const Radius.circular(20),
+                      bottomRight: const Radius.circular(20),
+                      topLeft: Radius.circular(
+                        data2[index]['email'] == email ? 20 : 0,
+                      ),
+                      topRight: Radius.circular(
+                        data2[index]['email'] == email ? 0 : 20,
+                      ),
+                    ),
+                  )),
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.04,
+                  vertical: data2[index]['email'] == email
+                      ? size.width * 0.025
+                      : size.width * 0.02),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        constraints: BoxConstraints(
+                          maxWidth: size.width * 0.42,
+                          minWidth: size.width * 0.1,
+                        ),
+                        child: Text(
+                          data2[index]['comment'].toString().capitalize(),
+                          softWrap: true,
+                          style: const TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      data2[index]['time'].toString().substring(0, 5),
+                      style: const TextStyle(fontSize: 9),
+                      maxLines: 1,
+                      overflow: TextOverflow.visible,
+                    ),
+                  )
+                ],
+              )),
+        ),
+        Visibility(
+          visible: _isVisible,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Reply',
+                    style: TextStyle(
+                      color:
+                          theme == Brightness.dark ? textDarkColor : textColor,
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.auto_awesome,
+                    color: errorColor,
+                  ),
+                  label: Text(
+                    'Like',
+                    style: TextStyle(
+                      color:
+                          theme == Brightness.dark ? textDarkColor : textColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  CircleAvatar userAvatar(
+      List<dynamic> data2, int index, String? email, Brightness theme) {
+    return CircleAvatar(
+      backgroundColor:
+          data2[index]['email'] == email ? primaryColor : Colors.blue,
+      foregroundColor: data2[index]['email'] == email
+          ? theme == Brightness.dark
+              ? textDarkColor
+              : textColor
+          : Colors.white,
+      child: Text(
+        data2[index]['postedBy'].toString().substring(0, 1),
       ),
     );
   }
@@ -1005,7 +1228,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.075),
       child: Text(
-        details.toLowerCase(),
+        details.toString().capitalize(),
         textAlign: TextAlign.left,
         style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
       ),
@@ -1026,3 +1249,316 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 }
+
+extension MyExtension on String {
+  String capitalize() {
+    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
+  }
+}
+
+// if (snapshot.connectionState ==
+                                        //     ConnectionState.waiting) {
+                                        //   return Expanded(
+                                        //     child: Container(
+                                        //       decoration: BoxDecoration(
+                                        //           borderRadius:
+                                        //               BorderRadius.circular(10),
+                                        //           border: Border.all(
+                                        //               color: primaryColor
+                                        //                   .withOpacity(0.4),
+                                        //               width: 1)),
+                                        //       height: size.height * 0.3,
+                                        //       child: Center(
+                                        //         child: JumpingText(
+                                        //             'Fetching comments...'),
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // } else
+                                        //  if (snapshot.hasError) {
+                                        //   return Expanded(
+                                        //     child: Container(
+                                        //       decoration: BoxDecoration(
+                                        //           borderRadius:
+                                        //               BorderRadius.circular(10),
+                                        //           border: Border.all(
+                                        //               color: primaryColor
+                                        //                   .withOpacity(0.4),
+                                        //               width: 1)),
+                                        //       height: size.height * 0.3,
+                                        //       child: const Center(
+                                        //         child: Text(
+                                        //             'No internet connnection'),
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // } else {
+                                        //   if (data2.isEmpty) {
+                                        //     return Expanded(
+                                        //       child: Container(
+                                        //         decoration: BoxDecoration(
+                                        //             borderRadius:
+                                        //                 BorderRadius.circular(
+                                        //                     10),
+                                        //             border: Border.all(
+                                        //                 color: primaryColor
+                                        //                     .withOpacity(0.4),
+                                        //                 width: 1)),
+                                        //         child: const Center(
+                                        //           child:
+                                        //               Text('No comments yet'),
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   }
+                                        //   return Container(
+                                        //     decoration: BoxDecoration(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(10),
+                                        //         border: Border.all(
+                                        //             color: primaryColor
+                                        //                 .withOpacity(0.4),
+                                        //             width: 1)),
+                                        //     height: size.height * 0.35,
+                                        //     padding: const EdgeInsets.all(10),
+                                        //     child: ListView.separated(
+                                        //       physics:
+                                        //           const BouncingScrollPhysics(),
+                                        //       itemCount: data2.length,
+                                        //       padding: EdgeInsets.zero,
+                                        //       separatorBuilder:
+                                        //           (context, index) => SizedBox(
+                                        //               height:
+                                        //                   size.height * 0.01),
+                                        //       shrinkWrap: true,
+                                        //       itemBuilder: (context, index) {
+                                        //         return Align(
+                                        //           alignment: data2[index]
+                                        //                       ['email'] ==
+                                        //                   email
+                                        //               ? Alignment.topRight
+                                        //               : Alignment.topLeft,
+                                        //           child: FittedBox(
+                                        //             child: Column(
+                                        //               crossAxisAlignment: data2[
+                                        //                               index]
+                                        //                           ['email'] ==
+                                        //                       email
+                                        //                   ? CrossAxisAlignment
+                                        //                       .end
+                                        //                   : CrossAxisAlignment
+                                        //                       .start,
+                                        //               children: [
+                                        //                 Visibility(
+                                        //                   visible: _isVisible,
+                                        //                   child: Container(
+                                        //                     alignment: data2[
+                                        //                                     index]
+                                        //                                 [
+                                        //                                 'email'] ==
+                                        //                             email
+                                        //                         ? Alignment
+                                        //                             .centerRight
+                                        //                         : Alignment
+                                        //                             .centerLeft,
+                                        //                     width:
+                                        //                         size.width * 0.4,
+                                        //                     child: Padding(
+                                        //                       padding: data2[index]
+                                        //                                   [
+                                        //                                   'email'] !=
+                                        //                               email
+                                        //                           ? EdgeInsets.only(
+                                        //                               left: size
+                                        //                                       .width *
+                                        //                                   0.05, bottom: 5)
+                                        //                           : EdgeInsets.only(
+                                        //                               right: size
+                                        //                                       .width *
+                                        //                                   0.05, bottom: 5),
+                                        //                       child: Text(
+                                        //                           '${data2[index]['postedBy']}',
+                                        //                           overflow:
+                                        //                               TextOverflow
+                                        //                                   .ellipsis,
+                                        //                           maxLines: 1,
+                                        //                           softWrap: true,
+                                        //                           style:
+                                        //                               const TextStyle(
+                                        //                                   fontSize:
+                                        //                                       12)),
+                                        //                     ),
+                                        //                   ),
+                                        //                 ),
+                                        //                 Container(
+                                        //                   alignment: Alignment
+                                        //                       .bottomLeft,
+                                        //                   child: Row(
+                                        //                     crossAxisAlignment: CrossAxisAlignment.start,
+                                        //                     children: [
+                                        //                       CircleAvatar(
+                                        //                         backgroundColor: data2[index]
+                                        //                                     [
+                                        //                                     'email'] ==
+                                        //                                 email
+                                        //                             ? primaryColor
+                                        //                             : randomBackgroundColor,
+                                        //                         foregroundColor: data2[index]
+                                        //                                     [
+                                        //                                     'email'] ==
+                                        //                                 email
+                                        //                             ? theme ==
+                                        //                                     Brightness.dark
+                                        //                                 ? textDarkColor
+                                        //                                 : textColor
+                                        //                             : randomForegroundColor,
+                                        //                         child: Text(
+                                        //                           data2[index][
+                                        //                                   'postedBy']
+                                        //                               .toString()
+                                        //                               .substring(
+                                        //                                   0, 1),
+                                        //                         ),
+                                        //                       ),
+                                        //                       const SizedBox(
+                                        //                           width: 8),
+                                        //                       Column(
+                                        //                         mainAxisSize: MainAxisSize.min,
+                                        //                         crossAxisAlignment: CrossAxisAlignment.start,
+                                        //                         mainAxisAlignment: MainAxisAlignment.start,
+                                        //                         children: [
+                                        //                           InkWell(
+                                        //                             onLongPress: () {
+                                        //                               setState(() {
+                                        //                                 _isVisible = !_isVisible;
+                                        //                               });
+                                        //                             },
+                                        //                             child: Container(
+                                        //                                 margin: EdgeInsets.symmetric(
+                                        //                                     vertical: data2[index]['email'] ==
+                                        //                                             email
+                                        //                                         ? 2
+                                        //                                         : 0),
+                                        //                                 constraints:
+                                        //                                     BoxConstraints(
+                                        //                                   maxWidth:
+                                        //                                       size.width *
+                                        //                                           0.55,
+                                        //                                 ),
+                                        //                                 decoration:
+                                        //                                     ShapeDecoration(
+                                        //                                         color: primaryColor.withOpacity(
+                                        //                                             0.5),
+                                        //                                         shape:
+                                        //                                             RoundedRectangleBorder(
+                                        //                                           borderRadius:
+                                        //                                               BorderRadius.only(
+                                        //                                             bottomLeft: const Radius.circular(20),
+                                        //                                             bottomRight: const Radius.circular(20),
+                                        //                                             topLeft: Radius.circular(
+                                        //                                               data2[index]['email'] == email ? 20 : 0,
+                                        //                                             ),
+                                        //                                             topRight: Radius.circular(
+                                        //                                               data2[index]['email'] == email ? 0 : 20,
+                                        //                                             ),
+                                        //                                           ),
+                                        //                                         )),
+                                        //                                 padding: EdgeInsets.symmetric(
+                                        //                                     horizontal:
+                                        //                                         size.width *
+                                        //                                             0.06,
+                                        //                                     vertical: data2[index]['email'] ==
+                                        //                                             email
+                                        //                                         ? size.width *
+                                        //                                             0.028
+                                        //                                         : size.width *
+                                        //                                             0.02),
+                                        //                                 alignment:
+                                        //                                     Alignment
+                                        //                                         .centerLeft,
+                                        //                                 child: Text(
+                                        //                                   data2[index]
+                                        //                                           [
+                                        //                                           'comment']
+                                        //                                       .toString(),
+                                        //                                   softWrap:
+                                        //                                       true,
+                                        //                                   style:
+                                        //                                       const TextStyle(
+                                        //                                     fontSize:
+                                        //                                         13,
+                                        //                                   ),
+                                        //                                 )),
+                                        //                           ),
+
+                                        //                 FittedBox(
+                                        //                   fit: BoxFit.scaleDown,
+                                        //                   child: Row(
+                                        //                     mainAxisSize: MainAxisSize.min,
+                                        //                     children: [
+                                        //                       TextButton(onPressed: () {}, child: const Text('Reply'),),
+                                        //                       TextButton.icon(onPressed: () {}, icon: const Icon(Icons.auto_awesome), label: const Text('Like'))
+                                        //                     ],
+                                        //                   ),
+                                        //                 )
+                                        //                         ],
+                                        //                       ),
+                                        //                     ],
+                                        //                   ),
+                                        //                 ),
+                                        //                 Visibility(
+                                        //                   visible: _isVisible,
+                                        //                   child: Container(
+                                        //                     alignment: data2[
+                                        //                                     index]
+                                        //                                 [
+                                        //                                 'email'] ==
+                                        //                             email
+                                        //                         ? Alignment
+                                        //                             .centerRight
+                                        //                         : Alignment
+                                        //                             .centerLeft,
+                                        //                     constraints:
+                                        //                         BoxConstraints(
+                                        //                             minWidth: size
+                                        //                                     .width *
+                                        //                                 0.2,
+                                        //                             maxWidth:
+                                        //                                 size.width *
+                                        //                                     0.5),
+                                        //                     child: Padding(
+                                        //                       padding: data2[index]
+                                        //                                   [
+                                        //                                   'email'] ==
+                                        //                               email
+                                        //                           ? EdgeInsets.only(
+                                        //                               right: size
+                                        //                                       .width *
+                                        //                                   0.05)
+                                        //                           : EdgeInsets.only(
+                                        //                               left: size
+                                        //                                       .width *
+                                        //                                   0.05),
+                                        //                       child: Text(
+                                        //                           '${data2[index]['time']} - ${data2[index]['date']}',
+                                        //                           overflow:
+                                        //                               TextOverflow
+                                        //                                   .fade,
+                                        //                           maxLines: 1,
+                                        //                           softWrap: true,
+                                        //                           style:
+                                        //                               const TextStyle(
+                                        //                                   fontSize:
+                                        //                                       12)),
+                                        //                     ),
+                                        //                   ),
+                                        //                 ),
+                                        //               ],
+                                        //             ),
+                                        //           ),
+                                        //         );
+                                        //       },
+                                        //     ),
+                                        //   );
+                                        // }
+ 

@@ -23,7 +23,6 @@ class textField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      
       onTap: () {
         showSearch(context: context, delegate: CustomSearchBar());
       },
@@ -38,9 +37,15 @@ class textField extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8.0),
           child: icon,
         ),
+        hintText: labelText,
+        hintStyle: TextStyle(
+          color: color.withOpacity(
+            0.6,
+          ),
+        ),
         focusColor: color,
-        focusedBorder: border(),
-        enabledBorder: border(),
+        focusedBorder: border(0.8),
+        enabledBorder: border(0.3),
         labelText: labelText,
         labelStyle: TextStyle(
           color: color.withOpacity(
@@ -51,9 +56,9 @@ class textField extends StatelessWidget {
     );
   }
 
-  OutlineInputBorder border() {
+  OutlineInputBorder border(width) {
     return OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(color: color.withOpacity(0.5), width: 0.2));
+          borderSide: BorderSide(color: primaryColor.withOpacity(0.5), width: width));
   }
 }

@@ -77,6 +77,23 @@ class _FarmsiesState extends State<Farmsies> {
                     color: primaryColor,
                   ),
                   brightness: Brightness.light,
+                  
+                  elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ButtonStyle(
+                      shape: 
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      backgroundColor: MaterialStateProperty.all(
+                              primaryColor.withOpacity(0.7)
+                            ),
+                      foregroundColor: MaterialStateProperty.all(
+                              textColor,
+                            ),
+                    )
+                  ),
                   appBarTheme: AppBarTheme(
                       systemOverlayStyle: SystemUiOverlayStyle.dark,
                       foregroundColor: primaryDarkColor),
@@ -89,7 +106,7 @@ class _FarmsiesState extends State<Farmsies> {
                     brightness: Brightness.light,
                     backgroundColor: screenColor,
                     errorColor: errorColor,
-                    primarySwatch: Colors.amber
+                    primarySwatch: Colors.green
                   ),),
               darkTheme: ThemeData(
                   useMaterial3: true,
@@ -124,7 +141,7 @@ class _FarmsiesState extends State<Farmsies> {
                           ),
                         ),
                       backgroundColor: MaterialStateProperty.all(
-                              primaryColor,
+                              primaryColor.withOpacity(0.5)
                             ),
                       foregroundColor: MaterialStateProperty.all(
                               textDarkColor,
@@ -135,15 +152,10 @@ class _FarmsiesState extends State<Farmsies> {
                     brightness: Brightness.dark,
                     backgroundColor: primaryDarkColor,
                     errorColor: errorColor,
-                    primarySwatch: Colors.amber
+                    primarySwatch: Colors.green
                   )),
             ),
           );
         });
   }
 }
-
-// ThemeData().colorScheme.copyWith(
-//                       primary: primaryDarkColor,
-//                       secondary: primaryDarkColor.withOpacity(0.5),
-//                       brightness: Brightness.dark)

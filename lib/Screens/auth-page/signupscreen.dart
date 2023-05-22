@@ -4,8 +4,6 @@ import 'dart:io';
 
 import 'package:farmsies/Provider/auth_provider.dart';
 import 'package:farmsies/Widgets/generalwidget/error_dialogue.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -64,8 +62,6 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context).brightness;
-    final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
-    final User? user = firebaseAuth.currentUser;
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -474,7 +470,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                               'Check your mail for verification mail please',
                                               5);
                                           ScaffoldMessenger.of(context)
-                                              .showSnackBar(showSnackBar);
+                                          ..removeCurrentSnackBar()
+                                              ..showSnackBar(showSnackBar);
                                         });
                                       } catch (e) {
                                         setState(() {});

@@ -12,6 +12,13 @@ class Itemprovider with ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
 
+  bool _toggled = false;
+
+  bool get toggled {
+    return _toggled;
+  }
+  
+
   final Map<String, bool> _isToggled = {};
 
   Future<bool> isToggledStatus(
@@ -51,6 +58,7 @@ class Itemprovider with ChangeNotifier {
         .collection(collection)
         .doc(id);
     try {
+      _toggled = true;
       await documentReference.get().then((DocumentSnapshot snapshot) {
         if (snapshot.exists) {
           docId = snapshot['id'];
@@ -59,7 +67,6 @@ class Itemprovider with ChangeNotifier {
         }
       });
       if (docId == '') {
-        _isToggled[id] = true;
         await documentReference.set({
           'id': id,
           'itemCreator': data['itemCreator'],
@@ -74,17 +81,20 @@ class Itemprovider with ChangeNotifier {
           'isCarted': true,
         }).then((value) {
           final SnackBar showSnackBar = snackBar(context, carted, 1);
-          ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+          ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
         });
+        _toggled = false;
         notifyListeners();
       } else if (docId == id) {
         _isToggled[id] = false;
+        _toggled = true;
         await documentReference.delete().then((value) {
           final SnackBar showSnackBar = snackBar(context, unCarted, 1);
-          ScaffoldMessenger.of(context).showSnackBar(showSnackBar);
+          ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
         });
         notifyListeners();
       }
+      _toggled = false;
       notifyListeners();
     } catch (e) {}
   }

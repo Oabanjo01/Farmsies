@@ -4,19 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum Category {
-  fruit,
-  vegetable,
-  fat,
-  goat,
-  sheep,
-  livestock,
-  poultry,
-  fish,
-  miscellanous,
-  pig
-}
-
 class ItemModel with ChangeNotifier {
   final String title;
   final String itemCreator;

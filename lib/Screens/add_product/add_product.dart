@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmsies/Constants/colors.dart';
 import 'package:farmsies/Constants/samples.dart';
-import 'package:farmsies/Provider/file_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 import '../../Utils/file_picker.dart';
@@ -39,7 +37,6 @@ class _AddProductState extends State<AddProduct> {
   String url = '';
   Future<String> getDownloadURL(email, uid) async {
     final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-    final theme = Theme.of(context).brightness;
     final imageurl = await firebaseStorage
         .ref()
         .child('Files/ProductPictures/$email/$uid-${titleController.text}')
@@ -62,7 +59,6 @@ class _AddProductState extends State<AddProduct> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
     final String? email = firebaseAuth.currentUser!.email;
     final String? user = firebaseAuth.currentUser!.displayName;
@@ -131,7 +127,7 @@ class _AddProductState extends State<AddProduct> {
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                   sliver: SliverToBoxAdapter(
                     child: TextFormField(
-                      cursorColor: primaryDarkColor,
+                      cursorColor: primaryColor,
                       controller: titleController,
                       maxLines: 1,
                       validator: ((String? value) {
@@ -155,7 +151,7 @@ class _AddProductState extends State<AddProduct> {
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                   sliver: SliverToBoxAdapter(
                     child: TextFormField(
-                      cursorColor: primaryDarkColor,
+                      cursorColor: primaryColor,
                       controller: descriptionController,
                       maxLines: 6,
                       validator: ((String? value) {
@@ -179,7 +175,7 @@ class _AddProductState extends State<AddProduct> {
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                   sliver: SliverToBoxAdapter(
                     child: TextFormField(
-                      cursorColor: primaryDarkColor,
+                      cursorColor: primaryColor,
                       controller: priceController,
                       keyboardType: TextInputType.number,
                       maxLines: 1,
@@ -206,7 +202,7 @@ class _AddProductState extends State<AddProduct> {
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                   sliver: SliverToBoxAdapter(
                     child: TextFormField(
-                      cursorColor: primaryDarkColor,
+                      cursorColor: primaryColor,
                       controller: amountController,
                       keyboardType: TextInputType.number,
                       maxLines: 1,
@@ -339,7 +335,7 @@ class _AddProductState extends State<AddProduct> {
                             icon: Icon(
                               Icons.camera,
                               size: constraint.biggest.height,
-                              color: primaryDarkColor.withOpacity(0.7),
+                              color: primaryColor.withOpacity(0.7),
                             ),
                           );
                         },
@@ -429,8 +425,8 @@ class _AddProductState extends State<AddProduct> {
                                         );
                                         final SnackBar showSnackBar = snackBar(context, 
                                             'Your Item has been created', 1);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(showSnackBar);
+                                        ScaffoldMessenger.of(context)..removeCurrentSnackBar()
+                                            ..showSnackBar(showSnackBar);
                                       });
                                     });
                                   });
@@ -440,8 +436,8 @@ class _AddProductState extends State<AddProduct> {
                                   });
                                   final SnackBar showSnackBar =
                                       snackBar(context, 'There was an error', 1);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(showSnackBar);
+                                  ScaffoldMessenger.of(context)..removeCurrentSnackBar()
+                                      ..showSnackBar(showSnackBar);
                                 }
                               }
                             },

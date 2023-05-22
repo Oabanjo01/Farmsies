@@ -15,7 +15,7 @@ class CustomSearchBar extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-          icon: const Icon(Icons.clear))
+          icon: Icon(Icons.clear, color: primaryColor,))
     ];
   }
 
@@ -25,7 +25,7 @@ class CustomSearchBar extends SearchDelegate {
         onPressed: () {
           close(context, null);
         },
-        icon: const Icon(Icons.arrow_back));
+        icon: Icon(Icons.arrow_back, color: primaryColor,));
   }
 
   @override
@@ -39,13 +39,27 @@ class CustomSearchBar extends SearchDelegate {
           } else {
             final data = snapshot.data!.docs;
             if (data
-                    .where((element) => element['title']
-                        .toString()
-                        .toLowerCase()
-                        .contains(query.toLowerCase()))
-                    .toList().isEmpty) {
-                  return const Center(child: Text('This Product does not exist\n....for now', textAlign: TextAlign.center,),);
-                }
+                .where((element) => element['title']
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()))
+                .toList()
+                .isEmpty) {
+              return InkWell(
+                onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+                child: const Center(
+                  child: Text(
+                    'This Product does not exist\n....for now',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
             return GestureDetector(
               onTap: () {
                 FocusScopeNode currentFocus = FocusScope.of(context);
@@ -66,9 +80,18 @@ class CustomSearchBar extends SearchDelegate {
                     final String description = data.get('description');
                     final String imagePath = data.get('imagepath');
 
-                    return searchlisttile(
-                        title, description, size, imagePath, context, data);
-                  })
+                    return Column(
+                      children: [
+                        searchlisttile(
+                            title, description, size, imagePath, context, data),
+                  Divider(
+                    color: primaryColor.withOpacity(0.5),
+                    endIndent: size.width * 0.04,
+                    indent: size.width * 0.04,
+                  )
+                      ],
+                    );
+                  }),
                 ]),
               ),
             );
@@ -81,9 +104,17 @@ class CustomSearchBar extends SearchDelegate {
     List<QueryDocumentSnapshot> matchQuery = [];
     final size = MediaQuery.of(context).size;
     if (query.isEmpty) {
-      return const Center(
-        child: Text(
-          'Search for a product',
+      return InkWell(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: const Center(
+          child: Text(
+            'Search for a product',
+          ),
         ),
       );
     } else {

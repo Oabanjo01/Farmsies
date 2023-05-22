@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../Constants/colors.dart';
 import '../Constants/samples.dart';
-import '../Utils/snack_bar.dart';
 
 class AllFoodCategories extends StatefulWidget {
   const AllFoodCategories({Key? key, this.initialTabPage = 0})
@@ -212,7 +211,6 @@ class _AllFoodCategoriesState extends State<AllFoodCategories>
   }
 
   SizedBox _tabpages(String text, Size size, TabController controller,) {
-    final theme = Theme.of(context).brightness;
     return SizedBox(
         child: StreamBuilder(
             stream: getFoodItemsByCategory(text),
