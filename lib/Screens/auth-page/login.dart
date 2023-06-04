@@ -40,8 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context).brightness;
-    // final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;
-    // final User user = firebaseAuth.currentUser!;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);

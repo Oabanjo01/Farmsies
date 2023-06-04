@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
         DateTime _lastoginTime =
             DateTime.tryParse(preferences.get('lastLoginTime').toString()) ??
                 DateTime.now();
-        final difference = DateTime.now().difference(_lastoginTime).inMinutes;
+        final difference = DateTime.now().difference(_lastoginTime).inHours;
         if (difference > 5) {
           if (mounted) {
             final auth.FirebaseAuth firebaseAuth = auth.FirebaseAuth.instance;

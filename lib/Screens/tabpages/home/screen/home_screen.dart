@@ -69,7 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
               listentoProductChanges();
               final SnackBar showSnackBar = snackBar(context, 'Refreshed', 1,
                   size.width * 0.3, primaryColor.withOpacity(0.1));
-              ScaffoldMessenger.of(context)..removeCurrentSnackBar()..showSnackBar(showSnackBar);
+              ScaffoldMessenger.of(context)
+                ..removeCurrentSnackBar()
+                ..showSnackBar(showSnackBar);
             },
             color: primaryColor.withOpacity(0.1),
             backgroundColor:
@@ -158,7 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   sliver: SliverToBoxAdapter(
-                    child: Foodcategories(size: size,),
+                    child: Foodcategories(
+                      size: size,
+                    ),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -222,7 +226,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           messageBody:
                               'Hello Olabanjo,\n I would like to make enquiries',
                           subject: 'I need more info')),
-                      child: Text('Contact us', style: TextStyle(color: theme == Brightness.dark ? textDarkColor : textColor),),
+                      child: Text(
+                        'Contact us',
+                        style: TextStyle(
+                            color: theme == Brightness.dark
+                                ? textDarkColor
+                                : textColor),
+                      ),
                     ),
                   ),
                 ),
@@ -232,13 +242,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            elevation: 0,
-            tooltip: 'Add your product',
-            onPressed: () {
-              Navigator.of(context).pushNamed('/addProduct');
-            },
-            child: const Icon(Icons.add),
+          floatingActionButton: SizedBox(
+            height: size.width * 0.15,
+            width: size.width * 0.15,
+            child: Material(
+              type: MaterialType.transparency,
+              shape: CircleBorder(side: BorderSide(style: BorderStyle.solid, color: primaryColor, width: 1,)),
+              color: Colors.transparent,
+              child: Ink(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                    border: Border.all(
+                  color: primaryColor,
+                  width: 1,
+                )),
+                child: InkWell(
+                  splashColor: Colors.blue.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(100),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/addProduct');
+                    },
+                    child: const Icon(Icons.add)),
+              ),
+            ),
           ),
         ),
       ),
