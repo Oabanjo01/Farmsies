@@ -1,6 +1,6 @@
 # farmsies
 
-A new Flutter project.
+An app for farmers and customers. The app helps bring the farmers product to a digital space, where they can sell and their customers can easily buy.
 
 ## Getting Started
 
